@@ -1,0 +1,21 @@
+threads conditionnement :
+
+  (1) envoi pièces
+      clapet
+
+  (2) contrôle dimensionnel
+      (dans 1 ?)
+
+  (3) remplissage cartons
+      imprimer cartons
+
+??(4) file d'attente cartons
+
+  (5) remplissage palette
+
+threads stockage :
+  (6) trouver place
+      stocker palette
+
+  (7)
+  
