@@ -13,9 +13,31 @@ threads conditionnement :
 
   (5) remplissage palette
 
+      imprime <-> palette
+      file d'attente FIFO
+      protégée par _sémaphore_
+
+
 threads stockage :
+
   (6) trouver place
       stocker palette
 
-  (7)
+      préparer commande
+
+autres threads :
+
+      écriture journal de bord
   
+??    arrêt urgence
+
+  (W) commande inteface client
+      (superviseur)
+
+
+
+journal de bord :
+  - erreurs
+  - date
+  - reprise
+
