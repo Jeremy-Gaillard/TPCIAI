@@ -75,7 +75,9 @@ _AU_ (!)
   jeter carton/pièces ?
   ouvrir clapet
 
-_absence carton_ (!)
+_absence carton_ (!) <= CHOIX DE SPECIF
+                        => pas de file d'attente de pièces
+                           à la sortie du clapet
   fermer clapet
   arrivée carton
   ouvrir clapet
