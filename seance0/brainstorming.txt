@@ -29,7 +29,7 @@ threads conditionnement :
  |___________/________/ \
                          \ (plein)
                           \
-
+                          fffffFFFFFFFFFFFFFFF
 
 
 
@@ -66,23 +66,26 @@ erreur --> OP ? --> stop !
                 |
                 --> reprise
 
-_AU_
+(!) : "mortelle"/bloquante
+(w) : warning (log, keep going)
+
+_AU_ (!)
   fermer clapet
   tout sauver
   jeter carton/pièces ?
   ouvrir clapet
 
-_absence carton_
+_absence carton_ (!)
   fermer clapet
   arrivée carton
   ouvrir clapet
 
-_trop de cartons_
+_trop de cartons_ (!)
 
-_absence palette_
+_absence palette_ (w)
 
-_trop de pièces mauvaises
+_trop de pièces mauvaises_ (!)
 
-_imprimante KO_
+_imprimante KO_ (!)
 
-_commande non prête_
+_commande non prête_ (w)
