@@ -17,23 +17,6 @@ threads conditionnement :
       file d'attente FIFO
       protégée par _sémaphore_
 
- ---------------->o (boucle tant que clapet fermé)
- |                |
- |                |
- |                v
- |                o  fermer clapet
- |               / \
- |    (mauvais) /   \ (bonne)
- |             L     _|
- |    rebus   o        o dans carton
- |___________/________/ \
-                         \ (plein)
-                          \
-                          fffffFFFFFFFFFFFFFFF
-
-
-
-
 threads stockage :
 
   (6) trouver place
@@ -50,6 +33,19 @@ autres threads :
   (W) commande inteface client
       (superviseur)
 
+
+threads de v11.59 :
+
+  - chaîne de remplissage carton + vérif pièces
+,
+  - cariste (va chercher les objets sur commande
+             et signale quand il les a sortis du stock)
+
+  - palette
+
+  - journal
+
+  - interface réseau
 
 
 journal de bord :
