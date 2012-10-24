@@ -17,6 +17,22 @@ threads conditionnement :
       file d'attente FIFO
       protégée par _sémaphore_
 
+ ---------------->o (boucle tant que clapet fermé)
+ |                |
+ |                |
+ |                v
+ |                o  fermer clapet
+ |               / \
+ |    (mauvais) /   \ (bonne)
+ |             L     _|
+ |    rebus   o        o dans carton
+ |___________/________/ \
+                         \ (plein)
+                          \
+
+
+
+
 
 threads stockage :
 
@@ -41,3 +57,32 @@ journal de bord :
   - date
   - reprise
 
+  - caractéristiques lots à fabriquer : - code opérateur
+                                        - nombre de pièces défectueuses
+                                        - codes défauts
+
+
+erreur --> OP ? --> stop !
+                |
+                --> reprise
+
+_AU_
+  fermer clapet
+  tout sauver
+  jeter carton/pièces ?
+  ouvrir clapet
+
+_absence carton_
+  fermer clapet
+  arrivée carton
+  ouvrir clapet
+
+_trop de cartons_
+
+_absence palette_
+
+_trop de pièces mauvaises
+
+_imprimante KO_
+
+_commande non prête_
