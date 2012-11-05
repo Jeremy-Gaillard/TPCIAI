@@ -1,23 +1,25 @@
-Scéance du 05/11
+Scï¿½ance du 05/11
 
-découpage du travail en trois lots differents. Chacun fera sa documentation
+dï¿½coupage du travail en trois lots differents. Chacun fera sa documentation
 
-Interface réseau (serveur[Linux] + client[Windows]) : Lionel.
+Interface rï¿½seau (serveur[Linux] + client[Windows]) : Lionel.
  
 
 
 thread simulation : 
-  permet de simuler le matériel et l'envoi de pièce
-  permet de simuler les actions de l'opérateur (ajouter un carton, une palette, vider un carton, réparer imprimante, appui sur arrêt d'urgence)
+  permet de simuler le matï¿½riel et l'envoi de piï¿½ce
+  permet de simuler les actions de l'opï¿½rateur (ajouter un carton, une palette, vider un carton, rï¿½parer imprimante, appui sur arrï¿½t d'urgence)
   permet de lancer des erreurs
   
-Echelle des priorités
+Echelle des prioritï¿½s
 
-	1 Initialisation (Necessaire au début. Il faut qu'il termine avant que les autres se lancent)
-	2 Simulation (Contient l'arrêt d'urgence et tout le matos)
-	3 Journal (Importance de garder trace de tout les évènements)/Interface reseau (commande lot, info AU, ordre cariste)
+	1 Initialisation (Necessaire au dï¿½but. Il faut qu'il termine avant que les autres se lancent)
+	2 Simulation (Contient l'arrï¿½t d'urgence et tout le matos)
+	3 Journal (Importance de garder trace de tout les ï¿½vï¿½nements)/Interface reseau (commande lot, info AU, ordre cariste)
 	4 Palette (Besoin de carton)/Remplissage carton
 	5 Cariste
 	
 Linux serveur
 Windows client.
+
+Erreur supplÃ©mentaire : lors du plastiquage de la palette, on peut "passer en mode erreur".
