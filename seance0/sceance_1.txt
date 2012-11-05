@@ -1,21 +1,21 @@
-Sc�ance du 05/11
+Scéance du 05/11
 
-d�coupage du travail en trois lots differents. Chacun fera sa documentation
+découpage du travail en trois lots differents. Chacun fera sa documentation
 
-Interface r�seau (serveur[Linux] + client[Windows]) : Lionel.
+Interface réseau (serveur[Linux] + client[Windows]) : Lionel.
  
 
 
 thread simulation : 
-  permet de simuler le mat�riel et l'envoi de pi�ce
-  permet de simuler les actions de l'op�rateur (ajouter un carton, une palette, vider un carton, r�parer imprimante, appui sur arr�t d'urgence)
+  permet de simuler le matériel et l'envoi de pièce
+  permet de simuler les actions de l'opérateur (ajouter un carton, une palette, vider un carton, réparer imprimante, appui sur arrêt d'urgence)
   permet de lancer des erreurs
   
-Echelle des priorit�s
+Echelle des priorités
 
-	1 Initialisation (Necessaire au d�but. Il faut qu'il termine avant que les autres se lancent)
-	2 Simulation (Contient l'arr�t d'urgence et tout le matos)
-	3 Journal (Importance de garder trace de tout les �v�nements)/Interface reseau (commande lot, info AU, ordre cariste)
+	1 Initialisation (Necessaire au début. Il faut qu'il termine avant que les autres se lancent)
+	2 Simulation (Contient l'arrêt d'urgence et tout le matos)
+	3 Journal (Importance de garder trace de tout les événements)/Interface reseau (commande lot, info AU, ordre cariste)
 	4 Palette (Besoin de carton)/Remplissage carton
 	5 Cariste
 	
