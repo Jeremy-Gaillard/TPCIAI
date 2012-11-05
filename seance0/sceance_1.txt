@@ -1,0 +1,18 @@
+Scéance du 05/11
+
+découpage du travail en trois lots differents.
+
+
+thread simulation : 
+  permet de simuler le matériel et l'envoi de pièce
+  permet de simuler les actions de l'opérateur (ajouter un carton, une palette, vider un carton, réparer imprimante, appui sur arrêt d'urgence)
+  permet de lancer des erreurs
+  
+Echelle des priorités
+
+	1 Initialisation (Necessaire au début. Il faut qu'il termine avant que les autres se lancent)
+	2 Simulation (Contient l'arrêt d'urgence et tout le matos)
+	3 Journal (Importance de garder trace de tout les évènements)
+	4 Remplissage carton
+	5 Palette (Besoin de carton)
+	6 Cariste

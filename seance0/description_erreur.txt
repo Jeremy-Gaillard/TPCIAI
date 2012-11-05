@@ -1,0 +1,49 @@
+erreur --> OP ? --> stop !
+                |
+                --> reprise
+
+				
+Les arrêts se font seulement sur la chaîne de production.
+				
+(!) : bloquante (fermeture du clapet)
+(w) : warning (log, keep going)
+
+_AU_ (!) (lancé dans simulation)
+  fermer clapet
+  tout sauver
+  jeter carton/pièces
+		OP ? --> jeter lot.
+			 |
+			 --> reprise du lot.
+  ouvrir clapet
+
+_absence carton_ (!) <= CHOIX DE SPECIF
+                        => pas de file d'attente de pièces
+                           à la sortie du clapet
+  fermer clapet
+  arrivée carton
+  ouvrir clapet
+
+_trop de cartons_ (!)
+  fermer clapet
+  évacuer carton sur palette (si palette)
+  ouvrir clapet
+
+_trop de pièces mauvaises_ (!)
+  fermer clapet
+  jeter carton (check de la machine si il faut)
+  ouvrir clapet
+  
+_imprimante KO_ (!)
+  fermer clapet
+  réparer imprimante
+  ouvrir clapet
+
+_absence palette_ (w)
+  avertissement journal, interface et ?
+
+_commande non prête_ (w)
+  avertissement journal et interface
+  
+  
+Handler pour chaque opération ?
