@@ -47,3 +47,12 @@ _commande non prête_ (w)
   
   
 Handler pour chaque opération ?
+2 signaux seulement
+
+Gestion des erreurs :
+	Semaphore pour les pieces. Si clapet fermé, on ajoute pas de pièce.
+	Semaphore pour les palettes
+	Semaphore pour les cartons
+		(les trois permettent de bloquer le thread si une erreur arrive).
+
+	
