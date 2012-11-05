@@ -55,4 +55,4 @@ Gestion des erreurs :
 	Semaphore pour les cartons
 		(les trois permettent de bloquer le thread si une erreur arrive).
 
-	
+	Handler pour le remplissage de carton, pour les palettes, qui réagissent à l'arrêt d'urgence.

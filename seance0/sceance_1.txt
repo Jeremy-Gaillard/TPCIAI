@@ -1,6 +1,9 @@
 Scéance du 05/11
 
-découpage du travail en trois lots differents.
+découpage du travail en trois lots differents. Chacun fera sa documentation
+
+Interface réseau (serveur[Linux] + client[Windows]) : Lionel.
+ 
 
 
 thread simulation : 
@@ -12,8 +15,9 @@ Echelle des priorités
 
 	1 Initialisation (Necessaire au début. Il faut qu'il termine avant que les autres se lancent)
 	2 Simulation (Contient l'arrêt d'urgence et tout le matos)
-	3 Journal (Importance de garder trace de tout les évènements) [Ressource ?]
-	4 Interface reseau (commande lot, info AU, ordre cariste)
-	5 Palette (Besoin de carton)
-	6 Remplissage carton
-	7 Cariste
+	3 Journal (Importance de garder trace de tout les évènements)/Interface reseau (commande lot, info AU, ordre cariste)
+	4 Palette (Besoin de carton)/Remplissage carton
+	5 Cariste
+	
+Linux serveur
+Windows client.
