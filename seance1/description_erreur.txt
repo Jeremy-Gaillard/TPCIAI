@@ -45,6 +45,10 @@ _absence palette_ (w)
 _commande non prête_ (w)
   avertissement journal et interface
   
+_plastiquage foiré_ (!)
+  fermer clapet
+  réparer plastiqueuse
+  ouvrir clapet  
   
 Handler pour chaque opération ?
 2 signaux seulement
