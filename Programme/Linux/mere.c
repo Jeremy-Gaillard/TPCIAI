@@ -1,20 +1,32 @@
-#include "config.h"
-
 #include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>      
+#include <sys/ipc.h>  
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <pthread.h>
+#include <mqueue.h>
+#include <fcntl.h>
 
 #include <unistd.h> /*temporaire (sleep)*/
 
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "log_disque.h"
+#include "config.h"
 
-const char BALERR = 'A';
-const char BALDIS = 'B';
-const char BALWIN = 'C';
+/*Definitions de constantes de config.h*/
+const mode_t MODERW = 0666;
+const log_t TRAME_FIN = "Fin";
+const int MESSAGE_TYPE_STD = 1;
+const int MESSAGE_TYPE_FIN = 2;
+
+const char * BALERR = "/bal_erreur";
+const char * BALDIS = "/bal_disque";
+const char * BALWIN = "/bal_windows";
+
+const char * NOM_LOG = "log.txt";
+
+/*Definitions des constantes locales*/
 const char SEMCLA = 'D';
 const char SEMPIE = 'E';
 const char SEMCAR = 'F';
@@ -29,11 +41,11 @@ const char SHMENT = 'M';
 
 int main(int argc, char** argv)
 {
-	pid_t bal_erreur, bal_log_disque, bal_log_windows; /*id des boites aux lettres*/
-	pid_t sem_clapet, sem_piece, sem_carton, sem_palette, 
+	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
+	int sem_clapet, sem_piece, sem_carton, sem_palette, 
 		sem_erreur_carton, sem_erreur_palette, sem_AU;	/*id des semaphores*/
 	pthread_mutex_t mutex_entrepot, mutex_lot; /*mutex*/
-	pid_t shm_statut, shm_lot, shm_entrepot; /*id des mémoires partagées*/
+	int shm_statut, shm_lot, shm_entrepot; /*id des mémoires partagées*/
 	
 	pthread_t t_carton, t_palette, t_cariste, t_erreur, t_log_disque, 
 		t_log_windows, t_commande_windows;
@@ -41,9 +53,10 @@ int main(int argc, char** argv)
 	/*Initialisation*/
 	
 	/*Boîtes aux lettres*/
-	bal_erreur = msgget( ftok(argv[0], BALERR), IPC_CREAT | MODERW );
-	bal_log_disque = msgget( ftok(argv[0], BALDIS), IPC_CREAT | MODERW );
-	bal_log_windows = msgget( ftok(argv[0], BALWIN), IPC_CREAT | MODERW );
+	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, NULL);
+	bal_log_disque = mq_open( BALDIS, O_CREAT | O_RDWR, MODERW, NULL);
+	printf("%i\n", bal_log_disque);
+	bal_log_windows = mq_open( BALWIN, O_CREAT | O_RDWR, MODERW, NULL);
 	
 	/*Sémaphores*/
 		/*Création*/
@@ -74,16 +87,17 @@ int main(int argc, char** argv)
 	shm_lot = shmget( ftok( argv[0], SHMLOT ), 2*sizeof(int), IPC_CREAT | MODERW);
 	
 	/*Threads*/
-	/*pthread_create( &t_carton, NULL, &carton, ? );
-	pthread_create( &t_log_disque, NULL, &log_disque, ? );
-	pthread_create( &t_log_windows, NULL, &log_windows, ? );
-	pthread_create( &t_palette, NULL, &palette, ? );
-	pthread_create( &t_cariste, NULL, &cariste, ? );
-	pthread_create( &t_erreur, NULL, &erreur, ? );
-	pthread_create( &t_commande_windows, NULL, &commande_windows, ? );*/
+	/*pthread_create( &t_carton, NULL, carton, ? );*/
+	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
+	/*pthread_create( &t_log_windows, NULL, log_windows, ? );
+	pthread_create( &t_palette, NULL, palette, ? );
+	pthread_create( &t_cariste, NULL, cariste, ? );
+	pthread_create( &t_erreur, NULL, erreur, ? );
+	pthread_create( &t_commande_windows, NULL, commande_windows, ? );*/
 	
 	/*Moteur*/
-	sleep( 5 );
+	/*sleep( 5 );*/
+	pthread_join( t_log_disque, NULL );
 	/*pthread_join( t_commande_windows, NULL );*/
 	
 	/*Destruction*/
@@ -107,9 +121,12 @@ int main(int argc, char** argv)
 	semctl( sem_clapet, 0, IPC_RMID, 0 );
 	
 	/*Boîtes aux lettres*/
-	msgctl( bal_log_windows, IPC_RMID, NULL );
-	msgctl( bal_log_disque, IPC_RMID, NULL );
-	msgctl( bal_erreur, IPC_RMID, NULL );
+	mq_unlink( BALWIN );
+	mq_close( bal_log_windows );
+	mq_unlink( BALDIS );
+	mq_close( bal_log_disque );
+	mq_unlink( BALERR );
+	mq_close( bal_erreur );
 	
 	return 0;
 }
