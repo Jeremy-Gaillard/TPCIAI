@@ -25,18 +25,6 @@ const char * BALWIN = "/bal_windows";
 
 const char * NOM_LOG = "log.txt";
 
-/*Definitions des constantes locales*/
-const char SEMCLA = 'D';
-const char SEMPIE = 'E';
-const char SEMCAR = 'F';
-const char SEMPAL = 'G';
-const char SEMERC = 'H';
-const char SEMERP = 'I';
-const char SEMAU = 'J';
-const char SHMSTA = 'K';
-const char SHMLOT = 'L';
-const char SHMENT = 'M';
-
 
 int main(int argc, char** argv)
 {
