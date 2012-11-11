@@ -10,20 +10,20 @@ typedef char log_t[128];
 typedef int lot_t[2];
 typedef char statut_t;
 
-struct erreur {
+typedef struct erreur {
 	int id;
 	char heure[6];
-};
+} erreur_t;
 
-struct palette {
+typedef struct palette {
 	int id;
 	char type;
 	char heure[6];
-};
+} palette_t;
 
-struct entrepot {
-	struct palette palettes[20];
-};
+typedef struct entrepot {
+	palette_t palettes[20];
+} entrepot_t;
 
 extern const mode_t MODERW;
 extern const log_t TRAME_FIN;
