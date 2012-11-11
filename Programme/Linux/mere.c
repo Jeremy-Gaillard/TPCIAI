@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <sys/stat.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <mqueue.h>
@@ -9,6 +10,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <errno.h>
 
 #include "log_disque.h"
 #include "config.h"
@@ -42,10 +45,19 @@ int main(int argc, char** argv)
 	/*Initialisation*/
 	
 	/*Boîtes aux lettres*/
-	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, NULL);
-	bal_log_disque = mq_open( BALDIS, O_CREAT | O_RDWR, MODERW, NULL);
-	printf("%i\n", bal_log_disque);
-	bal_log_windows = mq_open( BALWIN, O_CREAT | O_RDWR, MODERW, NULL);
+	struct mq_attr attributs;
+	attributs.mq_flags = 0;
+	attributs.mq_maxmsg = 100;	/*A changer en fonction de la bal ?*/
+	attributs.mq_msgsize = sizeof(erreur_t);
+	attributs.mq_curmsgs = 0;
+	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, &attributs );
+	
+	attributs.mq_msgsize = sizeof(log_t);
+	bal_log_disque = mq_open( BALDIS, O_CREAT | O_RDWR, MODERW, &attributs );
+	
+	attributs.mq_msgsize = sizeof(log_t);
+	bal_log_windows = mq_open( BALWIN, O_CREAT | O_RDWR, MODERW, &attributs );
+	/*la définition des attributs ne marche pas, cela n'a aucun sens (probleme avec mon OS ?)*/
 	
 	/*Sémaphores*/
 	sem_init( &sem_clapet, 0, 1 );
@@ -67,7 +79,7 @@ int main(int argc, char** argv)
 	
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
-	/*pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );*/
+	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	/*pthread_create( &t_log_windows, NULL, log_windows, ? );
 	pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );
@@ -75,8 +87,8 @@ int main(int argc, char** argv)
 	pthread_create( &t_commande_windows, NULL, commande_windows, ? );*/
 	
 	/*Moteur*/
-	sleep( 5 );
-	/*pthread_join( t_log_disque, NULL );*/
+	/*sleep( 5 );*/
+	pthread_join( t_log_disque, NULL );
 	/*pthread_join( t_commande_windows, NULL );*/
 	
 	/*Destruction*/
