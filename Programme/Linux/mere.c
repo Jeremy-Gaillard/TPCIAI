@@ -18,26 +18,18 @@
 #include "config.h"
 
 /*Definitions de constantes de config.h*/
-const mode_t MODERW = 0666;
-const log_t TRAME_FIN = "Fin";
-const int MESSAGE_TYPE_STD = 1;
-const int MESSAGE_TYPE_FIN = 2;
 
-const char * BALERR = "/bal_erreur";
-const char * BALDIS = "/bal_disque";
-const char * BALWIN = "/bal_windows";
-
-const char * NOM_LOG = "log.txt";
 
 
 int main(int argc, char** argv)
 {
 	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
 	sem_t sem_clapet, sem_piece, sem_carton, sem_palette, 
-		sem_erreur_carton, sem_erreur_palette, sem_AU;	/*semaphores*/
-	pthread_mutex_t mutex_entrepot, mutex_lot; /*mutex*/
+		sem_erreur_carton, sem_erreur_palette, sem_AU, sem_bal_log_disque,
+		sem_bal_log_windows, sem_bal_erreur;	/*semaphores*/
+	pthread_mutex_t mutex_entrepot; /*mutex*/
 	statut_t * shm_statut;
-	lot_t * shm_lot;
+	lot_t * shm_lot;	
 	entrepot_t * shm_entrepot;
 	
 	pthread_t t_carton, t_palette, t_cariste, t_erreur, t_log_disque, 
@@ -80,9 +72,11 @@ int main(int argc, char** argv)
 	sem_init( &sem_erreur_carton, 0, 0 );
 	sem_init( &sem_erreur_palette, 0, 0 );
 	sem_init( &sem_AU, 0, 0 );
+	sem_init( &sem_bal_log_disque, 10, 0);
+	sem_init( &sem_bal_log_windows, 10, 0);
+	sem_init( &sem_bal_erreur, 10, 0);
 	
 	/*Mutex*/
-	pthread_mutex_init( &mutex_lot, NULL );
 	pthread_mutex_init( &mutex_entrepot, NULL );
 	
 	/*Mémoire partagées*/
@@ -113,7 +107,6 @@ int main(int argc, char** argv)
 	
 	/*Mutex*/
 	pthread_mutex_destroy( &mutex_entrepot );
-	pthread_mutex_destroy( &mutex_lot );
 	
 	/*Sémaphores*/
 	sem_destroy( &sem_AU );
@@ -123,6 +116,9 @@ int main(int argc, char** argv)
 	sem_destroy( &sem_carton );
 	sem_destroy( &sem_piece );
 	sem_destroy( &sem_clapet );
+	sem_destroy( &sem_bal_log_disque );
+	sem_destroy( &sem_bal_log_windows );
+	sem_destroy( &sem_bal_erreur );
 	
 	/*Boîtes aux lettres*/
 	mq_unlink( BALWIN );

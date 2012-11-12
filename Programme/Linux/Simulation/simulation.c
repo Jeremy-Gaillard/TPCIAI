@@ -12,7 +12,7 @@
 
 int main()
 {
-	int bal_log_disque = mq_open( "/bal_disque", O_WRONLY );
+	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	printf("%i\n", bal_log_disque);
 	char commande[20];
 	for( ; ; )
@@ -24,7 +24,7 @@ int main()
 		}
 		if( !strcmp(commande, "logdf") )
 		{
-			mq_send(bal_log_disque, "Fin", sizeof(log_t), 2 );
+			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
 		}
 		if( !strcmp(commande, "q") )
 		{

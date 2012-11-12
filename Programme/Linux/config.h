@@ -46,15 +46,16 @@ typedef struct entrepot {
 	palette_t palettes[20];
 } entrepot_t;
 
-extern const mode_t MODERW;
-extern const log_t TRAME_FIN;
-extern const int MESSAGE_TYPE_STD;
-extern const int MESSAGE_TYPE_FIN;
 
-extern const char * BALERR;
-extern const char * BALDIS;
-extern const char * BALWIN;
+#define MODERW 0666
+#define TRAME_FIN "Fin"
+#define MESSAGE_TYPE_STD 1
+#define MESSAGE_TYPE_FIN 2
 
-extern const char * NOM_LOG;
+#define BALERR "/bal_erreur"
+#define BALDIS "/bal_disque"
+#define BALWIN "/bal_windows"
+
+#define NOM_LOG "log.txt"
 
 #endif
