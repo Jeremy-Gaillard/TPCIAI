@@ -4,7 +4,7 @@
 #include "config.h"
 #include "prod_utils.h"
 
-int carton( mqd_t bal_erreur, mdq_t bal_log_disque, mdq_t bal_log_windows,
+int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
             sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
             statut_t shm_statut ){
 	int nb_piece = 0;
@@ -21,12 +21,12 @@ int carton( mqd_t bal_erreur, mdq_t bal_log_disque, mdq_t bal_log_windows,
 		 envoi d'un message d'erreur avec hhmmss et type erreur
 		 puis attente sur semaphore de reprise d'erreur*/
 		 		
-			gerer_erreur_carton(ERR_PAS_DE_CARTON, bal_erreur, sem_erreur_carton);
+			gerer_erreur(ERR_PAS_DE_CARTON, bal_erreur);
 			sem_wait( &sem_erreur_carton );
 		}
 		/*end of absence carton*/
 		
-		if ( shm_statut[ ST_PIECE_OK ] == 1 ){
+		if ( shm_statut[ ST_PIECE ] == 1 ){
 			nb_piece += 1;
 			if ( nb_piece == CARTON_PLEIN ){
 				if ( shm_statut[ST_IMPRIMANTE] != 1 ){
@@ -34,7 +34,7 @@ int carton( mqd_t bal_erreur, mdq_t bal_log_disque, mdq_t bal_log_windows,
 				 envoie d'un message d'erreur avec hhmmss et type erreur
 				 puis attente sur semaphore de reprise d'erreur*/
 
-					gerer_erreur_carton(ERR_IMPRIMANTE_KO, bal_erreur, sem_erreur_carton);
+					gerer_erreur(ERR_IMPRIMANTE_KO, bal_erreur);
 					sem_wait( &sem_erreur_carton );
 				}
 				/*end of if imprimante HS*/
@@ -45,7 +45,7 @@ int carton( mqd_t bal_erreur, mdq_t bal_log_disque, mdq_t bal_log_windows,
 				 envoie d'un message d'erreur avec hhmmss et type erreur
 				 puis attente sur semaphore de reprise d'erreur*/
 				 
-					gerer_erreur_carton(ERR_FILE_D_ATTENTE, bal_erreur, sem_erreur_carton);
+					gerer_erreur(ERR_FILE_D_ATTENTE, bal_erreur);
 					sem_wait( &sem_erreur_carton );
 				}
 				/*end of if file attente pleine*/
@@ -72,7 +72,7 @@ int carton( mqd_t bal_erreur, mdq_t bal_log_disque, mdq_t bal_log_windows,
 			 puis attente sur semaphore de reprise d'erreur
 			 puis on jette le carton en cours*/
 			 	
-				gerer_erreur_carton(ERR_TROP_DE_REBUS, bal_erreur, sem_erreur_carton);
+				gerer_erreur(ERR_TROP_DE_REBUS, bal_erreur);
 				sem_wait( &sem_erreur_carton );
 
 				nb_piece = 0;
