@@ -17,6 +17,8 @@
 #include "log_disque.h"
 #include "config.h"
 #include "Simulation/simulation.h"
+#include "log_windows.h"
+#include "erreur.h"
 
 /*Definitions de constantes de config.h*/
 
@@ -88,8 +90,8 @@ int main(int argc, char** argv)
 	/*initialisation des mémoires*/
 	int i;
 	for ( i = 0; i < STATUT_SIZE; i++)
-		*shm_statut[i] = 0;
-	*shm_statut[ST_CLAPET_OUVERT] = 1; /* clapet ouvert*/
+		*shm_statut[i] = 1;
+	/**shm_statut[ST_CLAPET_OUVERT] = 1; /* clapet ouvert*/
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
@@ -101,11 +103,11 @@ int main(int argc, char** argv)
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) shm_statut );
-	/*pthread_create( &t_log_windows, NULL, log_windows, ? );
-	pthread_create( &t_palette, NULL, palette, ? );
-	pthread_create( &t_cariste, NULL, cariste, ? );
-	pthread_create( &t_erreur, NULL, erreur, ? );
-	pthread_create( &t_commande_windows, NULL, commande_windows, ? );*/
+	pthread_create( &t_log_windows, NULL, log_windows, NULL );
+	/*pthread_create( &t_palette, NULL, palette, ? );
+	pthread_create( &t_cariste, NULL, cariste, ? );*/
+	pthread_create( &t_erreur, NULL, erreur, NULL );
+	/*pthread_create( &t_commande_windows, NULL, commande_windows, ? );*/
 	
 	/*Moteur*/
 	/*sleep( 5 );*/

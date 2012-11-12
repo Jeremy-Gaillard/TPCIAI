@@ -16,12 +16,12 @@ void envoyer(log_t message)
 
 void log_windows()
 {
-	int bal_log_disque = mq_open( BALDIS, O_RDONLY );
+	int bal_log_windows = mq_open( BALWIN, O_RDONLY );
 	log_t message;	
 	
 	do
 	{
-		mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
+		mq_receive(bal_log_windows, (void*) &message, sizeof(log_t), NULL);
 		/*Analyser le message ici*/
 		envoyer(message);
 	}

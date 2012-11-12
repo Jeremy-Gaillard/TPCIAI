@@ -22,7 +22,7 @@ void simulation(statut_t* shm_statut)
 		scanf("%s", commande);
 		if( !strcmp(commande, "logd") )
 		{
-			mq_send(bal_log_disque, "E 2", sizeof(log_t), 1);
+			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), 1);
 		}
 		if( !strcmp(commande, "logdf") )
 		{
