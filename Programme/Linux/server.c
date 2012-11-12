@@ -8,20 +8,22 @@
 
 #define BUF_SIZE 256
 
+void wait_order();
+
 void error(const char* msg)
 {
   perror(msg);
   exit(0);
 }
 
-int main(int argc, char* argv[])
-{
   int sockfd, newsockfd, portno;
   socklen_t clilen;
   char buffer[BUF_SIZE];
   struct sockaddr_in serv_addr, cli_addr;
   int n;
   
+int main(int argc, char* argv[])
+{
   if (argc < 2) {
     fprintf(stderr, "ERROR, no port provided\n");
     exit(1);
@@ -41,9 +43,25 @@ int main(int argc, char* argv[])
     error("ERROR on binding");
 
   listen(sockfd, 5); // 5?
+  /*
+  int listen(int sockfd, int backlog);
+  The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow. If a connection request arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connection succeeds. 
+  */
 
   clilen = sizeof(cli_addr);
 
+  while(1) {
+    wait_order();
+  }
+
+  close(newsockfd);
+  close(sockfd);
+
+  return 0;
+}
+
+void wait_order()
+{
   newsockfd = accept( sockfd,
                       (struct sockaddr*)&cli_addr,
                       &clilen );
@@ -57,13 +75,16 @@ int main(int argc, char* argv[])
     error("ERROR reading from socket");
 
   printf("Here is the message: %s\n", buffer);
-
-  n = write( newsockfd, "I got your message", 18 );
+  
+  char resp[] = "I got your message\n";
+  
+  n = write( newsockfd, resp, sizeof(resp) );
   if (n<0)
     error("ERROR writing to socket");
-
-  close(newsockfd);
-  close(sockfd);
-
-  return 0;
 }
+
+
+
+
+
+
