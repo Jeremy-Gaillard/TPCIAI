@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <semaphore.h>
+#include <time.h>
 #include "config.h"
 #include "prod_utils.h"
 
@@ -52,9 +53,21 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				
 				sem_post( &sem_carton );
 				
-				/* NOT IMPLEMENTED YET
-				envoyer bal log_windoxs et bal_log_disque 
-				l'info carton plein*/
+				/*envoi logs*/
+				char heure[7];
+				time_t rawtime;
+				struct tm * timeinfo;
+				time ( &rawtime );
+				timeinfo = localtime ( &rawtime );
+				strftime ( heure, 7, "%H%M%S", timeinfo );
+				int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
+				char* message= malloc(30);/*id erreur(int=15) + heure (=6) + +erreur (2) +reste ressage (7) = 16*/
+				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
+				
+				mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
+				mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
+				/*fin envoi logs*/
+				
 				nb_piece = 0;
 				nb_rebus = 0;
 				nb_carton = (nb_carton==PALETTE_PLEINE) ? 0 : nb_carton+1;

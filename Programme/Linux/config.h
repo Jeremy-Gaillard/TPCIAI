@@ -23,7 +23,7 @@
 typedef char log_t[128];
 typedef int lot_t[2];
 typedef int statut_t[STATUT_SIZE];
-/* mommy, could you set all my ints to 0 please? */
+typedef char erreur_t[8];
 
 #define LOT_A 0
 #define LOT_B 1
@@ -35,11 +35,6 @@ typedef int statut_t[STATUT_SIZE];
 #define ERR_FILE_D_ATTENTE 4
 #define ERR_PAS_DE_PALETTE 5
 #define ERR_FILM_KO 6
-
-typedef struct erreur {
-	int id;
-	char heure[6];
-} erreur_t;
 
 typedef struct palette {
 	int id;
