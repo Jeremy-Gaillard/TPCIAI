@@ -30,6 +30,9 @@ simulation.o : $(SRCDIR)/simulation.c $(INCDIR)/simulation.h $(INCDIR)/config.h
 
 log_disque.o : $(SRCDIR)/log_disque.c $(INCDIR)/log_disque.h $(INCDIR)/config.h
 
+erreur.o: erreur.c
+	gcc -c $(SRCDIR)/erreur.c $(SYSLIBS) $(PERSLIBS)
+
 mere.o : $(SRCDIR)/mere.c $(INCDIR)/config.h
 	gcc -c $(SRCDIR)/mere.c $(SYSLIBS) $(PERSLIBS)
 

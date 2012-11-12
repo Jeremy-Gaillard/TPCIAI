@@ -13,7 +13,6 @@
 
 #include <errno.h>
 
-
 void log_disque()
 {
 	FILE * fichier_log;
@@ -23,6 +22,10 @@ void log_disque()
 	
 	fichier_log = fopen(NOM_LOG, "w");
 	fprintf(fichier_log, "Début de session\n");
+	
+	/*int idx = 2;
+	int idxn;
+	char buff[10];*/
 	
 	while( strcmp(message, TRAME_FIN) )
 	{
@@ -40,10 +43,16 @@ void log_disque()
 					switch (message[2])
 					{
 						case 'C':
-							/*TODO*/
+							/*idx = 2;
+							buff[0] = '\0';
+							strcat( log, "Id carton : ");
+							idxn = strchr( message+idx, ' ');
+							strncpy( buff, message+idx, idxn-idx);
+							strcat( log, buff);*/
+							strcat( log, message);
 							break;
 						case 'P':
-							/*TODO*/
+							strcat( log, message);
 							break;
 						default:
 							log[0] = '\0';

@@ -38,7 +38,7 @@ public class Commande extends javax.swing.JFrame {
         B_annuler_commande = new javax.swing.JButton();
         B_envoyer_commande = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Quantité actuelle de palettes A");
 
