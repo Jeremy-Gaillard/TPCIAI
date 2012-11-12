@@ -4,19 +4,28 @@
  */
 package vue;
 
+import interface_windows_ciai.Interface_windows_CIAI;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author michael
  */
 public class Suivi extends javax.swing.JFrame {
 
+    Interface_windows_CIAI app;
+    
     /**
      * Creates new form Suivi
      */
-    public Suivi() {
+    public Suivi(Interface_windows_CIAI inter) {
+        app = inter;
+        setLocationByPlatform(true);
         initComponents();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -111,56 +120,32 @@ public class Suivi extends javax.swing.JFrame {
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         // TODO add your handling code here:
         System.out.println("Message de reprise");
-        System.out.println("2");        
+        //System.out.println("2");
+        try {
+            app.error("The server responded...", app.network.send_message("Reprise !"));
+        } catch (IOException ex) {
+            //Logger.getLogger(Suivi.class.getName()).log(Level.SEVERE, null, ex);
+            app.error("IO Exception", "Could not send the command to the host!");
+            ex.printStackTrace(System.err);
+        }
     }//GEN-LAST:event_B_repriseActionPerformed
 
     private void B_arretActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_arretActionPerformed
         // TODO add your handling code here:
         System.out.println("Message d'arrêt");
-        System.out.println("3");         
+        //System.out.println("3");         
     }//GEN-LAST:event_B_arretActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    /*
     public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Suivi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Suivi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Suivi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Suivi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /*
-         * Create and display the form
-         */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new Suivi().setVisible(true);
             }
         });
-    }
+    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_arret;
     private javax.swing.JButton B_commande;

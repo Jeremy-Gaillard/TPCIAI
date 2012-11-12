@@ -20,9 +20,10 @@ public class NetworkInterface {
             this("if219-06.insa-lyon.fr");
         }
 	public NetworkInterface(String ip) throws UnknownHostException, IOException {
-		client = new Socket(ip, 32768);
+            System.out.println("Starting client socket...");
+            client = new Socket(ip, 32768);
 	}
-	
+	/*
 	public void recovery_order() {
 	
 	}
@@ -34,8 +35,9 @@ public class NetworkInterface {
 	public void command() {
 	
 	}
-	
+	*/
 	public String send_message(String msg) throws IOException {
+                System.out.println("Sending message: '"+msg+"'");
 		OutputStream oStream = client.getOutputStream();
 		BufferedOutputStream bOStream = new BufferedOutputStream(oStream);
 		for (byte c : msg.getBytes()) {
@@ -46,49 +48,59 @@ public class NetworkInterface {
 		InputStream feedback = client.getInputStream();
 		char r;
 		StringBuilder sb = new StringBuilder();
-System.out.println("lolinp");
+//System.out.println("lolinp");
 		while ((r = (char) feedback.read()) != '\n') {
 			//System.out.print((int)r);
 			//System.out.print(r);
 //System.out.println(r);
 			sb.append(r);
 		}
-		return sb.toString();
+                String resp = sb.toString();
+                System.out.println("Received response message: '"+resp+"'");
+		return resp;
 	}
 
 	public void listen_messages() throws IOException {
-		server = new ServerSocket(32767);
-		Socket clientSocket = null;
-		try {
-			clientSocket = server.accept();
-		} catch (IOException e) {
-			System.out.println("Accept failed: 4444");
-			System.exit(-1);
-		}
-		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-		BufferedReader in = 
-			new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		String inputLine, outputLine;
-		
-		/*
-		// initiate conversation with client
-		KnockKnockProtocol kkp = new KnockKnockProtocol();
-		outputLine = kkp.processInput(null);
-		out.println(outputLine);
-		while ((inputLine = in.readLine()) != null) {   
-		outputLine = kkp.processInput(inputLine);
-		out.println(outputLine);
-		if (outputLine.equals("Bye."))
-		break;
-		}*/
+            System.out.println("Starting server socket...");
+            server = new ServerSocket(32767);
+            Socket clientSocket = null;
+            //try {
+                    clientSocket = server.accept();
+            /*} catch (IOException e) {
+                    System.out.println("Accept failed: 4444");
+                    System.exit(-1);
+            }*/
+            BufferedReader in = 
+                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            /*
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            String inputLine, outputLine;
 
-		char r;
-		StringBuilder sb = new StringBuilder();
-		while ((r = (char) in.read()) != '!') {
-			sb.append(r);
-		}
-		System.out.println(sb.toString());
+            // initiate conversation with client
+            KnockKnockProtocol kkp = new KnockKnockProtocol();
+            outputLine = kkp.processInput(null);
+            out.println(outputLine);
+            while ((inputLine = in.readLine()) != null) {   
+            outputLine = kkp.processInput(inputLine);
+            out.println(outputLine);
+            if (outputLine.equals("Bye."))
+            break;
+            }*/
 
+            char r;
+            StringBuilder sb = new StringBuilder();
+            while ((r = (char) in.read()) != '!') {
+                    sb.append(r);
+            }
+            //System.out.println(sb.toString());
+            String msg = sb.toString();
+            System.out.println("Received message: '"+msg+"'");
 	}
+        @Override
+        protected void finalize() throws Throwable {
+            client.close();
+            server.close();
+            super.finalize();
+        }
 
 }
