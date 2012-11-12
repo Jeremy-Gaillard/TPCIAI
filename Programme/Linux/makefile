@@ -1,8 +1,30 @@
-CIAI: mere.o log_disque.o
-	gcc -o CIAI mere.o log_disque.o -Wall -lpthread -lrt
+CONFIGDIR=.
+BLDDIR=build
+OBJDIR=obj
+EXE=CIAI
 
-mere.o: mere.c
-	gcc -c mere.c -Wall	-lpthread -lrt
+PRODDIR=lot_production
+PRODSRC=$(PRODDIR)/carton.c
+PRODOBJ=$(PRODDIR)/carton.o
+PRODUTILS=$(PRODDIR)/prod_utils.c $(PRODDIR)/prod_utils.h
+GLOBSRC=mere.c log_disque.c
+GLOBOBJ=mere.o log_disque.o
 
-log_disque.o: log_disque.c
-	gcc -c log_disque.c -Wall -lpthread -lrt
+OBJ=$(PRODOBJ) $(GLOBOBJ)
+SRC=$(PRODSRC) $(GLOBSRC)
+
+COMP=gcc -c
+LINK=gcc -o
+
+LIBS=-lpthread -lrt
+CCFLAGS=-Wall
+
+
+mere.o :
+	$(COMP) $(CCFLAGS) $(LIBS) -I$(CONFIGDIR) mere.c config.h
+log_disque.o : log_disque.c log_disque.h config.h
+# production : carton.o
+carton.o :
+	$(COMP) $(CCFLAGS) $(LIBS) -I$(CONFIGDIR) $(PRODDIR)/carton.c $(PRODUTILS) config.h
+
+
