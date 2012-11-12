@@ -6,7 +6,12 @@ package vue;
 
 import interface_windows_ciai.Interface_windows_CIAI;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import network.NetworkInterface;
 //import java.net.NetworkInterface;
 
@@ -16,12 +21,16 @@ import network.NetworkInterface;
  */
 public class Identification extends javax.swing.JFrame {
 
+    Interface_windows_CIAI app;
+    
     /**
      * Creates new form Identification
      */
     public Identification(Interface_windows_CIAI inter) throws UnknownHostException, IOException {
         initComponents();
-        inter.network = new NetworkInterface();
+        //inter.network = new NetworkInterface();
+        app = inter;
+        setLocationByPlatform(true);
     }
 
     /**
@@ -60,45 +69,46 @@ public class Identification extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(B_connect)
-                .addGap(155, 155, 155))
             .addGroup(layout.createSequentialGroup()
-                .addGap(51, 51, 51)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(36, 36, 36)
-                        .addComponent(j_IP_linux, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(j_identification)
-                            .addComponent(j_mot_de_passe, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(36, 36, 36)
+                                .addComponent(j_IP_linux, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addGap(32, 32, 32)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(j_identification)
+                                    .addComponent(j_mot_de_passe)))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(B_connect)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(j_IP_linux, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(j_identification, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(j_mot_de_passe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(48, 48, 48)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(B_connect)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -121,11 +131,28 @@ public class Identification extends javax.swing.JFrame {
         }
         else
         {
-            System.out.println("Ok");
-                      
-            Parametrage fp = new Parametrage();
-            fp.setVisible(true);
-            this.dispose();
+            //System.out.println("Ok");
+            String host = j_IP_linux.getText();
+            try {
+                app.network = new NetworkInterface(host);
+            } catch (UnknownHostException ex) {
+                //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
+                /*String stack = new String();
+                PrintWriter pw = new PrintStream();
+                ex.printStackTrace(pw);
+                ex.g*/
+                app.error("Unknown Host", "The host '"+host+"' is unknown!");
+            } catch (IOException ex) {
+                //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
+                app.error("IO Exception", "Could not send a request to '"+host+"'!");
+            } finally {
+                //if (app.network == null) System.exit(-1);
+            }
+            if (app.network != null) {
+                Parametrage fp = new Parametrage();
+                fp.setVisible(true);
+                this.dispose();
+            }
         }
     }//GEN-LAST:event_B_connectActionPerformed
 
