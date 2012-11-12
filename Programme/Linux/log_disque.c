@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <errno.h>
 
@@ -16,20 +17,19 @@ void log_disque()
 {
 	FILE * fichier_log;
 	int bal_log_disque = mq_open( BALDIS, O_RDONLY );
-	int bla;
-	log_t message = "";
+	log_t message;
+	message[0] = '\0';
 	
 	fichier_log = fopen(NOM_LOG, "w");
 	
-	while( message != TRAME_FIN )
+	while( strcmp(message, TRAME_FIN) )
 	{
-		struct mq_attr attr;
-		mq_getattr(bal_log_disque, &attr);
-		bla = mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
-		/*TODO : erreur car sizeof log_t est trop petit -> réduire la limite (dans mq_attr) ou augmenter la taille de log_t*/
+		mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
 		/*Analyser le message ici*/
-		/*printf("%li\n", attr.mq_msgsize);*/
-		fprintf(fichier_log, "%s", message);
+		printf("%s\n", message);
+		fprintf(fichier_log, "log_disque : %s\n", message);
+		if( strcmp(message, TRAME_FIN) )
+			message[0] = '\0';
 	}
 	
 	fclose(fichier_log);
