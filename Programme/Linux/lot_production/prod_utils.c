@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <mqueue.h>
+#include <semaphore.h>
 #include "config.h"
 #include "prod_utils.h"
 
@@ -15,6 +16,8 @@ void gerer_erreur( int erreur_id, mqd_t bal_erreur )
 	timeinfo = localtime ( &rawtime );
 	strftime ( err.heure, 7, "%H%M%S", timeinfo );
 	err.id = erreur_id;
-			
-	mq_send( bal_erreur, err, sizeof( err ), 1 );
+
+	const char * message = "ERREUR!!! AAAAAAH!";
+
+	mq_send( bal_erreur, message, sizeof( message ), BAL_PRIO_ERREUR );
 }

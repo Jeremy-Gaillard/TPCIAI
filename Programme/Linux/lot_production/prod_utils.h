@@ -4,10 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mqueue.h>
+#include <semaphore.h>
 #include "config.h"
 
 
-int carton( mqd_t bal_erreur, mdq_t bal_log_disque, mdq_t bal_log_windows,
+int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
             sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
             statut_t shm_statut );
 
