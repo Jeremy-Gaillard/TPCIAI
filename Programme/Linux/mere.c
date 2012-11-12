@@ -85,6 +85,7 @@ int main(int argc, char** argv)
 	shm_entrepot = malloc( sizeof( entrepot_t ) );
 	shm_lot = malloc( sizeof( lot_t ) );
 	
+	/*initialisation des mémoires*/
 	int i;
 	for ( i = 0; i < STATUT_SIZE; i++)
 		*shm_statut[i] = 0;
@@ -92,6 +93,9 @@ int main(int argc, char** argv)
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
+		
+	for ( i = 0; i < 2; i++)
+		*shm_lot[i] = 0;
 	
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/

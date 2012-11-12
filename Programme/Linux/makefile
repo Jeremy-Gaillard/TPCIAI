@@ -9,3 +9,5 @@ gcc -c log_disque.c -Wall -lpthread -lrt
 
 simulation.o: Simulation/simulation.c
 gcc -c Simulation/simulation.c -Wall -lpthread -lrt
+
+
