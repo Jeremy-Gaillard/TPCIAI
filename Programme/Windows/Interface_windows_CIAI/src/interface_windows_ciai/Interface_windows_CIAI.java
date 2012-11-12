@@ -5,7 +5,10 @@
 package interface_windows_ciai;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.UnknownHostException;
+import javax.swing.JOptionPane;
 import network.NetworkInterface;
 import vue.Identification;
 
@@ -24,10 +27,23 @@ public class Interface_windows_CIAI {
     /**
      * @param args the command line arguments
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(String[] args) throws UnknownHostException, IOException {
         // TODO code application logic here
-        //Interface_windows_CIAI test = new Interface_windows_CIAI();
-        Identification fi = new Identification(null);
-        fi.setVisible(true);  
+        new Interface_windows_CIAI();
+        //Identification fi = new Identification(null);
+        //fi.setVisible(true);  
+    }
+    
+    public void error(String title, String msg, Exception ex) {
+        //throw new UnsupportedOperationException("Not yet implemented");
+        StringWriter sw = new StringWriter();
+        ex.printStackTrace(new PrintWriter(sw));
+        JOptionPane.showMessageDialog(null, msg+"\n\n"+sw.toString(), title, 0);
+    }
+    
+    public void error(String title, String msg) {
+        //throw new UnsupportedOperationException("Not yet implemented");
+        JOptionPane.showMessageDialog(null, msg, title, 0);
     }
 }
