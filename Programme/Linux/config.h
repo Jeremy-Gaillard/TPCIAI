@@ -4,6 +4,7 @@
 #include <sys/types.h>
 
 #define CARTON_PLEIN 10
+#define PALETTE_PLEINE 4
 #define MAX_REBUS 10
 
 #define STATUT_SIZE 6
@@ -17,6 +18,16 @@
 typedef char log_t[128];
 typedef int lot_t[2];
 typedef int statut_t[STATUT_SIZE];
+/* mommy, could you set all my ints to 0 please? */
+
+#define ERR_AU 0
+#define ERR_TROP_DE_REBUS 1
+#define ERR_PLUS_DE_CARTON 2
+#define ERR_IMPRIMANTE_KO 3
+#define ERR_FILE_D_ATTENTE 4
+#define ERR_PLUS_DE_PALETTE 5
+#define ERR_PLASTIQUEUSE_KO 6
+
 
 typedef struct erreur {
 	int id;
