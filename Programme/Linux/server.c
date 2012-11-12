@@ -69,28 +69,39 @@ void wait_order()
 {
   char msg_buffer[MSG_MAX_SIZE]; //msg_buffer[MSG_MAX_SIZE-1] = '\0';
   char resp_buffer[MSG_MAX_SIZE]; //resp_buffer[MSG_MAX_SIZE-1] = '\0';
-  newsockfd = accept( sockfd,
-                      (struct sockaddr*)&cli_addr,
-                      &clilen );
+  while (1)
+  {
+	  cont:
+	  printf("Waiting for connection...\n");
+	  newsockfd = accept( sockfd,
+						  (struct sockaddr*)&cli_addr,
+						  &clilen );
 
-  if (newsockfd < 0)
-    error("ERROR on accept");
+	  if (newsockfd < 0)
+		error("ERROR on accept");
+		
+	  printf("Connection initiated.\n");
+	  while (1)
+	  {
+		  bzero(msg_buffer, MSG_MAX_SIZE);
+		  n = read( newsockfd, msg_buffer, (MSG_MAX_SIZE-1) );
+		  if (n<0)
+			//error("ERROR reading from socket");
+		  { printf("Connection interrupted.\n"); goto cont; }
+		  
+		  printf("Here is the message: %s\n", msg_buffer);
+		  
+		  //char resp[] = "I got your message\n";
+		  //char resp[MSG_MAX_SIZE] 
+		  get_response_for(msg_buffer, resp_buffer);
+		  
+		  //n = write( newsockfd, resp_buffer, sizeof(resp_buffer) );
+		  n = write( newsockfd, resp_buffer, strlen(resp_buffer) );
+		  if (n<0)
+			error("ERROR writing to socket");
+	  }
+	}
 
-  bzero(msg_buffer, MSG_MAX_SIZE);
-  n = read( newsockfd, msg_buffer, (MSG_MAX_SIZE-1) );
-  if (n<0)
-    error("ERROR reading from socket");
-
-  printf("Here is the message: %s\n", msg_buffer);
-  
-  //char resp[] = "I got your message\n";
-  //char resp[MSG_MAX_SIZE] 
-  get_response_for(msg_buffer, resp_buffer);
-  
-  //n = write( newsockfd, resp_buffer, sizeof(resp_buffer) );
-  n = write( newsockfd, resp_buffer, strlen(resp_buffer) );
-  if (n<0)
-    error("ERROR writing to socket");
 }
 
 
