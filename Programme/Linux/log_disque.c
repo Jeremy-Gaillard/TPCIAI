@@ -26,13 +26,12 @@ void log_disque()
 	{
 		mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
 		/*Analyser le message ici*/
-		printf("%s\n", message);
 		fprintf(fichier_log, "log_disque : %s\n", message);
 		if( strcmp(message, TRAME_FIN) )
 			message[0] = '\0';
 	}
 	
 	fclose(fichier_log);
-	exit(0);
+	pthread_exit();
 }
 

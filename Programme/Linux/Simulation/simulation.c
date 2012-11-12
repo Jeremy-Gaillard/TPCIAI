@@ -10,10 +10,11 @@
 
 #include <errno.h>
 
-int main()
+#include "simulation.h"
+
+void simulation()
 {
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
-	printf("%i\n", bal_log_disque);
 	char commande[20];
 	for( ; ; )
 	{
@@ -31,5 +32,4 @@ int main()
 			break;
 		}
 	}
-	return 0;
 }
