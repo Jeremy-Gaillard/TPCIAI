@@ -4,6 +4,12 @@
  */
 package vue;
 
+import interface_windows_ciai.Interface_windows_CIAI;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import network.NetworkInterface;
+//import java.net.NetworkInterface;
+
 /**
  *
  * @author michael
@@ -13,8 +19,9 @@ public class Identification extends javax.swing.JFrame {
     /**
      * Creates new form Identification
      */
-    public Identification() {
+    public Identification(Interface_windows_CIAI inter) throws UnknownHostException, IOException {
         initComponents();
+        inter.network = new NetworkInterface();
     }
 
     /**
@@ -115,6 +122,7 @@ public class Identification extends javax.swing.JFrame {
         else
         {
             System.out.println("Ok");
+                      
             Parametrage fp = new Parametrage();
             fp.setVisible(true);
             this.dispose();
@@ -155,12 +163,12 @@ public class Identification extends javax.swing.JFrame {
         /*
          * Create and display the form
          */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+       /* java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new Identification().setVisible(true);
             }
-        });
+        });*/
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_connect;
