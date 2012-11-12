@@ -57,7 +57,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				l'info carton plein*/
 				nb_piece = 0;
 				nb_rebus = 0;
-				nb_carton = (nb_carton==PALETTE_PLEINE) ? 0 : nb_carton;
+				nb_carton = (nb_carton==PALETTE_PLEINE) ? 0 : nb_carton+1;
 			}
 			/*end of if carton plein*/
 		
