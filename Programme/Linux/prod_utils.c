@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <semaphore.h>
+#include <mqueue.h>
 #include "config.h"
 #include "prod_utils.h"
 
 void gerer_erreur( int erreur_id, mqd_t bal_erreur )
 {
+	time_t rawtime;
+	struct tm * timeinfo;
+
 	struct erreur err;
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
