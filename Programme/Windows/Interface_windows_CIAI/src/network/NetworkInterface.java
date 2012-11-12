@@ -90,5 +90,11 @@ System.out.println("lolinp");
 		System.out.println(sb.toString());
 
 	}
+        @Override
+        protected void finalize() throws Throwable {
+            client.close();
+            server.close();
+            super.finalize();
+        }
 
 }

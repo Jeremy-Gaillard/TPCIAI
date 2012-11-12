@@ -27,10 +27,10 @@ public class Identification extends javax.swing.JFrame {
      * Creates new form Identification
      */
     public Identification(Interface_windows_CIAI inter) throws UnknownHostException, IOException {
-        initComponents();
         //inter.network = new NetworkInterface();
         app = inter;
         setLocationByPlatform(true);
+        initComponents();
     }
 
     /**
@@ -52,6 +52,9 @@ public class Identification extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        j_identification.setText("John-Bob");
+        j_identification.setToolTipText("");
+
         jLabel1.setText("Identification");
 
         jLabel2.setText("Mot de passe");
@@ -63,7 +66,11 @@ public class Identification extends javax.swing.JFrame {
             }
         });
 
+        j_mot_de_passe.setText("lolilol");
+
         jLabel3.setText("IP de la machine Linux");
+
+        j_IP_linux.setText("134.214.161.98");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -149,7 +156,7 @@ public class Identification extends javax.swing.JFrame {
                 //if (app.network == null) System.exit(-1);
             }
             if (app.network != null) {
-                Parametrage fp = new Parametrage();
+                Parametrage fp = new Parametrage(app);
                 fp.setVisible(true);
                 this.dispose();
             }

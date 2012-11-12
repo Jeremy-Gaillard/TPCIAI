@@ -4,16 +4,22 @@
  */
 package vue;
 
+import interface_windows_ciai.Interface_windows_CIAI;
+
 /**
  *
  * @author michael
  */
 public class Parametrage extends javax.swing.JFrame {
 
+    Interface_windows_CIAI app;
+    
     /**
      * Creates new form Parametrage
      */
-    public Parametrage() {
+    public Parametrage(Interface_windows_CIAI inter) {
+        app = inter;
+        setLocationByPlatform(true);
         initComponents();
     }
 
@@ -53,7 +59,18 @@ public class Parametrage extends javax.swing.JFrame {
             }
         });
 
+        j_nb_palette_A.setText("42");
+
+        j_nb_palette_B.setText("42");
+
+        j_nb_pourcentage.setText("80");
+
         B_annuler.setText("Annuler");
+        B_annuler.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                B_annulerActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -120,67 +137,40 @@ public class Parametrage extends javax.swing.JFrame {
             nb_palette_commande_A = Integer.parseInt(j_nb_palette_A.getText());
             nb_palette_commande_B = Integer.parseInt(j_nb_palette_B.getText());
             pourcentage = Integer.parseInt(j_nb_pourcentage.getText());
-        }
-        catch (Exception ex){
+        } catch (java.lang.NumberFormatException ex){
             System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
         }
         
-        if (nb_palette_commande_A < 0 && nb_palette_commande_B < 0 && pourcentage < 0)
+        if (nb_palette_commande_A < 0 || nb_palette_commande_B < 0 || pourcentage < 0)
         {
-            System.out.println("Rentrez des valeurs positives pour les différentes paramètres.");            
+            //System.out.println("Rentrez des valeurs positives pour les différentes paramètres.");
+            app.error("Données invalides", "Rentrez des valeurs positives pour les différentes paramètres.");
         }
         else
         {
             //ouverture de la fenêtre de suivi
-            Suivi fv = new Suivi();
+            Suivi fv = new Suivi(app);
             fv.setVisible(true);
             this.dispose();
         }
         
-        
     }//GEN-LAST:event_B_envoi_parametrageActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Parametrage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Parametrage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Parametrage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Parametrage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void B_annulerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_annulerActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_B_annulerActionPerformed
 
-        /*
-         * Create and display the form
-         */
+    /*
+    public static void main(String args[]) {
+       
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new Parametrage().setVisible(true);
             }
         });
-    }
+    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_annuler;
     private javax.swing.JButton B_envoi_parametrage;
