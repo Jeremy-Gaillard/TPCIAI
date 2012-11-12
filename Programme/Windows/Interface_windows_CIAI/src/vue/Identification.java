@@ -149,9 +149,11 @@ public class Identification extends javax.swing.JFrame {
                 ex.printStackTrace(pw);
                 ex.g*/
                 app.error("Unknown Host", "The host '"+host+"' is unknown!");
+                ex.printStackTrace(System.err);
             } catch (IOException ex) {
                 //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
                 app.error("IO Exception", "Could not send a request to '"+host+"'!");
+                ex.printStackTrace(System.err);
             } finally {
                 //if (app.network == null) System.exit(-1);
             }

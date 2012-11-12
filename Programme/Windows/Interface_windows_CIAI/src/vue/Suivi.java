@@ -25,7 +25,7 @@ public class Suivi extends javax.swing.JFrame {
         setLocationByPlatform(true);
         initComponents();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -120,18 +120,20 @@ public class Suivi extends javax.swing.JFrame {
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         // TODO add your handling code here:
         System.out.println("Message de reprise");
-        System.out.println("2");
+        //System.out.println("2");
         try {
             app.error("The server responded...", app.network.send_message("Reprise !"));
         } catch (IOException ex) {
-            Logger.getLogger(Suivi.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Suivi.class.getName()).log(Level.SEVERE, null, ex);
+            app.error("IO Exception", "Could not send the command to the host!");
+            ex.printStackTrace(System.err);
         }
     }//GEN-LAST:event_B_repriseActionPerformed
 
     private void B_arretActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_arretActionPerformed
         // TODO add your handling code here:
         System.out.println("Message d'arrêt");
-        System.out.println("3");         
+        //System.out.println("3");         
     }//GEN-LAST:event_B_arretActionPerformed
 
     /*
