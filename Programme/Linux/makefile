@@ -1,13 +1,38 @@
-CIAI: mere.o log_disque.o simulation.o
-gcc -o CIAI mere.o simulation.o log_disque.o -Wall -lpthread -lrt
+CCFLAGS=-Wall
+LDFLAGS=
+RMFLAGS=-f -R
 
-mere.o: mere.c
-gcc -c mere.c -Wall -lpthread -lrt
+INCDIR=include
+SRCDIR=src
+BLDDIR=build
 
-log_disque.o: log_disque.c
-gcc -c log_disque.c -Wall -lpthread -lrt
+SYSLIBS=-lpthread -lrt
+PERSLIBS=-I$(INCDIR)/
 
-simulation.o: Simulation/simulation.c
-gcc -c Simulation/simulation.c -Wall -lpthread -lrt
+COMP=gcc -c
+LINK=gcc -o
 
+EXE=CIAI
 
+OBJ=mere.o log_disque.o simulation.o
+
+$(EXE) : $(OBJ)
+	echo Linking $(EXE)
+	rm $(RMFLAGS) $(BLDDIR)
+	mkdir $(BLDDIR)
+	$(LINK) $(LDFLAGS) $(BLDDIR)/$(EXE) $(OBJ) $(PERSLIBS) $(SYSLIBS)
+
+%.o : $(SRCDIR)/%.c $(INCDIR)/%.h
+	echo Compiling $<
+	$(COMP) $(CCFLAGS) $(PERSLIBS) $(SYSLIBS) $<
+
+simulation.o : $(SRCDIR)/simulation.c $(INCDIR)/simulation.h $(INCDIR)/config.h
+
+log_disque.o : $(SRCDIR)/log_disque.c $(INCDIR)/log_disque.h $(INCDIR)/config.h
+
+mere.o : $(SRCDIR)/mere.c $(INCDIR)/config.h
+	gcc -c $(SRCDIR)/mere.c $(SYSLIBS) $(PERSLIBS)
+
+clean :
+	echo Cleaning...
+	rm $(RMFLAGS) $(OBJ) $(BLDDIR)

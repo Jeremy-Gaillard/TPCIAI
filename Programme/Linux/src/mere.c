@@ -16,7 +16,7 @@
 
 #include "log_disque.h"
 #include "config.h"
-#include "Simulation/simulation.h"
+#include "simulation.h"
 
 /*Definitions de constantes de config.h*/
 
