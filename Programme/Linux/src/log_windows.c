@@ -11,6 +11,8 @@
 #include <string.h>
 
 
+void envoyer(log_t message)
+{}
 
 void log_windows()
 {

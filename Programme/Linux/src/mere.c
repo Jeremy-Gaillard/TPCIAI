@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
-	pthread_create( &t_simulation, NULL, (void*) simulation, NULL );
+	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) shm_statut );
 	/*pthread_create( &t_log_windows, NULL, log_windows, ? );
 	pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );
