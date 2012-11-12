@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <errno.h>
+#include <string.h>
 
 #include "log_disque.h"
 #include "config.h"
@@ -47,21 +48,21 @@ int main(int argc, char** argv)
 	/*Boîtes aux lettres*/
 	struct mq_attr attributs_err;
 	attributs_err.mq_flags = 0;
-	attributs_err.mq_maxmsg = 100;	/*A changer en fonction de la bal ?*/
+	attributs_err.mq_maxmsg = 10;	/*ATTENTION : 10 est le maximum toléré pour un processus n'étant pas privilégié*/
 	attributs_err.mq_msgsize = (long int) sizeof(erreur_t);
 	attributs_err.mq_curmsgs = 0;
 
 	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, &attributs_err );
+	
+	int errbuf = errno;
 
 	struct mq_attr attr_err;
 	mq_getattr(bal_erreur, &attr_err);
-	printf("Taille orig %lx\n", attributs_err.mq_maxmsg);
-	printf("Taille BAL %lx\n", attr_err.mq_maxmsg);
 
 	struct mq_attr attributs_log;
 	attributs_log.mq_flags = 0;
-	attributs_log.mq_maxmsg = 100;	/*A changer en fonction de la bal ?*/
-	attributs_log.mq_msgsize = (long int) sizeof(log_t);/* (long int) sizeof(erreur_t); */
+	attributs_log.mq_maxmsg = 10;	/*ATTENTION : 10 est le maximum toléré pour un processus n'étant pas privilégié*/
+	attributs_log.mq_msgsize = (long int) sizeof(log_t);
 	attributs_log.mq_curmsgs = 0;
 	
 	bal_log_disque = mq_open( BALDIS, O_CREAT | O_RDWR, MODERW, &attributs_log );
@@ -70,9 +71,6 @@ int main(int argc, char** argv)
 
 	struct mq_attr attr;
 	mq_getattr(bal_erreur, &attr);
-	printf("%li\n", (long int)sizeof(erreur_t));
-	printf("Taille BAL %lx\n", attr.mq_msgsize);
-	/*la définition des attributs ne marche pas, cela n'a aucun sens (probleme avec mon OS ?)*/
 	
 	/*Sémaphores*/
 	sem_init( &sem_clapet, 0, 1 );
