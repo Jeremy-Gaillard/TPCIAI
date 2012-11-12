@@ -45,18 +45,33 @@ int main(int argc, char** argv)
 	/*Initialisation*/
 	
 	/*Boîtes aux lettres*/
-	struct mq_attr attributs;
-	attributs.mq_flags = 0;
-	attributs.mq_maxmsg = 100;	/*A changer en fonction de la bal ?*/
-	attributs.mq_msgsize = sizeof(erreur_t);
-	attributs.mq_curmsgs = 0;
-	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, &attributs );
+	struct mq_attr attributs_err;
+	attributs_err.mq_flags = 0;
+	attributs_err.mq_maxmsg = 100;	/*A changer en fonction de la bal ?*/
+	attributs_err.mq_msgsize = (long int) sizeof(erreur_t);
+	attributs_err.mq_curmsgs = 0;
+
+	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, &attributs_err );
+
+	struct mq_attr attr_err;
+	mq_getattr(bal_erreur, &attr_err);
+	printf("Taille orig %lx\n", attributs_err.mq_maxmsg);
+	printf("Taille BAL %lx\n", attr_err.mq_maxmsg);
+
+	struct mq_attr attributs_log;
+	attributs_log.mq_flags = 0;
+	attributs_log.mq_maxmsg = 100;	/*A changer en fonction de la bal ?*/
+	attributs_log.mq_msgsize = (long int) sizeof(log_t);/* (long int) sizeof(erreur_t); */
+	attributs_log.mq_curmsgs = 0;
 	
-	attributs.mq_msgsize = sizeof(log_t);
-	bal_log_disque = mq_open( BALDIS, O_CREAT | O_RDWR, MODERW, &attributs );
+	bal_log_disque = mq_open( BALDIS, O_CREAT | O_RDWR, MODERW, &attributs_log );
 	
-	attributs.mq_msgsize = sizeof(log_t);
-	bal_log_windows = mq_open( BALWIN, O_CREAT | O_RDWR, MODERW, &attributs );
+	bal_log_windows = mq_open( BALWIN, O_CREAT | O_RDWR, MODERW, &attributs_log );
+
+	struct mq_attr attr;
+	mq_getattr(bal_erreur, &attr);
+	printf("%li\n", (long int)sizeof(erreur_t));
+	printf("Taille BAL %lx\n", attr.mq_msgsize);
 	/*la définition des attributs ne marche pas, cela n'a aucun sens (probleme avec mon OS ?)*/
 	
 	/*Sémaphores*/
@@ -79,7 +94,7 @@ int main(int argc, char** argv)
 	
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
-	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
+	/*pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	/*pthread_create( &t_log_windows, NULL, log_windows, ? );
 	pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );
@@ -88,7 +103,7 @@ int main(int argc, char** argv)
 	
 	/*Moteur*/
 	/*sleep( 5 );*/
-	pthread_join( t_log_disque, NULL );
+	/*pthread_join( t_log_disque, NULL );
 	/*pthread_join( t_commande_windows, NULL );*/
 	
 	/*Destruction*/

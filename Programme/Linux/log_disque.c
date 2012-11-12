@@ -28,7 +28,7 @@ void log_disque()
 		bla = mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
 		/*TODO : erreur car sizeof log_t est trop petit -> réduire la limite (dans mq_attr) ou augmenter la taille de log_t*/
 		/*Analyser le message ici*/
-		printf("%li\n", attr.mq_msgsize);
+		/*printf("%li\n", attr.mq_msgsize);*/
 		fprintf(fichier_log, "%s", message);
 	}
 	
