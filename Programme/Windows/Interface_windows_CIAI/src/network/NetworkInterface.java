@@ -1,3 +1,5 @@
+package network;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +11,16 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-class NetworkInterface {
+public class NetworkInterface {
 	Socket client;
 	ServerSocket server;
-	
+        
 	public NetworkInterface() throws UnknownHostException, IOException {
-		client = new Socket("134.214.105.197", 32768);
+            //this("134.214.105.197");
+            this("if219-06.insa-lyon.fr");
+        }
+	public NetworkInterface(String ip) throws UnknownHostException, IOException {
+		client = new Socket(ip, 32768);
 	}
 	
 	public void recovery_order() {
@@ -83,43 +89,6 @@ System.out.println("lolinp");
 		}
 		System.out.println(sb.toString());
 
-	}
-
-}
-
-class Main {
-	
-	public static void main(String[] args) throws IOException {
-		/*
-		//Socket client = new Socket("localhost", 32768);
-		//Socket client = new Socket("127.0.0.1", 32768);
-		//Socket client = new Socket("192.168.242.128", 32768);
-		//Socket client = new Socket("134.214.161.17", 32768);
-		//Socket client = new Socket("10.0.2.15", 32768);
-		//Socket client = new Socket("fe80::a00:27ff:fe4f:db5b", 32768);
-		//Socket client = new Socket("134.214.161.78", 32768);
-		Socket client = new Socket("134.214.105.197", 32768);
-		
-		OutputStream oStream = client.getOutputStream();
-		BufferedOutputStream bOStream = new BufferedOutputStream(oStream);
-		
-		//int c = 300;
-		char c = 'a';
-		bOStream.write(c);
-		bOStream.write('l');
-		bOStream.flush();
-		InputStream feedback = client.getInputStream();
-		char r;
-		while ((r = (char) feedback.read()) != '\0') {
-			//System.out.print((int)r);
-			System.out.print(r);
-		}
-		System.out.println();
-		*/
-		//new Socket("134.214.105.197", 32768);
-		NetworkInterface ni = new NetworkInterface();
-		System.out.println(ni.send_message("lolilol"));
-		ni.listen_messages();
 	}
 
 }
