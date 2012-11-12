@@ -45,5 +45,6 @@ public class Interface_windows_CIAI {
     public void error(String title, String msg) {
         //throw new UnsupportedOperationException("Not yet implemented");
         JOptionPane.showMessageDialog(null, msg, title, 0);
+        System.err.println("Error: "+title+"\n\t"+msg);
     }
 }

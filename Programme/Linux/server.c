@@ -42,11 +42,11 @@ int main(int argc, char* argv[])
   if ( bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0 )
     error("ERROR on binding");
 
-  listen(sockfd, 5); // 5?
   /*
-int listen(int sockfd, int backlog);
-The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow. If a connection request arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connection succeeds.
-*/
+  int listen(int sockfd, int backlog);
+  The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow. If a connection request arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connection succeeds.
+  */
+  listen(sockfd, 1); // 5?
 
   clilen = sizeof(cli_addr);
 
@@ -99,7 +99,9 @@ void wait_order()
 		  n = write( newsockfd, resp_buffer, strlen(resp_buffer) );
 		  if (n<0)
 			error("ERROR writing to socket");
+		
 	  }
+	  
 	}
 
 }
