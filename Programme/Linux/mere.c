@@ -16,6 +16,7 @@
 
 #include "log_disque.h"
 #include "config.h"
+#include "Simulation/simulation.h"
 
 /*Definitions de constantes de config.h*/
 
@@ -33,7 +34,7 @@ int main(int argc, char** argv)
 	entrepot_t * shm_entrepot;
 	
 	pthread_t t_carton, t_palette, t_cariste, t_erreur, t_log_disque, 
-		t_log_windows, t_commande_windows;
+		t_log_windows, t_commande_windows, t_simulation;
 	
 	/*Initialisation*/
 	
@@ -84,9 +85,18 @@ int main(int argc, char** argv)
 	shm_entrepot = malloc( sizeof( entrepot_t ) );
 	shm_lot = malloc( sizeof( lot_t ) );
 	
+	int i;
+	for ( i = 0; i < STATUT_SIZE; i++)
+		*shm_statut[i] = 0;
+	*shm_statut[ST_CLAPET_OUVERT] = 1; /* clapet ouvert*/
+	
+	for ( i = 0; i < 20; i++)
+		shm_entrepot->palettes[i].id = NO_PALETTE;
+	
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
+	pthread_create( &t_simulation, NULL, (void*) simulation, NULL );
 	/*pthread_create( &t_log_windows, NULL, log_windows, ? );
 	pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );
@@ -96,6 +106,7 @@ int main(int argc, char** argv)
 	/*Moteur*/
 	/*sleep( 5 );*/
 	pthread_join( t_log_disque, NULL );
+	pthread_join( t_simulation, NULL );
 	/*pthread_join( t_commande_windows, NULL );*/
 	
 	/*Destruction*/
