@@ -4,16 +4,22 @@
  */
 package vue;
 
+import interface_windows_ciai.Interface_windows_CIAI;
+import java.io.IOException;
+
 /**
  *
  * @author michael
  */
 public class Commande extends javax.swing.JFrame {
 
+    Interface_windows_CIAI app;
     /**
      * Creates new form Commande
      */
-    public Commande() {
+    public Commande(Interface_windows_CIAI inter) {
+        app = inter;
+        setLocationByPlatform(true);
         initComponents();
         initData();
     }
@@ -188,9 +194,15 @@ public class Commande extends javax.swing.JFrame {
         else
         {
             System.out.println("Commande OK");
-            String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
-            System.out.println(commande);
-            this.dispose();
+            try {
+                String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
+                //System.out.println(commande);
+                app.error("The server responded...", app.network.send_message(commande));
+                this.dispose();
+            } catch (IOException ex) {
+                app.error("IO Exception", "Could not send the command to the host!");
+                ex.printStackTrace(System.err);
+            }                                
         }
         
     }//GEN-LAST:event_B_envoyer_commandeActionPerformed
@@ -207,44 +219,15 @@ public class Commande extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Commande.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Commande.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Commande.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Commande.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    /*public static void main(String args[]) {
 
-        /*
-         * Create and display the form
-         */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new Commande().setVisible(true);
             }
         });
-    }
+    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_annuler_commande;
     private javax.swing.JButton B_envoyer_commande;

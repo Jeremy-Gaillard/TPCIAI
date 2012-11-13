@@ -113,27 +113,28 @@ public class Suivi extends javax.swing.JFrame {
     private void B_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_commandeActionPerformed
         // TODO add your handling code here:
         System.out.println("Commande");
-        Commande fc = new Commande();
+        Commande fc = new Commande(app);
         fc.setVisible(true);
     }//GEN-LAST:event_B_commandeActionPerformed
 
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
-        // TODO add your handling code here:
         System.out.println("Message de reprise");
-        //System.out.println("2");
         try {
-            app.error("The server responded...", app.network.send_message("Reprise !"));
+            app.error("The server responded...", app.network.send_message("2"));
         } catch (IOException ex) {
-            //Logger.getLogger(Suivi.class.getName()).log(Level.SEVERE, null, ex);
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
         }
     }//GEN-LAST:event_B_repriseActionPerformed
 
     private void B_arretActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_arretActionPerformed
-        // TODO add your handling code here:
         System.out.println("Message d'arrêt");
-        //System.out.println("3");         
+        try {
+            app.error("The server responded...", app.network.send_message("3"));
+        } catch (IOException ex) {
+            app.error("IO Exception", "Could not send the command to the host!");
+            ex.printStackTrace(System.err);
+        }        
     }//GEN-LAST:event_B_arretActionPerformed
 
     /*
