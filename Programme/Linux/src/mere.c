@@ -6,7 +6,6 @@
 #include <mqueue.h>
 #include <fcntl.h>
 
-#include <unistd.h> /*temporaire (sleep)*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +19,6 @@
 #include "log_windows.h"
 #include "erreur.h"
 
-/*Definitions de constantes de config.h*/
 
 
 
@@ -75,9 +73,9 @@ int main(int argc, char** argv)
 	sem_init( &sem_erreur_carton, 0, 0 );
 	sem_init( &sem_erreur_palette, 0, 0 );
 	sem_init( &sem_AU, 0, 0 );
-	sem_init( &sem_bal_log_disque, 10, 0);
-	sem_init( &sem_bal_log_windows, 10, 0);
-	sem_init( &sem_bal_erreur, 10, 0);
+	sem_init( &sem_bal_log_disque, 0, 0);
+	sem_init( &sem_bal_log_windows, 0, 0);
+	sem_init( &sem_bal_erreur, 0, 0);
 	
 	/*Mutex*/
 	pthread_mutex_init( &mutex_entrepot, NULL );
@@ -91,7 +89,7 @@ int main(int argc, char** argv)
 	int i;
 	for ( i = 0; i < STATUT_SIZE; i++)
 		*shm_statut[i] = 1;
-	/**shm_statut[ST_CLAPET_OUVERT] = 1; /* clapet ouvert*/
+	/**shm_statut[ST_CLAPET_OUVERT] = 1; /*clapet ouvert*/
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
@@ -101,20 +99,38 @@ int main(int argc, char** argv)
 	
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
-	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
-	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) shm_statut );
-	pthread_create( &t_log_windows, NULL, log_windows, NULL );
+
+	pthread_create( &t_log_disque, NULL, (void*) log_disque, (void*) &sem_bal_log_disque );
+	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &shm_statut );
+	pthread_create( &t_log_windows, NULL, (void*) log_windows, (void*) &sem_bal_log_windows );
 	/*pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );*/
-	pthread_create( &t_erreur, NULL, erreur, NULL );
+	struct arg_erreur
+	{
+		statut_t* statut;
+		sem_t bal_erreur;
+		sem_t bal_log_win;
+		sem_t bal_log_disque;
+	} erreur_arg;
+	erreur_arg.statut = shm_statut;
+	erreur_arg.bal_erreur = sem_bal_erreur;
+	erreur_arg.bal_log_win = sem_bal_log_windows;
+	erreur_arg.bal_log_disque = sem_bal_log_disque;
+	
+	
+	pthread_create( &t_erreur, NULL, (void*) erreur, (void*) &erreur_arg );
 	/*pthread_create( &t_commande_windows, NULL, commande_windows, ? );*/
 	
 	/*Moteur*/
 	/*sleep( 5 );*/
 	pthread_join( t_simulation, NULL );
 	
+	printf("Heya\n");
 	/*Destruction*/
 	
+	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), 2);
+	printf("Heya\n");
+	pthread_join( t_erreur, NULL );
 	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
 	pthread_join( t_log_disque, NULL );
 	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), 2 );

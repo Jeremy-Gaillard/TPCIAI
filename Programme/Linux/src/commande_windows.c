@@ -5,6 +5,7 @@
 #include <sys/ipc.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -91,10 +92,14 @@ void expedier_lot(int nb_A, int nb_B)
 	pthread_mutex_unlock(&mtx_entrepot);	
 }
 
-void commande_windows(statut_t* shm_statut, lot_t* shm_lot, entrepot_t* shm_entrepot)
+void commande_windows(statut_t* shm_statut, lot_t* shm_lot, entrepot_t* shm_entrepot, pthread_mutex_t entrepot, sem_t palette, sem_t carton, sem_t AU, sem_t clapet)
 {
 	statut = shm_statut;
 	lot = shm_lot;
 	entrepot = shm_entrepot;
-
+	mtx_entrepot = entrepot;
+	sem_erreur_palette = palette;
+	sem_erreur_carton = carton;
+	sem_AU = AU;
+	sem_clapet = clapet;
 }

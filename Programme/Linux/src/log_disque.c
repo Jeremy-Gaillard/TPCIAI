@@ -6,6 +6,7 @@
 #include <mqueue.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +14,7 @@
 
 #include <errno.h>
 
-void log_disque()
+void log_disque(sem_t disque)
 {
 	FILE * fichier_log;
 	int bal_log_disque = mq_open( BALDIS, O_RDONLY );
@@ -23,12 +24,15 @@ void log_disque()
 	fichier_log = fopen(NOM_LOG, "w");
 	fprintf(fichier_log, "Début de session\n");
 	
+	sem_t sem_bal_log_disque = disque;
+	
 	/*int idx = 2;
 	int idxn;
 	char buff[10];*/
 	
 	while( strcmp(message, TRAME_FIN) )
 	{
+		sem_wait(&sem_bal_log_disque);
 		mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
 		/*Analyser le message ici*/
 		log_t log = "";

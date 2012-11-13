@@ -8,13 +8,20 @@
 #include <mqueue.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #include <errno.h>
 
 #include "simulation.h"
 
-void simulation(statut_t* shm_statut)
+static sem_t sem_clapet;
+
+void simulation(statut_t* shm_statut, sem_t erreur, sem_t windows, sem_t disque, sem_t clapet)
 {
+	sem_clapet = clapet;
+	sem_t sem_disque = disque;
+	sem_t sem_windows = windows;
+	sem_t sem_erreur = erreur;
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
 	for( ; ; )
@@ -23,10 +30,12 @@ void simulation(statut_t* shm_statut)
 		if( !strcmp(commande, "logd") )
 		{
 			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), 1);
+			sem_post(&sem_disque);
 		}
 		if( !strcmp(commande, "logdf") )
 		{
 			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
+			sem_post(&sem_disque);
 		}
 		else if( !strcmp(commande, "presence_carton") )
 		{
