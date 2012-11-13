@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <pthread.h
 #include <semaphore.h>
+#include <signal.h>
 #include <time.h>
+
 #include "config.h"
 #include "prod_utils.h"
 
@@ -24,6 +28,10 @@ int carton( arg_carton_t args ){
 	sem_t* sem_carton = args.sem_carton;
 	sem_t* sem_erreur_carton = args.sem_erreur_carton;
   
+	struct sigaction handler_USR2;
+	handler_USR2.sa_handler = fin_production;
+	sigaction( SIGUSR2, &handler_USR2, NULL );
+
 	for( ; ; ){
 		/* attente piece */
 		sem_wait( sem_piece ); 
