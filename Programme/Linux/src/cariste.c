@@ -3,11 +3,22 @@
 #include <time.h>
 #include <semaphore.h>
 #include <mqueue.h>
+#include <signal.h>
 
 #include "config.h"
 #include "prod_utils.h"
  
  int cariste( sem_t sem_palette, pthread_mutex_t mutex_entrepot, lot_t shm_lot ){
+ 	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
+	struct sigaction handler_USR2;
+	handler_USR2.sa_handler = fin_simulation;
+	sigaction ( SIGUSR2, &handler_USR2, NULL );
+ 	
+ 	/*Création du Handler d'arret d urgence et démasquage de SIGUSR1*/
+	struct sigaction handler_USR1;
+	handler_USR1.sa_handler = AU;
+	sigaction ( SIGUSR1, &handler_USR1, NULL );
+	
  	int nb_palette = 0;
 	int i = 0;
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
