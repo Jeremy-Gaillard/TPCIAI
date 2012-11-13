@@ -9,6 +9,13 @@
 #include "config.h"
 #include "prod_utils.h"
 
+
+void AU_carton(int signum)
+{
+	printf("PRODUCTION: CARTON: ARRET D'URGENCE !\n");
+	sem_wait(sem_AU);
+}
+
 int carton( arg_carton_t args ){
 
 	int nb_piece = 0;
@@ -27,10 +34,16 @@ int carton( arg_carton_t args ){
 	sem_t* sem_piece = args.sem_piece;
 	sem_t* sem_carton = args.sem_carton;
 	sem_t* sem_erreur_carton = args.sem_erreur_carton;
-  
+
+	static sem_t* sem_AU = args.sem_AU;
+	
 	struct sigaction handler_USR2;
 	handler_USR2.sa_handler = fin_production;
 	sigaction( SIGUSR2, &handler_USR2, NULL );
+
+	struct sigaction handler_USR1;
+	handler_USR1.sa_handler = AU_carton;
+	sigaction( SIGUSR1, &handler_USR1, NULL );
 
 	for( ; ; ){
 		/* attente piece */
