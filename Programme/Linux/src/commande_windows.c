@@ -19,15 +19,6 @@ static sem_t sem_AU;
 static sem_t sem_clapet;
 
 void reprise(int erreur_id) 
-
-#define ERR_AU 0
-#define ERR_TROP_DE_REBUS 1
-#define ERR_PAS_DE_CARTON 2
-#define ERR_IMPRIMANTE_KO 3
-#define ERR_FILE_D_ATTENTE 4
-#define ERR_PAS_DE_PALETTE 5
-#define ERR_FILM_KO 6
-
 {
 	switch(erreur_id) 
 	{
