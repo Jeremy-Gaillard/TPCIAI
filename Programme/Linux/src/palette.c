@@ -9,7 +9,8 @@
 
 int palette( sem_t sem_carton, sem_t sem_palette, sem_t sem_erreur_palette,
              statut_t shm_statut , lot_t shm_lot ){
-	
+	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
+	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);	
 	int nb_carton = 0;
 	int nb_palette = 0;
 	for ( ; ; ){
@@ -41,8 +42,6 @@ int palette( sem_t sem_carton, sem_t sem_palette, sem_t sem_erreur_palette,
 			char* message= malloc(28);/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
 
 			sprintf(message, "L P %d %s", nb_palette,heure);
-			mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
-			mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 			mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
 			mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
 			/*fin envoi logs*/

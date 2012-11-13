@@ -11,7 +11,8 @@ int carton( sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
 	int nb_carton = 0;
 	int nb_rebus =0;
 	int place_file_attente;
-
+	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
+	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 	for( ; ; ){
 		/* attente piece */
 		sem_wait( &sem_piece ); 
@@ -62,8 +63,7 @@ int carton( sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
 				int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
 				char* message= malloc(30);/*id erreur(int=15) + heure (=6) + +erreur (2) +reste ressage (7) = 16*/
 				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
-				mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
-				mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
+
 				mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
 				mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
 				/*fin envoi logs*/
