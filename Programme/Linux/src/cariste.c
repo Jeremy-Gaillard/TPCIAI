@@ -7,8 +7,7 @@
 #include "config.h"
 #include "prod_utils.h"
  
- int cariste( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
-              sem_t sem_palette, pthread_mutex_t mutex_entrepot, lot_t shm_lot ){
+ int cariste( sem_t sem_palette, pthread_mutex_t mutex_entrepot, lot_t shm_lot ){
  	int nb_palette = 0;
 	int i = 0;
  	for ( ; ; ){

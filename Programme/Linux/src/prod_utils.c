@@ -6,7 +6,7 @@
 #include "config.h"
 #include "prod_utils.h"
 
-void gerer_erreur( int erreur_id, mqd_t bal_erreur, mqd_t bal_log_disque )
+void gerer_erreur( int erreur_id )
 {
 	char heure[7];
 	time_t rawtime;
@@ -20,7 +20,8 @@ void gerer_erreur( int erreur_id, mqd_t bal_erreur, mqd_t bal_log_disque )
 
 	char* message_log= malloc(22);/*2+ id erreur(int=15) + heure (=6) + 1 = 22*/
 	sprintf(message_log, "E %d %s", id,heure);
-
+	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
+	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mq_send( bal_erreur, message_erreur, sizeof( message_erreur ), BAL_PRIO_ERREUR );
 	mq_send( bal_log_disque, message_log, sizeof( message_log ), BAL_PRIO_ERREUR );
 }
