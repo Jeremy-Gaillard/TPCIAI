@@ -20,18 +20,18 @@ int carton( arg_carton_t args ){
 	sem_t* sem_bal_log_win = args.bal_log_win;
 	sem_t* sem_bal_log_disque = args.bal_log_disque;
 
-  sem_t* sem_piece = args.sem_piece;
-  sem_t* sem_carton = args.sem_carton;
-  sem_t* sem_erreur_carton = args.sem_erreur_carton;
+	sem_t* sem_piece = args.sem_piece;
+	sem_t* sem_carton = args.sem_carton;
+	sem_t* sem_erreur_carton = args.sem_erreur_carton;
   
 	for( ; ; ){
 		/* attente piece */
 		sem_wait( sem_piece ); 
 
 		if ( nb_piece == 0 && shm_statut[ST_PRESENCE_CARTON] != 1 ){
-		/*si premiere piece et absence carton
-		 envoi d'un message d'erreur avec hhmmss et type erreur
-		 puis attente sur semaphore de reprise d'erreur*/
+			/*si premiere piece et absence carton
+			  envoi d'un message d'erreur avec hhmmss et type erreur
+			  puis attente sur semaphore de reprise d'erreur*/
 		 		
 			gerer_erreur(ERR_PAS_DE_CARTON);
 			sem_wait( sem_erreur_carton );
@@ -42,9 +42,9 @@ int carton( arg_carton_t args ){
 			nb_piece += 1;
 			if ( nb_piece == CARTON_PLEIN ){
 				if ( shm_statut[ST_IMPRIMANTE] != 1 ){
-				/*si carton plein et imprimante HS
-				 envoie d'un message d'erreur avec hhmmss et type erreur
-				 puis attente sur semaphore de reprise d'erreur*/
+					/*si carton plein et imprimante HS
+					  envoie d'un message d'erreur avec hhmmss et type erreur
+					  puis attente sur semaphore de reprise d'erreur*/
 
 					gerer_erreur(ERR_IMPRIMANTE_KO );
 					sem_wait( sem_erreur_carton );
@@ -53,9 +53,9 @@ int carton( arg_carton_t args ){
 				
 				sem_getvalue( sem_carton, &place_file_attente );
 				if ( place_file_attente == 0 ){
-				/*si trop de cartons dans la file d'attente
-				 envoie d'un message d'erreur avec hhmmss et type erreur
-				 puis attente sur semaphore de reprise d'erreur*/
+					/*si trop de cartons dans la file d'attente
+					  envoie d'un message d'erreur avec hhmmss et type erreur
+					  puis attente sur semaphore de reprise d'erreur*/
 				 
 					gerer_erreur(ERR_FILE_D_ATTENTE );
 					sem_wait( sem_erreur_carton );
@@ -76,9 +76,9 @@ int carton( arg_carton_t args ){
 				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
 
 				mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
-        sem_post( sem_bal_log_disque );
+				sem_post( sem_bal_log_disque );
 				mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
-        sem_post( sem_bal_log_win );
+				sem_post( sem_bal_log_win );
 				/*fin envoi logs*/
 				
 				nb_piece = 0;
@@ -93,10 +93,10 @@ int carton( arg_carton_t args ){
 		else{
 			nb_rebus +=1;
 			if ( nb_rebus == MAX_REBUS ){
-			/*si trop de mauvaise piece
-			 envoie d'un message d'erreur avec hhmmss et type erreur
-			 puis attente sur semaphore de reprise d'erreur
-			 puis on jette le carton en cours*/
+				/*si trop de mauvaise piece
+				  envoie d'un message d'erreur avec hhmmss et type erreur
+				  puis attente sur semaphore de reprise d'erreur
+				  puis on jette le carton en cours*/
 			 	
 				gerer_erreur(ERR_TROP_DE_REBUS );
 				sem_wait( sem_erreur_carton );
