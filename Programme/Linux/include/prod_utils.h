@@ -18,12 +18,15 @@ typedef struct arg_carton
   sem_t* sem_piece;
   sem_t* sem_carton;
   sem_t* sem_erreur_carton;
+
+	sem_t* sem_AU;
 } arg_carton_t;
 
 void fin_production(int signum);
 
 void arret_urgence_prod(int signum);
 
+void AU_carton( int signum);
 int carton( arg_carton_t args );
 
 int palette();
