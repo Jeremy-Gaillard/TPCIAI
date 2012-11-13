@@ -5,6 +5,8 @@
 #include <semaphore.h>
 #include <mqueue.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <unistd.h>
 
 
 #include <stdio.h>
@@ -38,6 +40,15 @@ int main(int argc, char** argv)
 		t_log_windows, t_commande_windows, t_simulation;
 	
 	/*Initialisation*/
+	
+	/*Définition d'un comportement de masquage de signal*/
+	struct sigaction mask;
+	mask.sa_handler = SIG_IGN;
+
+	/*Masquage de SIGUSR1*/
+	sigaction( SIGUSR2, &mask, NULL );
+	/*Masquage de SIGUSR2*/
+	sigaction( SIGUSR2, &mask, NULL );
 	
 	/*Boîtes aux lettres*/
 	struct mq_attr attributs_err;
@@ -131,7 +142,8 @@ int main(int argc, char** argv)
 	pthread_create( &t_commande_windows, NULL, (void*) commande_windows, (void*) &windows_arg );
 	
 	/*Moteur*/
-	pthread_join( t_simulation, NULL );
+	pthread_join( t_commande_windows, NULL );
+	pthread_kill( t_simulation, SIGUSR2 );
 	
 	/*Destruction*/
 	

@@ -9,23 +9,38 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <signal.h>
 
 #include <errno.h>
 
 #include "simulation.h"
+#include "commande_windows.h"
 
 static sem_t* sem_clapet;
 static statut_t* shm_statut;
 
+void fin_simulation(int signum)
+{
+	printf("Catching : %i\n", signum);
+	pthread_exit( 0 );
+}
+
 void test_clapet()
 {
-	sem_wait( &sem_clapet );
+	sem_wait( sem_clapet );
+	printf("Yay\n");
+	sem_wait( sem_clapet );
 	printf("Yay\n");
 	pthread_exit( 0 );
 }
 
 void simulation(arg_simulation_t* ipc)
 {
+	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
+	struct sigaction handler_USR2;
+	handler_USR2.sa_handler = fin_simulation;
+	sigaction ( SIGUSR2, &handler_USR2, NULL );
+	
 	shm_statut = ipc->statut;
 	sem_clapet = ipc->clapet;
 	sem_t* sem_disque = ipc->disque;
@@ -38,6 +53,7 @@ void simulation(arg_simulation_t* ipc)
 	
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
+	
 	for( ; ; )
 	{
 		scanf("%s", commande);

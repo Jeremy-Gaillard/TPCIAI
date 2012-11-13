@@ -94,7 +94,7 @@ void expedier_lot(int nb_A, int nb_B)
 }
 
 void commande_windows(arg_commande_windows_t* ipc)
-{
+{	
 	statut = ipc->shm_statut;
 	lot = ipc->shm_lot;
 	entrepot = ipc->shm_entrepot;
