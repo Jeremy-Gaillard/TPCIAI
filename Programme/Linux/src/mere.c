@@ -111,11 +111,14 @@ int main(int argc, char** argv)
 	
 	/*Moteur*/
 	/*sleep( 5 );*/
-	pthread_join( t_log_disque, NULL );
 	pthread_join( t_simulation, NULL );
-	/*pthread_join( t_commande_windows, NULL );*/
 	
 	/*Destruction*/
+	
+	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
+	pthread_join( t_log_disque, NULL );
+	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), 2 );
+	pthread_join( t_commande_windows, NULL );
 	
 	/*Mémoire partagées*/
 	free( shm_lot );
