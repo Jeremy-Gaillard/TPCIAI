@@ -14,7 +14,7 @@
 
 #include <errno.h>
 
-void log_disque(sem_t disque)
+void log_disque(sem_t* disque)
 {
 	FILE * fichier_log;
 	int bal_log_disque = mq_open( BALDIS, O_RDONLY );
@@ -24,7 +24,7 @@ void log_disque(sem_t disque)
 	fichier_log = fopen(NOM_LOG, "w");
 	fprintf(fichier_log, "Début de session\n");
 	
-	sem_t sem_bal_log_disque = disque;
+	sem_t sem_bal_log_disque = *disque;
 	
 	/*int idx = 2;
 	int idxn;

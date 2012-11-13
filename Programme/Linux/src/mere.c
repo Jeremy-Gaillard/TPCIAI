@@ -100,22 +100,18 @@ int main(int argc, char** argv)
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
 
+	printf("mere : %i", sem_bal_log_windows);
+	
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, (void*) &sem_bal_log_disque );
-	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &shm_statut );
+	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) shm_statut );
 	pthread_create( &t_log_windows, NULL, (void*) log_windows, (void*) &sem_bal_log_windows );
 	/*pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );*/
-	struct arg_erreur
-	{
-		statut_t* statut;
-		sem_t bal_erreur;
-		sem_t bal_log_win;
-		sem_t bal_log_disque;
-	} erreur_arg;
+	struct arg_erreur erreur_arg;
 	erreur_arg.statut = shm_statut;
-	erreur_arg.bal_erreur = sem_bal_erreur;
-	erreur_arg.bal_log_win = sem_bal_log_windows;
-	erreur_arg.bal_log_disque = sem_bal_log_disque;
+	erreur_arg.bal_erreur = &sem_bal_erreur;
+	erreur_arg.bal_log_win = &sem_bal_log_windows;
+	erreur_arg.bal_log_disque = &sem_bal_log_disque;
 	
 	
 	pthread_create( &t_erreur, NULL, (void*) erreur, (void*) &erreur_arg );
@@ -125,15 +121,16 @@ int main(int argc, char** argv)
 	/*sleep( 5 );*/
 	pthread_join( t_simulation, NULL );
 	
-	printf("Heya\n");
 	/*Destruction*/
 	
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), 2);
-	printf("Heya\n");
+	sem_post(&sem_bal_erreur);
 	pthread_join( t_erreur, NULL );
 	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
+	sem_post(&sem_bal_log_disque);
 	pthread_join( t_log_disque, NULL );
 	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), 2 );
+	sem_post(&sem_bal_log_windows);
 	pthread_join( t_commande_windows, NULL );
 	
 	/*Mémoire partagées*/

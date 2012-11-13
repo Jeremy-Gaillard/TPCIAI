@@ -12,16 +12,18 @@
 #include <stdio.h>
 #include <string.h>
 
-void erreur(statut_t* shm_statut, sem_t erreur, sem_t windows, sem_t disque)
+void erreur(struct arg_erreur *ipc/*statut_t* shm_statut, sem_t* erreur, sem_t* windows, sem_t* disque*/)
 {
 	int bal_log_erreur = mq_open( BALERR, O_RDONLY );
 	int bal_log_windows = mq_open( BALWIN, O_RDONLY );
 	int bal_log_disque = mq_open( BALDIS, O_RDONLY );
 	erreur_t message;
 	erreur_t log = "E ";
-	sem_t sem_bal_erreur = erreur;
-	sem_t sem_bal_log_windows = windows;
-	sem_t sem_bal_log_disque = disque;	
+	sem_t sem_bal_erreur = *ipc->bal_erreur;
+	sem_t sem_bal_log_windows = *ipc->bal_log_win;
+	sem_t sem_bal_log_disque = *ipc->bal_log_disque;
+	statut_t* shm_statut = ipc->statut;
+	printf("erreur : %i\n", sem_bal_log_windows);
 	
 	
 	do

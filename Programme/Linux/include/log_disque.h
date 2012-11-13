@@ -3,7 +3,7 @@
 
 #include <semaphore.h>
 
-void log_disque(sem_t disque);
+void log_disque(sem_t *disque);
 
 #endif
 

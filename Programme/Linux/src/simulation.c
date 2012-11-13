@@ -15,13 +15,27 @@
 #include "simulation.h"
 
 static sem_t sem_clapet;
+static statut_t* shm_statut;
 
-void simulation(statut_t* shm_statut, sem_t erreur, sem_t windows, sem_t disque, sem_t clapet)
+void test_clapet()
 {
+	sem_wait( &sem_clapet );
+	printf("Yay\n");
+	pthread_exit( 0 );
+}
+
+void simulation(statut_t* statut, sem_t erreur, sem_t windows, sem_t disque, sem_t clapet)
+{
+	shm_statut = statut;
 	sem_clapet = clapet;
 	sem_t sem_disque = disque;
 	sem_t sem_windows = windows;
 	sem_t sem_erreur = erreur;
+	pthread_t t_envoie_piece;
+	
+	
+	pthread_create( &t_envoie_piece, NULL, (void*) test_clapet, NULL );
+	
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
 	for( ; ; )
@@ -88,6 +102,8 @@ void simulation(statut_t* shm_statut, sem_t erreur, sem_t windows, sem_t disque,
 		else if( !strcmp(commande, "clapet_ouvert") )
 		{
 			*shm_statut[ ST_CLAPET_OUVERT ] = 1;
+			sem_post( &sem_clapet );
+			pthread_join( t_envoie_piece, NULL );
 		}
 		else if( !strcmp(commande, "clapet_ferme") )
 		{
