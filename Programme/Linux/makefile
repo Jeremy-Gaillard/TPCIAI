@@ -14,7 +14,7 @@ LINK=gcc -o
 
 EXE=CIAI
 
-OBJ=mere.o log_disque.o simulation.o erreur.o
+OBJ=mere.o log_disque.o log_windows.o simulation.o erreur.o
 
 $(EXE) : $(OBJ)
 	echo Linking $(EXE)
@@ -30,11 +30,13 @@ simulation.o : $(SRCDIR)/simulation.c $(INCDIR)/simulation.h $(INCDIR)/config.h
 
 log_disque.o : $(SRCDIR)/log_disque.c $(INCDIR)/log_disque.h $(INCDIR)/config.h
 
+log_windows.o : $(SRCDIR)/log_windows.c $(INCDIR)/log_windows.h $(INCDIR)/config.h
+
 erreur.o: $(SRCDIR)/erreur.c $(INCDIR)/config.h
-	gcc -c $(SRCDIR)/erreur.c $(SYSLIBS) $(PERSLIBS)
+	$(COMP) $(CCFLAGS) $(SRCDIR)/erreur.c $(SYSLIBS) $(PERSLIBS)
 
 mere.o : $(SRCDIR)/mere.c $(INCDIR)/config.h
-	gcc -c $(SRCDIR)/mere.c $(SYSLIBS) $(PERSLIBS)
+	$(COMP) $(CCFLAGS) $(SRCDIR)/mere.c $(SYSLIBS) $(PERSLIBS)
 
 clean :
 	echo Cleaning...
