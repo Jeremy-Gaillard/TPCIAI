@@ -5,14 +5,25 @@
 #include "config.h"
 #include "prod_utils.h"
 
-int carton( sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
-            statut_t shm_statut ){
+int carton( arg_carton_t args ){
+
 	int nb_piece = 0;
 	int nb_carton = 0;
 	int nb_rebus =0;
 	int place_file_attente;
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
+
+	statut_t* shm_statut = args.shm_statut;
+
+	sem_t* sem_bal_erreur = args.bal_erreur;
+	sem_t* sem_bal_log_win = args.bal_log_win;
+	sem_t* sem_bal_log_disque = args.bal_log_disque;
+
+  sem_t* sem_piece = args.sem_piece;
+  sem_t* sem_carton = args.sem_carton;
+  sem_t* sem_erreur_carton = args.sem_erreur_carton;
+  
 	for( ; ; ){
 		/* attente piece */
 		sem_wait( &sem_piece ); 
@@ -22,7 +33,7 @@ int carton( sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
 		 envoi d'un message d'erreur avec hhmmss et type erreur
 		 puis attente sur semaphore de reprise d'erreur*/
 		 		
-			gerer_erreur(ERR_PAS_DE_CARTON );
+			gerer_erreur(ERR_PAS_DE_CARTON);
 			sem_wait( &sem_erreur_carton );
 		}
 		/*end of absence carton*/
