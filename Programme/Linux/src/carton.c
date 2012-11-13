@@ -22,7 +22,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 		 envoi d'un message d'erreur avec hhmmss et type erreur
 		 puis attente sur semaphore de reprise d'erreur*/
 		 		
-			gerer_erreur(ERR_PAS_DE_CARTON, bal_erreur);
+			gerer_erreur(ERR_PAS_DE_CARTON, bal_erreur, mqd_t bal_log_disque );
 			sem_wait( &sem_erreur_carton );
 		}
 		/*end of absence carton*/
@@ -35,7 +35,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				 envoie d'un message d'erreur avec hhmmss et type erreur
 				 puis attente sur semaphore de reprise d'erreur*/
 
-					gerer_erreur(ERR_IMPRIMANTE_KO, bal_erreur);
+					gerer_erreur(ERR_IMPRIMANTE_KO, bal_erreur, mqd_t bal_log_disque );
 					sem_wait( &sem_erreur_carton );
 				}
 				/*end of if imprimante HS*/
@@ -46,7 +46,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				 envoie d'un message d'erreur avec hhmmss et type erreur
 				 puis attente sur semaphore de reprise d'erreur*/
 				 
-					gerer_erreur(ERR_FILE_D_ATTENTE, bal_erreur);
+					gerer_erreur(ERR_FILE_D_ATTENTE, bal_erreur, mqd_t bal_log_disque );
 					sem_wait( &sem_erreur_carton );
 				}
 				/*end of if file attente pleine*/
@@ -85,7 +85,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 			 puis attente sur semaphore de reprise d'erreur
 			 puis on jette le carton en cours*/
 			 	
-				gerer_erreur(ERR_TROP_DE_REBUS, bal_erreur);
+				gerer_erreur(ERR_TROP_DE_REBUS, bal_erreur, mqd_t bal_log_disque );
 				sem_wait( &sem_erreur_carton );
 
 				nb_piece = 0;
