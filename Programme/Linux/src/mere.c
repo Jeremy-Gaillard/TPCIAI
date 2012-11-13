@@ -18,6 +18,7 @@
 #include "simulation.h"
 #include "log_windows.h"
 #include "erreur.h"
+#include "commande_windows.h"
 
 
 
@@ -47,10 +48,7 @@ int main(int argc, char** argv)
 
 	bal_erreur = mq_open( BALERR, O_CREAT | O_RDWR, MODERW, &attributs_err );
 	
-	int errbuf = errno;
 
-	struct mq_attr attr_err;
-	mq_getattr(bal_erreur, &attr_err);
 
 	struct mq_attr attributs_log;
 	attributs_log.mq_flags = 0;
@@ -62,10 +60,8 @@ int main(int argc, char** argv)
 	
 	bal_log_windows = mq_open( BALWIN, O_CREAT | O_RDWR, MODERW, &attributs_log );
 
-	struct mq_attr attr;
-	mq_getattr(bal_erreur, &attr);
 	
-	/*Sémaphores*/
+	/*Sémaphores*/	
 	sem_init( &sem_clapet, 0, 1 );
 	sem_init( &sem_piece, 0, 0 );
 	sem_init( &sem_carton, 0, 0 );
@@ -76,6 +72,7 @@ int main(int argc, char** argv)
 	sem_init( &sem_bal_log_disque, 0, 0);
 	sem_init( &sem_bal_log_windows, 0, 0);
 	sem_init( &sem_bal_erreur, 0, 0);
+	
 	
 	/*Mutex*/
 	pthread_mutex_init( &mutex_entrepot, NULL );
@@ -100,25 +97,40 @@ int main(int argc, char** argv)
 	/*Threads*/
 	/*pthread_create( &t_carton, NULL, carton, ? );*/
 
-	printf("mere : %i", sem_bal_log_windows);
-	
+
+	arg_simulation_t simulation_arg;
+	simulation_arg.statut = shm_statut;
+	simulation_arg.erreur = &sem_bal_erreur;
+	simulation_arg.windows = &sem_bal_log_windows;
+	simulation_arg.disque = &sem_bal_log_disque;
+	simulation_arg.clapet = &sem_clapet;
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, (void*) &sem_bal_log_disque );
-	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) shm_statut );
+	
+	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );
+	
 	pthread_create( &t_log_windows, NULL, (void*) log_windows, (void*) &sem_bal_log_windows );
 	/*pthread_create( &t_palette, NULL, palette, ? );
 	pthread_create( &t_cariste, NULL, cariste, ? );*/
-	struct arg_erreur erreur_arg;
+	
+	arg_erreur_t erreur_arg;
 	erreur_arg.statut = shm_statut;
 	erreur_arg.bal_erreur = &sem_bal_erreur;
 	erreur_arg.bal_log_win = &sem_bal_log_windows;
 	erreur_arg.bal_log_disque = &sem_bal_log_disque;
-	
-	
 	pthread_create( &t_erreur, NULL, (void*) erreur, (void*) &erreur_arg );
-	/*pthread_create( &t_commande_windows, NULL, commande_windows, ? );*/
+	
+	arg_commande_windows_t windows_arg;
+	windows_arg.shm_statut = shm_statut;
+	windows_arg.shm_lot = shm_lot;
+	windows_arg.shm_entrepot = shm_entrepot;
+	windows_arg.entrepot = &mutex_entrepot;
+	windows_arg.palette = &sem_erreur_palette;
+	windows_arg.carton = &sem_erreur_carton;
+	windows_arg.AU = &sem_AU;
+	windows_arg.clapet = &sem_clapet;
+	pthread_create( &t_commande_windows, NULL, (void*) commande_windows, (void*) &windows_arg );
 	
 	/*Moteur*/
-	/*sleep( 5 );*/
 	pthread_join( t_simulation, NULL );
 	
 	/*Destruction*/
@@ -126,12 +138,14 @@ int main(int argc, char** argv)
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), 2);
 	sem_post(&sem_bal_erreur);
 	pthread_join( t_erreur, NULL );
+	
 	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
 	sem_post(&sem_bal_log_disque);
 	pthread_join( t_log_disque, NULL );
+	
 	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), 2 );
 	sem_post(&sem_bal_log_windows);
-	pthread_join( t_commande_windows, NULL );
+	pthread_join( t_log_windows, NULL );
 	
 	/*Mémoire partagées*/
 	free( shm_lot );

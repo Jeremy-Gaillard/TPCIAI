@@ -14,7 +14,7 @@ LINK=gcc -o
 
 EXE=CIAI
 
-OBJ=mere.o log_disque.o log_windows.o simulation.o erreur.o 
+OBJ=mere.o log_disque.o log_windows.o simulation.o erreur.o commande_windows.o
 
 $(EXE) : $(OBJ)
 	echo Linking $(EXE)

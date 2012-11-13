@@ -20,6 +20,7 @@
 
 #define NO_PALETTE -1
 
+		
 typedef char log_t[128];
 typedef int lot_t[2];
 typedef int statut_t[STATUT_SIZE];

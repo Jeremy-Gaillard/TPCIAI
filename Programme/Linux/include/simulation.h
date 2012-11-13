@@ -3,7 +3,16 @@
 
 #include <semaphore.h>
 
-void simulation(statut_t* shm_statut, sem_t erreur, sem_t windows, sem_t disque, sem_t clapet);
+typedef struct arg_simulation
+{
+	statut_t* statut;
+	sem_t* erreur;
+	sem_t* windows;
+	sem_t* disque;
+	sem_t* clapet;
+} arg_simulation_t;
+
+void simulation(arg_simulation_t* ipc);
 
 #endif
 

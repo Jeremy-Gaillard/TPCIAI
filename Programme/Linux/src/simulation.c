@@ -14,7 +14,7 @@
 
 #include "simulation.h"
 
-static sem_t sem_clapet;
+static sem_t* sem_clapet;
 static statut_t* shm_statut;
 
 void test_clapet()
@@ -24,13 +24,13 @@ void test_clapet()
 	pthread_exit( 0 );
 }
 
-void simulation(statut_t* statut, sem_t erreur, sem_t windows, sem_t disque, sem_t clapet)
+void simulation(arg_simulation_t* ipc)
 {
-	shm_statut = statut;
-	sem_clapet = clapet;
-	sem_t sem_disque = disque;
-	sem_t sem_windows = windows;
-	sem_t sem_erreur = erreur;
+	shm_statut = ipc->statut;
+	sem_clapet = ipc->clapet;
+	sem_t* sem_disque = ipc->disque;
+	sem_t* sem_windows = ipc->windows;
+	sem_t* sem_erreur = ipc->erreur;
 	pthread_t t_envoie_piece;
 	
 	
@@ -44,12 +44,12 @@ void simulation(statut_t* statut, sem_t erreur, sem_t windows, sem_t disque, sem
 		if( !strcmp(commande, "logd") )
 		{
 			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), 1);
-			sem_post(&sem_disque);
+			sem_post(sem_disque);
 		}
 		if( !strcmp(commande, "logdf") )
 		{
 			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
-			sem_post(&sem_disque);
+			sem_post(sem_disque);
 		}
 		else if( !strcmp(commande, "presence_carton") )
 		{
@@ -102,7 +102,7 @@ void simulation(statut_t* statut, sem_t erreur, sem_t windows, sem_t disque, sem
 		else if( !strcmp(commande, "clapet_ouvert") )
 		{
 			*shm_statut[ ST_CLAPET_OUVERT ] = 1;
-			sem_post( &sem_clapet );
+			sem_post( sem_clapet );
 			pthread_join( t_envoie_piece, NULL );
 		}
 		else if( !strcmp(commande, "clapet_ferme") )
