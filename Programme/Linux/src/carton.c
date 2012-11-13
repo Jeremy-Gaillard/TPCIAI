@@ -5,14 +5,14 @@
 #include "config.h"
 #include "prod_utils.h"
 
-int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
-            sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
+int carton( sem_t sem_piece, sem_t sem_carton, sem_t sem_erreur_carton,
             statut_t shm_statut ){
 	int nb_piece = 0;
 	int nb_carton = 0;
 	int nb_rebus =0;
 	int place_file_attente;
-
+	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
+	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 	for( ; ; ){
 		/* attente piece */
 		sem_wait( &sem_piece ); 
@@ -22,7 +22,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 		 envoi d'un message d'erreur avec hhmmss et type erreur
 		 puis attente sur semaphore de reprise d'erreur*/
 		 		
-			gerer_erreur(ERR_PAS_DE_CARTON, bal_erreur, mqd_t bal_log_disque );
+			gerer_erreur(ERR_PAS_DE_CARTON );
 			sem_wait( &sem_erreur_carton );
 		}
 		/*end of absence carton*/
@@ -35,7 +35,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				 envoie d'un message d'erreur avec hhmmss et type erreur
 				 puis attente sur semaphore de reprise d'erreur*/
 
-					gerer_erreur(ERR_IMPRIMANTE_KO, bal_erreur, mqd_t bal_log_disque );
+					gerer_erreur(ERR_IMPRIMANTE_KO );
 					sem_wait( &sem_erreur_carton );
 				}
 				/*end of if imprimante HS*/
@@ -46,7 +46,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				 envoie d'un message d'erreur avec hhmmss et type erreur
 				 puis attente sur semaphore de reprise d'erreur*/
 				 
-					gerer_erreur(ERR_FILE_D_ATTENTE, bal_erreur, mqd_t bal_log_disque );
+					gerer_erreur(ERR_FILE_D_ATTENTE );
 					sem_wait( &sem_erreur_carton );
 				}
 				/*end of if file attente pleine*/
@@ -63,7 +63,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 				int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
 				char* message= malloc(30);/*id erreur(int=15) + heure (=6) + +erreur (2) +reste ressage (7) = 16*/
 				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
-				
+
 				mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
 				mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
 				/*fin envoi logs*/
@@ -85,7 +85,7 @@ int carton( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 			 puis attente sur semaphore de reprise d'erreur
 			 puis on jette le carton en cours*/
 			 	
-				gerer_erreur(ERR_TROP_DE_REBUS, bal_erreur, mqd_t bal_log_disque );
+				gerer_erreur(ERR_TROP_DE_REBUS );
 				sem_wait( &sem_erreur_carton );
 
 				nb_piece = 0;

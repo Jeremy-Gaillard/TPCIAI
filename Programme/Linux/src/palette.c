@@ -7,17 +7,17 @@
 #include "config.h"
 #include "prod_utils.h"
 
-int palette( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
-             sem_t sem_carton, sem_t sem_palette, sem_t sem_erreur_palette,
+int palette( sem_t sem_carton, sem_t sem_palette, sem_t sem_erreur_palette,
              statut_t shm_statut , lot_t shm_lot ){
-	
+	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
+	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);	
 	int nb_carton = 0;
 	int nb_palette = 0;
 	for ( ; ; ){
 		sem_wait( &sem_carton );
 		if ( nb_carton == 0 && shm_statut[ ST_PRESENCE_PALETTE ] != 1 ){
 			
-			gerer_erreur( ERR_ABSENCE_PALETTE, bal_erreur, mqd_t bal_log_disque  );
+			gerer_erreur( ERR_ABSENCE_PALETTE);
 			sem_wait( &sem_erreur_palette );
 		}/*end if palette absente*/
 		
@@ -25,7 +25,7 @@ int palette( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 		if ( nb_carton == PALETTE_PLEINE ){
 			if ( shm_statut[ ST_FILM ] != 1 ){
 
-				gerer_erreur( ERR_FILM_KO, bal_erreur, mqd_t bal_log_disque  );
+				gerer_erreur( ERR_FILM_KO );
 				sem_wait( &sem_erreur_palette );	
 			}/*end if film_KO*/
 			
@@ -42,7 +42,6 @@ int palette( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 			char* message= malloc(28);/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
 
 			sprintf(message, "L P %d %s", nb_palette,heure);
-			
 			mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
 			mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
 			/*fin envoi logs*/
