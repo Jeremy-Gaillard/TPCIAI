@@ -17,7 +17,7 @@ int palette( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 		sem_wait( &sem_carton );
 		if ( nb_carton == 0 && shm_statut[ ST_PRESENCE_PALETTE ] != 1 ){
 			
-			gerer_erreur( ERR_ABSENCE_PALETTE, bal_erreur );
+			gerer_erreur( ERR_ABSENCE_PALETTE, bal_erreur, mqd_t bal_log_disque  );
 			sem_wait( &sem_erreur_palette );
 		}/*end if palette absente*/
 		
@@ -25,7 +25,7 @@ int palette( mqd_t bal_erreur, mqd_t bal_log_disque, mqd_t bal_log_windows,
 		if ( nb_carton == PALETTE_PLEINE ){
 			if ( shm_statut[ ST_FILM ] != 1 ){
 
-				gerer_erreur( ERR_FILM_KO, bal_erreur );
+				gerer_erreur( ERR_FILM_KO, bal_erreur, mqd_t bal_log_disque  );
 				sem_wait( &sem_erreur_palette );	
 			}/*end if film_KO*/
 			
