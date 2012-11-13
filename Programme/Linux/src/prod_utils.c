@@ -6,6 +6,13 @@
 #include "config.h"
 #include "prod_utils.h"
 
+
+void fin_production(int signum)
+{
+	printf("PRODUTION: signal %d reçu\n", signum);
+	pthread_exit( 0 );
+}
+
 void gerer_erreur( int erreur_id,
                    sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque )
 {
