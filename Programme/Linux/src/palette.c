@@ -8,9 +8,7 @@
 #include "prod_utils.h"
 
 int palette( sem_t sem_carton, sem_t sem_palette, sem_t sem_erreur_palette,
-             statut_t shm_statut , lot_t shm_lot ){
-	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
-	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);	
+             statut_t shm_statut , lot_t shm_lot ){	
 	int nb_carton = 0;
 	int nb_palette = 0;
 	for ( ; ; ){
@@ -30,21 +28,6 @@ int palette( sem_t sem_carton, sem_t sem_palette, sem_t sem_erreur_palette,
 			}/*end if film_KO*/
 			
 			nb_palette += 1;
-
-			/*envoi logs*/
-			char heure[7];
-			time_t rawtime;
-			struct tm * timeinfo;
-			time ( &rawtime );
-			timeinfo = localtime ( &rawtime );
-			strftime ( heure, 7, "%H%M%S", timeinfo );
-	
-			char* message= malloc(28);/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
-
-			sprintf(message, "L P %d %s", nb_palette,heure);
-			mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
-			mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
-			/*fin envoi logs*/
 			 
 			sem_post( &sem_palette );
 			nb_carton = 0;
