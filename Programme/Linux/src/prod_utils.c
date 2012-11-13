@@ -9,7 +9,7 @@
 
 void fin_production(int signum)
 {
-	printf("PRODUTION: signal %d reçu\n", signum);
+	printf("PRODUCTION: signal %d reçu\n", signum);
 	pthread_exit( 0 );
 }
 
