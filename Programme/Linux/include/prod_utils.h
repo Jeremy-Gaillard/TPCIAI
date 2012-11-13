@@ -20,8 +20,7 @@ typedef struct arg_carton
   sem_t* sem_erreur_carton;
 } arg_carton_t;
 
-
-
+void fin_production(int signum)
 
 int carton( arg_carton_t args );
 
