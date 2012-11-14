@@ -68,6 +68,7 @@ int palette();
 
 int cariste();
 
-void gerer_erreur( int erreur_id );
+void gerer_erreur( int erreur_id,
+                   sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque );
 
 #endif
