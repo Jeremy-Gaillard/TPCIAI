@@ -10,15 +10,6 @@
 #include "prod_utils.h"
 
 
-static sem_t* sem_AU;
-
-
-void AU_carton(int signum)
-{
-	printf("PRODUCTION: CARTON: ARRET D'URGENCE !\n");
-	sem_wait(sem_AU);
-}
-
 int carton( arg_carton_t* args ){
 
 	/* Récupération des ressources */
@@ -35,15 +26,13 @@ int carton( arg_carton_t* args ){
 	sem_t* sem_carton = args->sem_carton;
 	sem_t* sem_erreur_carton = args->sem_erreur_carton;
 
-	sem_AU = args->sem_AU;
-
 	/* Définition des handlers */	
 	struct sigaction handler_USR2;
 	handler_USR2.sa_handler = fin_production;
 	sigaction( SIGUSR2, &handler_USR2, NULL );
 
 	struct sigaction handler_USR1;
-	handler_USR1.sa_handler = AU_carton;
+	handler_USR1.sa_handler = arret_urgence_prod;
 	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
 	sigaction( SIGUSR1, &handler_USR1, NULL );
 

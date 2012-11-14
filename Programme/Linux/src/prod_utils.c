@@ -10,6 +10,16 @@
 #include "prod_utils.h"
 
 
+void init_prod( arg_prod_t* args )
+{
+	sem_AU = args->sem_AU;
+}
+
+void arret_urgence_prod(int signum) {
+	printf("PRODUCTION: ARRÊT D'URGENCE !\n");
+	sem_wait(sem_AU);
+}
+
 void fin_production(int signum)
 {
 	printf("PRODUCTION: signal %d reçu\n", signum);
