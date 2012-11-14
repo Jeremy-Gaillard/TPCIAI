@@ -17,20 +17,36 @@
 #include "commande_windows.h"
 
 static sem_t* sem_clapet;
+static sem_t* sem_piece;
 static statut_t* shm_statut;
+static pthread_t t_envoi_piece;
 
 void fin_simulation(int signum)
 {
-	printf("Catching : %i\n", signum);
+	printf("Simulation catching : %i\n", signum);
+	pthread_join( t_envoi_piece, NULL );
+	printf("Envoi piece termine! Fin simulation");
 	pthread_exit( 0 );
 }
 
-void test_clapet()
+void fin_envoi_piece(int signum)
 {
-	sem_wait( sem_clapet );
-	printf("Yay\n");
-	sem_wait( sem_clapet );
-	printf("Yay\n");
+	printf("Envoi piece catching : %i\n", signum);
+	pthread_exit( 0 );
+}
+
+void envoi_piece()
+{
+	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
+	struct sigaction handler_USR2;
+	handler_USR2.sa_handler = fin_envoi_piece;
+	sigaction ( SIGUSR2, &handler_USR2, NULL );
+	
+	for( ; ; )
+	{
+		sem_post( sem_piece );
+		sleep(10);
+	}
 	pthread_exit( 0 );
 }
 
@@ -43,13 +59,13 @@ void simulation(arg_simulation_t* ipc)
 	
 	shm_statut = ipc->statut;
 	sem_clapet = ipc->clapet;
+	sem_piece = ipc->piece;
 	sem_t* sem_disque = ipc->disque;
 	sem_t* sem_windows = ipc->windows;
 	sem_t* sem_erreur = ipc->erreur;
-	pthread_t t_envoie_piece;
 	
 	
-	pthread_create( &t_envoie_piece, NULL, (void*) test_clapet, NULL );
+	pthread_create( &t_envoi_piece, NULL, (void*) envoi_piece, NULL );
 	
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
