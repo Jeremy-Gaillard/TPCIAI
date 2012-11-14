@@ -44,7 +44,7 @@ void log_windows(sem_t* windows)
 	{
 		sem_wait(sem_bal_log_windows);
 		mq_receive(bal_log_windows, (void*) &message, sizeof(log_t), NULL);
-		envoyer(message);
+		//envoyer(message);
 	}
 	while( strcmp(message, TRAME_FIN) );
 	printf("Fin log win\n");

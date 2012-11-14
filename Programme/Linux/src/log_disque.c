@@ -100,7 +100,7 @@ void log_disque(sem_t* disque)
 			}
 			if( log[0] != '\0' )
 			{
-				fprintf(fichier_log, "log_disque : %s\n", log);
+				fprintf(fichier_log, "%s\n", log);
 			}
 		}
 	}

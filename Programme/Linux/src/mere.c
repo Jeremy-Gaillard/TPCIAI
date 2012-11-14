@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	
 	/*----------------------------------------------------Initialisation--------------------------------------------------*/
 
-	server(32768);
+	//server(32768);
 	
 	/*priorite de la mere*/
 	struct sched_param mere_param;
@@ -236,7 +236,6 @@ int main(int argc, char** argv)
 	free( shm_lot );
 	free( shm_entrepot );
 	free( shm_statut );
-	
 	/*Mutex*/
 	pthread_mutex_destroy( &mutex_entrepot );
 	
