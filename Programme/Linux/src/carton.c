@@ -90,13 +90,13 @@ int carton( arg_carton_t* args ){
 				timeinfo = localtime ( &rawtime );
 				strftime ( heure, 7, "%H%M%S", timeinfo );
 				int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
-				char* message= malloc(30);/*id erreur(int=15) + heure (=6) + +erreur (2) +reste ressage (7) = 16*/
-				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
+				log_t* message= malloc(sizeof(log_t));/*id erreur(int=15) + heure (=6) + +erreur (2) +reste ressage (7) = 16*/
+				sprintf(*message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
 
-				mq_send( bal_log_disque, message, sizeof( message ),
+				mq_send( bal_log_disque, *message, sizeof( log_t ),
 				         BAL_PRIO_ELSE );
 				sem_post( sem_bal_log_disque );
-				mq_send( bal_log_windows, message, sizeof( message ),
+				mq_send( bal_log_windows, *message, sizeof( log_t ),
 				         BAL_PRIO_ELSE );
 				sem_post( sem_bal_log_win );
 				/*fin envoi logs*/
