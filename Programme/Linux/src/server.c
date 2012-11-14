@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <pthread.h>
 
 #define MSG_MAX_SIZE 256
 
@@ -21,19 +22,35 @@ socklen_t clilen;
 struct sockaddr_in serv_addr, cli_addr;
 int n;
 
+int host_server(int portno);
+int server(int portno);
+
 int main(int argc, char* argv[])
 {
   if (argc < 2) {
     fprintf(stderr, "ERROR, no port provided\n");
     exit(1);
   }
+  int portno = atoi(argv[1]);
+  
+  host_server(atoi(argv[1]));
+  //server(portno);
+}
+/*
+int server(int portno)
+{
+  pthread_t t_server;
+  pthread_create( &t_server, NULL, (void*) host_server, (void*) portno );
+}
+*/
+int host_server(int portno)
+{
   printf("Launching server...\n"); 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0)
     error("ERROR opening socket");
 
   bzero( (char*)&serv_addr, sizeof(serv_addr) );
-  portno = atoi(argv[1]);
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = INADDR_ANY;
