@@ -197,7 +197,7 @@ public class Commande extends javax.swing.JFrame {
             try {
                 String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
                 //System.out.println(commande);
-                app.error("The server responded...", app.network.send_message(commande));
+                app.network.send_message(commande);
                 this.dispose();
             } catch (IOException ex) {
                 app.error("IO Exception", "Could not send the command to the host!");
