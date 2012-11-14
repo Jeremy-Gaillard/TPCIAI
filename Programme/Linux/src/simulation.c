@@ -136,7 +136,7 @@ void simulation(arg_simulation_t* ipc)
 		{
 			*shm_statut[ ST_CLAPET_OUVERT ] = 1;
 			sem_post( sem_clapet );
-			pthread_join( t_envoie_piece, NULL );
+			pthread_join( t_envoi_piece, NULL );
 		}
 		else if( !strcmp(commande, "clapet_ferme") )
 		{
