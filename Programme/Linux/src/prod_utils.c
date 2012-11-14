@@ -27,10 +27,10 @@ void gerer_erreur( int erreur_id,
 	timeinfo = localtime ( &rawtime );
 	strftime ( heure, 7, "%H%M%S", timeinfo );
 	char* message_erreur= malloc(22);/*id erreur(int=15) + heure (=6) + 1 = 22*/
-	sprintf(message_erreur, "%d %s", id,heure);
+	sprintf(message_erreur, "%d %s", erreur_id,heure);
 
 	char* message_log= malloc(22);/*2+ id erreur(int=15) + heure (=6) + 1 = 22*/
-	sprintf(message_log, "E %d %s", id,heure);
+	sprintf(message_log, "E %d %s", erreur_id,heure);
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mq_send( bal_erreur, message_erreur, sizeof( message_erreur ),
