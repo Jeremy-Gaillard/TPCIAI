@@ -208,15 +208,15 @@ int main(int argc, char** argv)
 	pthread_kill(t_envoi_piece, SIGUSR2);
 	pthread_join(t_envoi_piece, NULL);
 	
-	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), 2);
+	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), BAL_PRIO_FIN);
 	sem_post(&sem_bal_erreur);
 	pthread_join( t_erreur, NULL );
 	
-	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
+	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
 	sem_post(&sem_bal_log_disque);
 	pthread_join( t_log_disque, NULL );
 	
-	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), 2 );
+	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
 	sem_post(&sem_bal_log_windows);
 	pthread_join( t_log_windows, NULL );
 	

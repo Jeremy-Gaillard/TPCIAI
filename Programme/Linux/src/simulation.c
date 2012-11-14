@@ -73,12 +73,12 @@ void simulation(arg_simulation_t* ipc)
 		scanf("%s", commande);
 		if( !strcmp(commande, "logd") )
 		{
-			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), 1);
+			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), BAL_PRIO_ELSE);
 			sem_post(sem_disque);
 		}
 		if( !strcmp(commande, "logdf") )
 		{
-			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), 2 );
+			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
 			sem_post(sem_disque);
 		}
 		else if( !strcmp(commande, "presence_carton") )
