@@ -30,6 +30,7 @@ void fin_production(int signum)
 void gerer_erreur( int erreur_id,
                    sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque )
 {
+	printf("err: %d\n", erreur_id);
 	char heure[7];
 	time_t rawtime;
 	struct tm * timeinfo;
@@ -37,17 +38,16 @@ void gerer_erreur( int erreur_id,
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	strftime ( heure, 7, "%H%M%S", timeinfo );
-	char* message_erreur= malloc(22);/*id erreur(int=15) + heure (=6) + 1 = 22*/
-	sprintf(message_erreur, "%d %s", erreur_id,heure);
+	erreur_t* message_erreur= malloc(sizeof(erreur_t));/*id erreur(int=15) + heure (=6) + 1 = 22*/
+	sprintf(*message_erreur, "%d %s", erreur_id,heure);
 
-	char* message_log= malloc(22);/*2+ id erreur(int=15) + heure (=6) + 1 = 22*/
-	sprintf(message_log, "E %d %s", erreur_id,heure);
+	log_t* message_log= malloc(sizeof(log_t));/*2+ id erreur(int=15) + heure (=6) + 1 = 22*/
+	sprintf(*message_log, "E %d %s", erreur_id,heure);
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mq_send( bal_erreur, message_erreur, sizeof( message_erreur ),
 	         BAL_PRIO_ELSE );
 	sem_post(sem_bal_erreur);
 	mq_send( bal_log_disque, message_log, sizeof( message_log ),
-	         BAL_PRIO_ELSE );
 	sem_post(sem_bal_log_disque);
 }
