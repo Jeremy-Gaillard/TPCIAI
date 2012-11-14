@@ -125,6 +125,7 @@ int main(int argc, char** argv)
 	simulation_arg.windows = &sem_bal_log_windows;
 	simulation_arg.disque = &sem_bal_log_disque;
 	simulation_arg.clapet = &sem_clapet;
+	simulation_arg.piece = &sem_piece;
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, (void*) &sem_bal_log_disque );
 	
 	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );
