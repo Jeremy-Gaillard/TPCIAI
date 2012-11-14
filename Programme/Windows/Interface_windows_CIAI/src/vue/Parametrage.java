@@ -5,6 +5,7 @@
 package vue;
 
 import interface_windows_ciai.Interface_windows_CIAI;
+import java.io.IOException;
 
 /**
  *
@@ -144,6 +145,14 @@ public class Parametrage extends javax.swing.JFrame {
             }
             else
             {
+                try {
+                    String parametrage_lot = "0 " + nb_palette_commande_A + " " + nb_palette_commande_B + " " +  pourcentage;
+                    app.error("The server responded...", app.network.send_message(parametrage_lot));
+                    this.dispose();
+                } catch (IOException ex) {
+                    app.error("IO Exception", "Could not send the command to the host!");
+                    ex.printStackTrace(System.err);
+                }    
                 //ouverture de la fenêtre de suivi
                 Suivi fv = new Suivi(app);
                 fv.setVisible(true);

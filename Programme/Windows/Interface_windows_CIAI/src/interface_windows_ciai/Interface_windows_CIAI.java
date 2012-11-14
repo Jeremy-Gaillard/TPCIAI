@@ -31,8 +31,6 @@ public class Interface_windows_CIAI {
     public static void main(String[] args) throws UnknownHostException, IOException {
         // TODO code application logic here
         new Interface_windows_CIAI();
-        //Identification fi = new Identification(null);
-        //fi.setVisible(true);  
     }
     
     public void error(String title, String msg, Exception ex) {

@@ -85,7 +85,7 @@ public class NetworkInterface {
 		return resp;
 	}
 
-	public void listen_messages() throws IOException {
+	public String listen_messages() throws IOException {
             System.out.println("Starting server socket...");
             server = new ServerSocket(32767);
             Socket clientSocket = null;
@@ -120,6 +120,7 @@ public class NetworkInterface {
             //System.out.println(sb.toString());
             String msg = sb.toString();
             System.out.println("Received message: '"+msg+"'");
+            return msg;
 	}
         
         @Override
