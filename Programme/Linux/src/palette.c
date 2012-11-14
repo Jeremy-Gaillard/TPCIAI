@@ -45,6 +45,7 @@ int palette( arg_palette_t* args ){
  	/*Création du Handler d'arret d urgence et démasquage de SIGUSR1*/
 	struct sigaction handler_USR1;
 	handler_USR1.sa_handler = AU_palette;
+	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
 	sigaction ( SIGUSR1, &handler_USR1, NULL );
 
 	/* Création des variables locales */
