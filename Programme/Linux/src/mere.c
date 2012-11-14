@@ -21,7 +21,7 @@
 #include "log_windows.h"
 #include "erreur.h"
 #include "commande_windows.h"
-#include "prod_utils.h"
+#include "prod_utils.h"	
 
 
 
@@ -116,7 +116,6 @@ int main(int argc, char** argv)
 	carton_arg.sem_piece = &sem_piece;
 	carton_arg.sem_carton = &sem_carton;
 	carton_arg.sem_erreur_carton = &sem_erreur_carton;
-	carton_arg.sem_AU = &sem_AU;
 	pthread_create( &t_carton, NULL, (void*) carton, (void*) &carton_arg );
 
 	arg_simulation_t simulation_arg;
@@ -140,7 +139,6 @@ int main(int argc, char** argv)
 	palette_arg.sem_carton = &sem_carton;
 	palette_arg.sem_palette = &sem_palette;
   	palette_arg.sem_erreur_palette = &sem_erreur_palette;
-	palette_arg.sem_AU = &sem_AU;
 	pthread_create( &t_palette, NULL, (void*) palette, (void*) &palette_arg );
 	
 	arg_cariste_t cariste_arg;
@@ -170,9 +168,8 @@ int main(int argc, char** argv)
 	windows_arg.clapet = &sem_clapet;
 	pthread_create( &t_commande_windows, NULL, (void*) commande_windows, (void*) &windows_arg );
 	
-	printf("lol\n");
 	pthread_create( &t_envoi_piece, NULL, (void*) envoi_piece, (void*) &sem_piece );
-	printf("lol\n");
+	
 	/*---------------------------------------------------------Moteur----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );
 	pthread_kill( t_simulation, SIGUSR2 );
