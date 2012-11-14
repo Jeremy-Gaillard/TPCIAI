@@ -62,12 +62,12 @@ void arret_urgence_prod(int signum);
 
 
 void AU_carton( int signum);
-int carton( arg_carton_t args );
+int carton( arg_carton_t* args );
 
 void AU_palette( int signum );
-int palette();
+int palette( arg_palette_t* args );
 
-int cariste();
+int cariste( arg_cariste_t* args );
 
 void gerer_erreur( int erreur_id,
                    sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque );

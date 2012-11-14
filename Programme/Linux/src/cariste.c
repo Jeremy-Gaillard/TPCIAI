@@ -10,22 +10,22 @@
 #include "config.h"
 #include "prod_utils.h"
  
- int cariste( arg_cariste_t args ){
+int cariste( arg_cariste_t* args ){
 	
 	/* Récupération des ressources */
 
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 
-	lot_t* shm_lot = args.shm_lot;
-	entrepot_t* shm_entrepot = args.shm_entrepot;
+	lot_t* shm_lot = args->shm_lot;
+	entrepot_t* shm_entrepot = args->shm_entrepot;
 
-	pthread_mutex_t* mutex_entrepot = args.mutex_entrepot;
-	sem_t* sem_palette = args.sem_palette;
+	pthread_mutex_t* mutex_entrepot = args->mutex_entrepot;
+	sem_t* sem_palette = args->sem_palette;
 
-	/* sem_t* sem_bal_erreur = args.bal_erreur; */
-	sem_t* sem_bal_log_win = args.bal_log_win;
-	sem_t* sem_bal_log_disque = args.bal_log_disque;
+	/* sem_t* sem_bal_erreur = args->bal_erreur; */
+	sem_t* sem_bal_log_win = args->bal_log_win;
+	sem_t* sem_bal_log_disque = args->bal_log_disque;
 
  	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
 	struct sigaction handler_USR2;
