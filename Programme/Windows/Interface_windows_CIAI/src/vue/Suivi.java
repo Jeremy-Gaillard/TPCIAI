@@ -8,8 +8,10 @@ import interface_windows_ciai.Carton;
 import interface_windows_ciai.Interface_windows_CIAI;
 import interface_windows_ciai.Palette;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ListModel;
 
 /**
  *
@@ -18,16 +20,20 @@ import java.util.logging.Logger;
 public class Suivi extends javax.swing.JFrame {
 
     Interface_windows_CIAI app;
+    String[] liste_palette;
     
     /**
      * Creates new form Suivi
      */
     public Suivi(Interface_windows_CIAI inter) {
-        String msg ="";
-        String id_message = "";
+        String msg ="";       
+        Palette test_palette = new Palette(1, 5);
         app = inter;
         setLocationByPlatform(true);
         initComponents();
+        liste_palette = new String[10];
+        liste_palette[1] = test_palette.Definition();
+        j_palette.setListData(liste_palette);
         for(;;){
             try {
                 msg = app.network.listen_messages();
@@ -48,7 +54,7 @@ public class Suivi extends javax.swing.JFrame {
             }
             else if ("L P".equals(msg.substring(0, 3))){
                 //Reception d'une palette
-                Palette palette = new Palette();
+                Palette palette = new Palette(1, 5);
             }
         }
     }
@@ -69,9 +75,9 @@ public class Suivi extends javax.swing.JFrame {
         B_arret = new javax.swing.JButton();
         j_erreur = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        j_palette = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList();
+        j_carton = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -102,19 +108,14 @@ public class Suivi extends javax.swing.JFrame {
 
         j_erreur.setText("Pas d'erreur detectée");
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(j_palette);
 
-        jList2.setModel(new javax.swing.AbstractListModel() {
+        j_carton.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(jList2);
+        jScrollPane2.setViewportView(j_carton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -186,7 +187,7 @@ public class Suivi extends javax.swing.JFrame {
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         System.out.println("Message de reprise");
         try {
-            app.error("The server responded...", app.network.send_message("2")); //AJouter ici l'id de l'erreur
+            app.error("The server responded...", app.network.send_message("2")); //Ajouter ici l'id de l'erreur
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
@@ -219,10 +220,10 @@ public class Suivi extends javax.swing.JFrame {
     private javax.swing.JButton B_reprise;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JList jList1;
-    private javax.swing.JList jList2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList j_carton;
     private javax.swing.JLabel j_erreur;
+    private javax.swing.JList j_palette;
     // End of variables declaration//GEN-END:variables
 }
