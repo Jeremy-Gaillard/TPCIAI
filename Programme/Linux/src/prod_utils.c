@@ -51,4 +51,5 @@ void gerer_erreur( int erreur_id,
 	mq_send( bal_log_disque, *message_log, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	sem_post(sem_bal_log_disque);
+	printf("message sent\n");
 }

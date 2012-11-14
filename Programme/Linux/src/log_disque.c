@@ -66,30 +66,28 @@ void log_disque(sem_t* disque)
 					}
 					break;
 				case 'E':
-					log_t logtemp;
-					sprintf( logtemp, "Erreur : ");
 					switch (message[2] - '0')
 					{
 						case ERR_AU:
-							sprintf( log, "%s arrêt d'urgence", logtemp );
+							sprintf( log, "Erreur : arrêt d'urgence" );
 							break;
 						case ERR_TROP_DE_REBUS:
-							sprintf( log, "%s trop de rebusn", logtemp );
+							sprintf( log, "Erreur : trop de rebusn" );
 							break;
 						case ERR_PAS_DE_CARTON:
-							sprintf( log, "%s plus de carton", logtemp );
+							sprintf( log, "Erreur : plus de carton");
 							break;
 						case ERR_IMPRIMANTE_KO:
-							sprintf( log, "%s imprimante hors service", logtemp );
+							sprintf( log, "Erreur : imprimante hors service" );
 							break;
 						case ERR_FILE_D_ATTENTE:
-							sprintf( log, "%s trop de carton en attente d'être empaletté", logtemp );
+							sprintf( log, "Erreur : trop de carton en attente d'être empaletté" );
 							break;
 						case ERR_PAS_DE_PALETTE:
-							sprintf( log, "%s plus de palette", logtemp);
+							sprintf( log, "Erreur : plus de palette");
 							break;
 						case ERR_FILM_KO:
-							sprintf( log, "%s dysfonction du film palette", logtemp);
+							sprintf( log, "Erreur : dysfonction du film palette");
 							break;
 						default:
 							log[0] = '\0';
