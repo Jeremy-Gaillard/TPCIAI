@@ -25,17 +25,17 @@ int carton( arg_carton_t* args ){
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 
-	statut_t* shm_statut = args.shm_statut;
+	statut_t* shm_statut = args->shm_statut;
 
-	sem_t* sem_bal_erreur = args.bal_erreur;
-	sem_t* sem_bal_log_win = args.bal_log_win;
-	sem_t* sem_bal_log_disque = args.bal_log_disque;
+	sem_t* sem_bal_erreur = args->bal_erreur;
+	sem_t* sem_bal_log_win = args->bal_log_win;
+	sem_t* sem_bal_log_disque = args->bal_log_disque;
 
-	sem_t* sem_piece = args.sem_piece;
-	sem_t* sem_carton = args.sem_carton;
-	sem_t* sem_erreur_carton = args.sem_erreur_carton;
+	sem_t* sem_piece = args->sem_piece;
+	sem_t* sem_carton = args->sem_carton;
+	sem_t* sem_erreur_carton = args->sem_erreur_carton;
 
-	sem_AU = args.sem_AU;
+	sem_AU = args->sem_AU;
 
 	/* Définition des handlers */	
 	struct sigaction handler_USR2;

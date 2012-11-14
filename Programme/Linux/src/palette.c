@@ -25,17 +25,17 @@ int palette( arg_palette_t* args ){
 	/* mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY); */
 
 	statut_t* shm_statut = args.shm_statut;
-	lot_t* shm_lot = args.shm_lot;
+	lot_t* shm_lot = args->shm_lot;
 
-	sem_t* sem_bal_erreur = args.bal_erreur;
-	/* sem_t* sem_bal_log_win = args.bal_log_win; */
-	sem_t* sem_bal_log_disque = args.bal_log_disque;
+	sem_t* sem_bal_erreur = args->bal_erreur;
+	/* sem_t* sem_bal_log_win = args->bal_log_win; */
+	sem_t* sem_bal_log_disque = args->bal_log_disque;
 
-	sem_t* sem_carton = args.sem_carton;
-	sem_t* sem_palette = args.sem_palette;
-	sem_t* sem_erreur_palette = args.sem_erreur_palette;
+	sem_t* sem_carton = args->sem_carton;
+	sem_t* sem_palette = args->sem_palette;
+	sem_t* sem_erreur_palette = args->sem_erreur_palette;
 
-	sem_AU = args.sem_AU;
+	sem_AU = args->sem_AU;
 
 	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
 	struct sigaction handler_USR2;
