@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ListModel;
 
 /**
  *
@@ -20,14 +19,16 @@ import javax.swing.ListModel;
  */
 public class Suivi extends javax.swing.JFrame {
     
-    int MAXPAL=100;
+    //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
+    int MAXPAL = 100;
     Interface_windows_CIAI app;
+    /*Utilisé pour avoir un bon format dans les listes*/
     String[] liste_def_palette;
     String[] liste_def_carton;
     Palette[] liste_palette;
     List liste_carton = new LinkedList();
     /**
-     * Creates new form Suivi
+     * Creation d'une nouvelle forme Suivi
      */
     public Suivi(Interface_windows_CIAI inter) {
         int i = 0;
@@ -40,6 +41,7 @@ public class Suivi extends javax.swing.JFrame {
         liste_def_palette[i] = test_palette.ToString();
         j_palette.setListData(liste_def_palette);
         for(;;){
+            /*Boucle infinie pour écouter les messages provenant de Linux*/
             try {
                 msg = app.network.listen_messages();
             } catch (IOException ex) {
@@ -54,7 +56,7 @@ public class Suivi extends javax.swing.JFrame {
                 j_erreur.setText("erreur détectée");
             }
             else if ("L C".equals(msg.substring(0, 3))){
-                //Reception d'un carton
+                //Reception d'un carton et ajout dans sa palette
                 
                 String decoupe[] = msg.split(" ");
                 int id_carton = Integer.parseInt(decoupe[2]);
@@ -72,9 +74,12 @@ public class Suivi extends javax.swing.JFrame {
                 
                 String decoupe[] = msg.split(" ");
                 int id_palette = Integer.parseInt(decoupe[2]);
-                int horaire = Integer.parseInt(decoupe[3]);               
+                int horaire = Integer.parseInt(decoupe[3]); 
+                
                 Palette palette = new Palette(id_palette, horaire);
                 liste_palette[i] = palette;
+                
+                //MAJ de la liste de palettes
                 liste_def_palette[i] = test_palette.ToString();
                 j_palette.setListData(liste_def_palette);
             }
@@ -204,14 +209,22 @@ public class Suivi extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    /*
+     * ouverure de la fenêtre commande
+     * 
+     */
     private void B_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_commandeActionPerformed
-        // TODO add your handling code here:
+        // Envoi d'une commande
         System.out.println("Commande");
         Commande fc = new Commande(app);
         fc.setVisible(true);
     }//GEN-LAST:event_B_commandeActionPerformed
 
+    /*
+     * Envoi d'un message de reprise après une erreur.
+     * 
+     */
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         System.out.println("Message de reprise");
         try {
@@ -221,18 +234,26 @@ public class Suivi extends javax.swing.JFrame {
             ex.printStackTrace(System.err);
         }
     }//GEN-LAST:event_B_repriseActionPerformed
-
+    
+    /*
+     * Envoi d'un message d'arrêt de production après une erreur.
+     * 
+     */
     private void B_arretActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_arretActionPerformed
         System.out.println("Message d'arrêt");
         try {
-            app.error("The server responded...", app.network.send_message("3"));
+            app.network.send_message("3");
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
         }        
     }//GEN-LAST:event_B_arretActionPerformed
-
+    /*
+     * Selection d'une palette dans la liste
+     * 
+     */
     private void j_paletteValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_j_paletteValueChanged
+        
         int index_palette = j_palette.getSelectedIndex();
         liste_carton = liste_palette[index_palette].getListeCarton();
         for(int j = 0; j < liste_carton.size(); j++){

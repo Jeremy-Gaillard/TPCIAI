@@ -10,43 +10,18 @@ import java.net.UnknownHostException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class NetworkInterface {
-    
-        public class HelloThread extends Thread {
-            
-            NetworkInterface network;
-            public HelloThread(NetworkInterface network) {
-                this.network = network;
-            }
-            public void run() {
-                try {
-                    //System.out.println("Hello from a thread!");
-                    network.listen_messages();
-                } catch (IOException ex) {
-                    Logger.getLogger(NetworkInterface.class.getName()).log(Level.SEVERE, null, ex);
-                    
-                    
-                    
-                    
-                }
-            }
-
-        }
-    
 	Socket client;
 	ServerSocket server;
         
 	public NetworkInterface() throws UnknownHostException, IOException {
             //this("134.214.105.197");
-            this("if219-06.insa-lyon.fr"); // 134.214.161.160
+            this("if219-06.insa-lyon.fr");
         }
 	public NetworkInterface(String ip) throws UnknownHostException, IOException {
             System.out.println("Starting client socket...");
             client = new Socket(ip, 32768);
-            (new HelloThread(this)).start();
 	}
 	/*
 	public void recovery_order() {
@@ -122,11 +97,8 @@ public class NetworkInterface {
             System.out.println("Received message: '"+msg+"'");
             return msg;
 	}
-        
         @Override
-        @SuppressWarnings("FinalizeDeclaration")
         protected void finalize() throws Throwable {
-            System.out.println("Closing sockets...");
             client.close();
             server.close();
             super.finalize();

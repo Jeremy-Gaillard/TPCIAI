@@ -12,7 +12,7 @@ public class Carton {
     int id_carton;
     String type_piece;
     int horaire;
-    int pourcentage;
+    int pourcentage; //de pièces défectueuses durant la réalisation du carton
 
     public Carton(int id_carton, String type_piece, int horaire, int pourcentage) {
         this.id_carton = id_carton;
@@ -20,7 +20,10 @@ public class Carton {
         this.horaire = horaire;
         this.pourcentage = pourcentage;
     }
-    
+    /*
+     * Fonction ToSTring pour récuperer les différents paramètres sous forme d'une string
+     * 
+     */    
     public String ToString(){
         String definition = "Carton "+ this.id_carton + " de type  " + this.type_piece+ 
                 " finie à " + this.horaire + " avec taux de pièces defectueuses " + this.pourcentage;
