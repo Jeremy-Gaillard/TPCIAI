@@ -110,7 +110,6 @@ int main(int argc, char** argv)
 		
 	for ( i = 0; i < 2; i++)
 		(*shm_lot)[i] = 0;
-	printf("shm stat piece %d\n",(*shm_statut)[ ST_PIECE ]);
 	/*Threads*/
 	
 	arg_carton_t carton_arg;
