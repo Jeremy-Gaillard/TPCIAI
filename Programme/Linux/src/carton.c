@@ -70,7 +70,7 @@ int carton( arg_carton_t* args ){
 				/*end of if imprimante HS*/
 				
 				sem_getvalue( sem_carton, &place_file_attente );
-				if ( place_file_attente == 0 ){
+				if ( place_file_attente == 10 ){
 					/*si trop de cartons dans la file d'attente
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
