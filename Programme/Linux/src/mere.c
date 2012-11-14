@@ -42,6 +42,11 @@ int main(int argc, char** argv)
 	
 	/*----------------------------------------------------Initialisation--------------------------------------------------*/
 	
+	/*priorite de la mere*/
+	struct sched_param mere_param;
+	mere_param.sched_priority = PRIO_MERE;
+	pthread_setschedparam(pthread_self(), SCHED_FIFO, &mere_param);
+	
 	/*Définition d'un comportement de masquage de signal*/
 	struct sigaction mask;
 	mask.sa_handler = SIG_IGN;
@@ -169,6 +174,30 @@ int main(int argc, char** argv)
 	pthread_create( &t_commande_windows, NULL, (void*) commande_windows, (void*) &windows_arg );
 	
 	pthread_create( &t_envoi_piece, NULL, (void*) envoi_piece, (void*) &sem_piece );
+	 
+	/*priorites*/
+	struct sched_param erreur_param;
+	struct sched_param carton_param;
+	struct sched_param log_windows_param;
+	struct sched_param palette_param;
+	struct sched_param cariste_param;
+	struct sched_param commande_windows_param;
+	struct sched_param log_disque_param;
+	erreur_param.sched_priority = PRIO_ERREUR;
+	carton_param.sched_priority = PRIO_CARTON;
+	log_windows_param.sched_priority = PRIO_LOG_WINDOWS;
+	palette_param.sched_priority = PRIO_PALETTE;
+	cariste_param.sched_priority = PRIO_CARISTE;
+	commande_windows_param.sched_priority = PRIO_COMMANDE_WINDOWS;
+	log_disque_param.sched_priority = PRIO_LOG_DISQUE;
+	
+	pthread_setschedparam(t_erreur, SCHED_FIFO, &erreur_param);
+	pthread_setschedparam(t_carton, SCHED_FIFO, &carton_param);
+	pthread_setschedparam(t_log_windows, SCHED_FIFO, &log_windows_param);
+	pthread_setschedparam(t_palette, SCHED_FIFO, &palette_param);
+	pthread_setschedparam(t_cariste, SCHED_FIFO, &cariste_param);
+	pthread_setschedparam(t_commande_windows, SCHED_FIFO, &commande_windows_param);
+	pthread_setschedparam(t_log_disque, SCHED_FIFO, &log_disque_param);
 	
 	/*---------------------------------------------------------Moteur----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );

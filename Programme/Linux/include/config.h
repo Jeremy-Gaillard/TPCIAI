@@ -20,6 +20,14 @@
 
 #define NO_PALETTE -1
 
+#define PRIO_MERE 1
+#define PRIO_ERREUR 2
+#define PRIO_CARTON 3
+#define PRIO_LOG_WINDOWS 4
+#define PRIO_PALETTE 5
+#define PRIO_CARISTE 6
+#define PRIO_COMMANDE_WINDOWS 7
+#define PRIO_LOG_DISQUE 8
 		
 typedef char log_t[128];
 typedef int lot_t[2];
