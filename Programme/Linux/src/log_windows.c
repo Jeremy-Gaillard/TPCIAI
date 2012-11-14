@@ -21,16 +21,28 @@
 static int my_socket;
 
 void envoyer(log_t message)
-{
-	int n = write( socket, message, sizeof(log_t) );
+{/*
+	//printf("%d\n",socket);
+	printf("Sending to %d\n",my_socket);
+	printf("%c\n",message[len-2]);
+	//message[len-2] = '\n';
+	//message[len-1] = '\0'; // TODO: fix possible overflow
+	printf("%s\n",message);*/
+	int len = strlen(message);
+	char buffer[len+1]; // alloca POWA
+	strcpy(buffer,message);
+	buffer[len-1] = '\n';
+	//printf("%s\n",buffer);
+	int n = write( my_socket, buffer, len );
 	if (n<0)
 		error("ERROR writing to socket");
 }
 
 void init_log_windows(int asocket)
 {
-	printf("%d",sizeof(log_t));
-	error("");
+	//printf("%d",sizeof(log_t));
+	//error("");
+	//printf(":%d",asocket);
 	my_socket = asocket;
 }
 
