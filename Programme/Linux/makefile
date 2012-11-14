@@ -14,7 +14,7 @@ LINK=gcc -o
 
 EXE=CIAI
 
-OBJ=mere.o log_disque.o log_windows.o simulation.o erreur.o commande_windows.o prod_utils.o carton.o palette.o cariste.o
+OBJ=mere.o log_disque.o log_windows.o simulation.o erreur.o commande_windows.o prod_utils.o carton.o palette.o cariste.o server.o
 
 $(EXE) : $(OBJ)
 	echo Linking $(EXE)
@@ -43,6 +43,8 @@ prod_utils.o : $(SRCDIR)/prod_utils.c $(INCDIR)/prod_utils.h $(INCDIR)/config.h
 
 carton.o : $(SRCDIR)/carton.c $(INCDIR)/prod_utils.h $(INCDIR)/config.h
 	$(COMP) $(CCFLAGS) $(SRCDIR)/carton.c $(SYSLIBS) $(PERSLIBS) 
+
+server.o : $(SRCDIR)/server.c $(INCDIR)/server.h $(INCDIR)/config.h
 
 palette.o : $(SRCDIR)/palette.c $(INCDIR)/prod_utils.h $(INCDIR)/config.h
 	$(COMP) $(CCFLAGS) $(SRCDIR)/palette.c $(SYSLIBS) $(PERSLIBS)
