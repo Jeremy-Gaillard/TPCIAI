@@ -49,5 +49,6 @@ void gerer_erreur( int erreur_id,
 	         BAL_PRIO_ELSE );
 	sem_post(sem_bal_erreur);
 	mq_send( bal_log_disque, message_log, sizeof( message_log ),
+		BAL_PRIO_ELSE );
 	sem_post(sem_bal_log_disque);
 }
