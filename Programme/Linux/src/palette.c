@@ -24,7 +24,7 @@ int palette( arg_palette_t* args ){
 	/* mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY); */
 	/* mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY); */
 
-	statut_t* shm_statut = args.shm_statut;
+	statut_t* shm_statut = args->shm_statut;
 	lot_t* shm_lot = args->shm_lot;
 
 	sem_t* sem_bal_erreur = args->bal_erreur;
