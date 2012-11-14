@@ -10,9 +10,9 @@
 #include "prod_utils.h"
 
 
-void init_prod( arg_prod_t* args )
+void init_prod( sem_t* sem_arret_urgence )
 {
-	sem_AU = args->sem_AU;
+	sem_AU = sem_arret_urgence;
 }
 
 void arret_urgence_prod(int signum) {
