@@ -45,8 +45,13 @@ void envoi_piece(sem_t* sem_piece)
 	sigaction ( SIGUSR2, &handler_USR2, NULL );*/
 	for( ; ; )
 	{
-		sem_post( sem_piece );
-		sleep(1);
+		if( (*shm_statut)[ST_CLAPET_OUVERT] == 1 )
+		{
+			sleep(1);
+			sem_post( sem_piece );
+		}
+		else
+			sem_wait( sem_clapet );
 	}
 	pthread_exit( 0 );
 }
