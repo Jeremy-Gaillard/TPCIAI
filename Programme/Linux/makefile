@@ -35,7 +35,7 @@ log_windows.o : $(SRCDIR)/log_windows.c $(INCDIR)/log_windows.h $(INCDIR)/config
 erreur.o : $(SRCDIR)/erreur.c $(INCDIR)/config.h
 	$(COMP) $(CCFLAGS) $(SRCDIR)/erreur.c $(SYSLIBS) $(PERSLIBS)
 
-#commande_windows.o : $(SRCDIR)/commande_windows.c $(INCDIR)/commande_windows.h $(INCDIR)/config.h
+commande_windows.o : $(SRCDIR)/commande_windows.c $(INCDIR)/commande_windows.h $(INCDIR)/config.h
 
 mere.o : $(SRCDIR)/mere.c $(INCDIR)/config.h
 	$(COMP) $(CCFLAGS) $(SRCDIR)/mere.c $(SYSLIBS) $(PERSLIBS)
