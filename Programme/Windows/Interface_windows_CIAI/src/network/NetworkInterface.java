@@ -55,8 +55,15 @@ network.client_reader =
 	public NetworkInterface(String ip) throws UnknownHostException, IOException {
             //(new ServerInitThread(this)).start();
             System.out.println("Starting client socket...");
-            //client = new Socket(ip, 32768);
-client = new Socket("localhost", 32768);
+            client = new Socket(ip, 32768);
+            //client_reader = new Socket(ip, 32768).get;
+            //client_reader = new BufferedReader(new InputStreamReader(new Socket(ip, 32768).getInputStream()));
+            //Socket clientSocket = client.accept();
+            client_reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            //client_reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            //listen_messages();
+            
+//client = new Socket("localhost", 32768);
 	}
 	/*
 	public void recovery_order() {
@@ -81,7 +88,9 @@ client = new Socket("localhost", 32768);
 		bOStream.flush();
 	}
 
-	public void listen_messages() throws IOException {
+	public String listen_message() throws IOException {
+            //client_reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            
 /*
             System.out.println("Starting server socket...");
             server = new ServerSocket(32767);
@@ -104,12 +113,13 @@ client = new Socket("localhost", 32768);
             if (outputLine.equals("Bye."))
             break;
             }*/
+            System.out.println("Listening...");
 
             StringBuilder sb = new StringBuilder();
             
             char r;
 while ((r = (char) client_reader.read()) != '\n') {
-System.out.println(r);
+//System.out.println(r);
                     sb.append(r);
             }
 /*
@@ -126,6 +136,7 @@ System.out.println((char)r);
             //System.out.println(sb.toString());
             String msg = sb.toString();
             System.out.println("Received message: '"+msg+"'");
+            return msg;
 	}
         @Override
         protected void finalize() throws Throwable {

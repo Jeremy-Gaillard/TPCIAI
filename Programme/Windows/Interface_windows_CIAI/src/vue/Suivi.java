@@ -19,6 +19,28 @@ import java.util.logging.Logger;
  */
 public class Suivi extends javax.swing.JFrame {
     
+    class MessageReceiver extends Thread {
+            Suivi suivi;
+            public MessageReceiver(Suivi suivi) {
+                this.suivi = suivi;
+            }
+            
+            public void run() {
+                System.out.println("Starting message receiver...");
+                while (true) {
+                    try {
+                        String msg = suivi.app.network.listen_message();
+                        
+                        // ...
+                        
+                    } catch (IOException ex) {
+                        System.err.println("Could not establish server socket!");
+                    }
+                }
+            }
+
+        }
+    
     //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
     int MAXPAL = 100;
     Interface_windows_CIAI app;
@@ -31,12 +53,15 @@ public class Suivi extends javax.swing.JFrame {
      * Creation d'une nouvelle forme Suivi
      */
     public Suivi(Interface_windows_CIAI inter) {
-        int i = 0;
-        String msg ="";       
-        Palette test_palette = new Palette(1, "A", 5);
         app = inter;
         setLocationByPlatform(true);
         initComponents();
+        new MessageReceiver(this).start();
+        
+        /*
+        int i = 0;
+        Palette test_palette = new Palette(1, "A", 5);
+        String msg ="";
         liste_def_palette = new String[MAXPAL];
         liste_def_palette[i] = test_palette.ToString();
         j_palette.setListData(liste_def_palette);
@@ -84,7 +109,7 @@ public class Suivi extends javax.swing.JFrame {
                 liste_def_palette[i] = test_palette.ToString();
                 j_palette.setListData(liste_def_palette);
             }
-        }
+        }*/
     }
     
     /**

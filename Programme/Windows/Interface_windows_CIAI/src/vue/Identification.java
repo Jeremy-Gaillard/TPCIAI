@@ -52,8 +52,7 @@ public class Identification extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        j_identification.setText("John-Bob");
-        j_identification.setToolTipText("");
+        j_identification.setText("JB");
 
         jLabel1.setText("Identification");
 
@@ -66,11 +65,11 @@ public class Identification extends javax.swing.JFrame {
             }
         });
 
-        j_mot_de_passe.setText("lolilol");
+        j_mot_de_passe.setText("C");
 
         jLabel3.setText("IP de la machine Linux");
 
-        j_IP_linux.setText("134.214.161.98");
+        j_IP_linux.setText("134.214.161.86");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
