@@ -10,6 +10,9 @@
 #include "prod_utils.h"
 
 
+static sem_t* sem_AU;
+
+
 void AU_carton(int signum)
 {
 	printf("PRODUCTION: CARTON: ARRET D'URGENCE !\n");
@@ -22,7 +25,7 @@ int carton( arg_carton_t args ){
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 
-	statut_t shm_statut = args.shm_statut;
+	statut_t* shm_statut = args.shm_statut;
 
 	sem_t* sem_bal_erreur = args.bal_erreur;
 	sem_t* sem_bal_log_win = args.bal_log_win;
@@ -32,7 +35,7 @@ int carton( arg_carton_t args ){
 	sem_t* sem_carton = args.sem_carton;
 	sem_t* sem_erreur_carton = args.sem_erreur_carton;
 
-	static sem_t* sem_AU = args.sem_AU;
+	sem_AU = args.sem_AU;
 
 	/* Définition des handlers */	
 	struct sigaction handler_USR2;
@@ -53,25 +56,25 @@ int carton( arg_carton_t args ){
 		/* attente piece */
 		sem_wait( sem_piece ); 
 
-		if ( nb_piece == 0 && shm_statut[ST_PRESENCE_CARTON] != 1 ){
+		if ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
 			/*si premiere piece et absence carton
 			  envoi d'un message d'erreur avec hhmmss et type erreur
 			  puis attente sur semaphore de reprise d'erreur*/
 		 		
-			gerer_erreur(ERR_PAS_DE_CARTON);
+			gerer_erreur(ERR_PAS_DE_CARTON, sem_bal_erreur, sem_bal_log_disque);
 			sem_wait( sem_erreur_carton );
 		}
 		/*end of absence carton*/
 		
-		if ( shm_statut[ ST_PIECE ] == 1 ){
+		if ( (*shm_statut)[ ST_PIECE ] == 1 ){
 			nb_piece += 1;
 			if ( nb_piece == CARTON_PLEIN ){
-				if ( shm_statut[ST_IMPRIMANTE] != 1 ){
+				if ( (*shm_statut)[ST_IMPRIMANTE] != 1 ){
 					/*si carton plein et imprimante HS
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
 
-					gerer_erreur(ERR_IMPRIMANTE_KO );
+					gerer_erreur(ERR_IMPRIMANTE_KO, sem_bal_erreur, sem_bal_log_disque);
 					sem_wait( sem_erreur_carton );
 				}
 				/*end of if imprimante HS*/
@@ -82,7 +85,7 @@ int carton( arg_carton_t args ){
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
 				 
-					gerer_erreur(ERR_FILE_D_ATTENTE );
+					gerer_erreur(ERR_FILE_D_ATTENTE, sem_bal_erreur, sem_bal_log_disque);
 					sem_wait( sem_erreur_carton );
 				}
 				/*end of if file attente pleine*/
@@ -126,7 +129,7 @@ int carton( arg_carton_t args ){
 				  puis attente sur semaphore de reprise d'erreur
 				  puis on jette le carton en cours*/
 			 	
-				gerer_erreur(ERR_TROP_DE_REBUS );
+				gerer_erreur(ERR_TROP_DE_REBUS, sem_bal_erreur, sem_bal_log_disque);
 				sem_wait( sem_erreur_carton );
 
 				nb_piece = 0;

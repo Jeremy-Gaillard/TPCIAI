@@ -17,12 +17,13 @@
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 
-	lot_t shm_lot = args.shm_lot;
+	lot_t* shm_lot = args.shm_lot;
+	entrepot_t* shm_entrepot = args.shm_entrepot;
 
 	pthread_mutex_t* mutex_entrepot = args.mutex_entrepot;
 	sem_t* sem_palette = args.sem_palette;
 
-	sem_t* sem_bal_erreur = args.bal_erreur;
+	/* sem_t* sem_bal_erreur = args.bal_erreur; */
 	sem_t* sem_bal_log_win = args.bal_log_win;
 	sem_t* sem_bal_log_disque = args.bal_log_disque;
 
@@ -45,21 +46,21 @@
 		nb_palette += 1;
 		pthread_mutex_lock ( mutex_entrepot );
 		i = 0;
-		for( ; shm_entrepot[ i ].id == 0 || i < 20 ; i += 1 ){
-			shm_entrepot[ i ].id = nb_palette;
-			if ( shm_lot[ LOT_A ] == 0 ){
-				shm_entrepot[ i ].type = 'B';
+		for( ; shm_entrepot->palettes[ i ].id == 0 || i < 20 ; i += 1 ){
+			shm_entrepot->palettes[ i ].id = nb_palette;
+			if ( (*shm_lot)[ LOT_A ] == 0 ){
+				shm_entrepot->palettes[ i ].type = 'B';
 			}
 			else{
-				shm_entrepot[ i ].type = 'A';
+				shm_entrepot->palettes[ i ].type = 'A';
 			}
 			time_t rawtime;
 			struct tm * timeinfo;	
 			time ( &rawtime );
 			timeinfo = localtime ( &rawtime );
-			strftime ( shm_entrepot[ i ].heure, 7, "%H%M%S", timeinfo );
+			strftime ( shm_entrepot->palettes[ i ].heure, 7, "%H%M%S", timeinfo );
 		}/*palette rangee*/
-		if ( i = 20 ){
+		if ( i == 20 ){
 			printf("j ai mange une palette. Om Nom Nom Nom \n Affectueusement le cariste\n");
 		}
 		pthread_mutex_unlock( mutex_entrepot );
@@ -82,12 +83,12 @@
 		/*fin envoi logs*/
 		
 		/*Fin de production d'un lot: mise a 0 du lot a produire*/
-		if ( shm_lot[ LOT_A ] == nb_palette ){
-			shm_lot [ LOT_A ] = 0;
+		if ( (*shm_lot)[ LOT_A ] == nb_palette ){
+			(*shm_lot) [ LOT_A ] = 0;
 			nb_palette = 0;
 		}
-		else if ( shm_lot[ LOT_A ] == 0 && shm_lot[ LOT_B ] == nb_palette ){
-			shm_lot[ LOT_B ] == 0;
+		else if ( (*shm_lot)[ LOT_A ] == 0 && (*shm_lot)[ LOT_B ] == nb_palette ){
+			(*shm_lot)[ LOT_B ] = 0;
 			nb_palette = 0;
 		}
 	}

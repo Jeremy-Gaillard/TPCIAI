@@ -9,6 +9,9 @@
 #include "config.h"
 #include "prod_utils.h"
 
+
+static sem_t* sem_AU;
+
 void AU_palette(int signum)
 {
 	printf("PRODUCTION: PALETTE: ARRET D'URGENCE !\n");
@@ -21,18 +24,18 @@ int palette( arg_palette_t args ){
 	/* mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY); */
 	/* mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY); */
 
-	statut_t shm_statut = args.shm_statut;
-	statut_t shm_lot = args.shm_lot;
+	statut_t* shm_statut = args.shm_statut;
+	lot_t* shm_lot = args.shm_lot;
 
-	/* sem_t* sem_bal_erreur = args.bal_erreur; */
+	sem_t* sem_bal_erreur = args.bal_erreur;
 	/* sem_t* sem_bal_log_win = args.bal_log_win; */
-	/* sem_t* sem_bal_log_disque = args.bal_log_disque; */
+	sem_t* sem_bal_log_disque = args.bal_log_disque;
 
 	sem_t* sem_carton = args.sem_carton;
 	sem_t* sem_palette = args.sem_palette;
 	sem_t* sem_erreur_palette = args.sem_erreur_palette;
 
-	static sem_t* sem_AU = args.sem_AU;
+	sem_AU = args.sem_AU;
 
 	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
 	struct sigaction handler_USR2;
@@ -50,17 +53,17 @@ int palette( arg_palette_t args ){
 
 	for ( ; ; ){
 		sem_wait( sem_carton );
-		if ( nb_carton == 0 && shm_statut[ ST_PRESENCE_PALETTE ] != 1 ){
+		if ( nb_carton == 0 && (*shm_statut)[ ST_PRESENCE_PALETTE ] != 1 ){
 			
-			gerer_erreur( ERR_ABSENCE_PALETTE);
+			gerer_erreur( ERR_PAS_DE_PALETTE, sem_bal_erreur, sem_bal_log_disque );
 			sem_wait( sem_erreur_palette );
 		}/*end if palette absente*/
 		
 		nb_carton += 1;
 		if ( nb_carton == PALETTE_PLEINE ){
-			if ( shm_statut[ ST_FILM ] != 1 ){
+			if ( (*shm_statut)[ ST_FILM ] != 1 ){
 
-				gerer_erreur( ERR_FILM_KO );
+				gerer_erreur( ERR_FILM_KO, sem_bal_erreur, sem_bal_log_disque );
 				sem_wait( sem_erreur_palette );	
 			}/*end if film_KO*/
 			
@@ -72,11 +75,11 @@ int palette( arg_palette_t args ){
 			/*On part du principe qu'on produit du A puis du B
 			  ET que shm_lot[ LOT_A ] est mis à 0 une fois la
 			  production finie*/
-			if ( nb_palette == shm_lot[ LOT_A ] ){
+			if ( nb_palette == (*shm_lot)[ LOT_A ] ){
 			/*Si productionde A finie*/
 				nb_palette = 0;
 			}
-			else if ( nb_palette == shm_lot[ LOT_B ] ){
+			else if ( nb_palette == (*shm_lot)[ LOT_B ] ){
 				/*Si productionde B finie*/
 				nb_palette = 0;
 			}
