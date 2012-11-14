@@ -23,6 +23,7 @@ static pthread_t t_envoi_piece;
 void fin_simulation(int signum)
 {
 	printf("Simulation catching : %i\n", signum);
+	pthread_kill( t_envoi_piece, SIGUSR2 );
 	pthread_join( t_envoi_piece, NULL );
 	printf("Envoi piece termine! Fin simulation");
 	pthread_exit( 0 );

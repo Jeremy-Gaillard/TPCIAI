@@ -10,14 +10,6 @@
 #include "prod_utils.h"
 
 
-static sem_t* sem_AU;
-
-void AU_palette(int signum)
-{
-	printf("PRODUCTION: PALETTE: ARRET D'URGENCE !\n");
-	sem_wait(sem_AU);
-}
-
 int palette( arg_palette_t* args ){
          
 	/* Récupération des ressources */
@@ -35,8 +27,6 @@ int palette( arg_palette_t* args ){
 	sem_t* sem_palette = args->sem_palette;
 	sem_t* sem_erreur_palette = args->sem_erreur_palette;
 
-	sem_AU = args->sem_AU;
-
 	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
 	struct sigaction handler_USR2;
 	handler_USR2.sa_handler = fin_production;
@@ -44,7 +34,7 @@ int palette( arg_palette_t* args ){
  	
  	/*Création du Handler d'arret d urgence et démasquage de SIGUSR1*/
 	struct sigaction handler_USR1;
-	handler_USR1.sa_handler = AU_palette;
+	handler_USR1.sa_handler = arret_urgence_prod;
 	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
 	sigaction ( SIGUSR1, &handler_USR1, NULL );
 

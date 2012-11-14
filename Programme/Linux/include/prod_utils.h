@@ -23,7 +23,6 @@ typedef struct arg_carton
   sem_t* sem_carton;
   sem_t* sem_erreur_carton;
 
-	sem_t* sem_AU;
 } arg_carton_t;
 
 typedef struct arg_palette
@@ -39,7 +38,6 @@ typedef struct arg_palette
 	sem_t* sem_palette;
   sem_t* sem_erreur_palette;
 
-	sem_t* sem_AU;
 } arg_palette_t;
 
 typedef struct arg_cariste
@@ -55,16 +53,13 @@ typedef struct arg_cariste
 	pthread_mutex_t* mutex_entrepot;
 } arg_cariste_t;
 
+void init_prod( sem_t* sem_arret_urgence );
+void arret_urgence_prod(int signum);
 
 void fin_production(int signum);
 
-void arret_urgence_prod(int signum);
-
-
-void AU_carton( int signum);
 int carton( arg_carton_t* args );
 
-void AU_palette( int signum );
 int palette( arg_palette_t* args );
 
 int cariste( arg_cariste_t* args );
