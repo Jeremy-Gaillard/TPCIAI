@@ -140,11 +140,10 @@ public class Parametrage extends javax.swing.JFrame {
             pourcentage = Integer.parseInt(j_nb_pourcentage.getText());
             if (nb_palette_commande_A < 0 || nb_palette_commande_B < 0 || pourcentage < 0)
             {
-                //System.out.println("Rentrez des valeurs positives pour les différentes paramètres.");
                 app.error("Données invalides", "Rentrez des valeurs positives pour les différentes paramètres.");
             }
             else
-            {
+            { /* censé veréifier si la commande est possible ici ? C'est passé ou ?*/
                 try {
                     String parametrage_lot = "0 " + nb_palette_commande_A + " " + nb_palette_commande_B + " " +  pourcentage;
                     app.network.send_message(parametrage_lot);

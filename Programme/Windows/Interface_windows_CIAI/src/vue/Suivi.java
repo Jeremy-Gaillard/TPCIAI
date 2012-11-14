@@ -33,14 +33,14 @@ public class Suivi extends javax.swing.JFrame {
     public Suivi(Interface_windows_CIAI inter) {
         int i = 0;
         String msg ="";       
-        Palette test_palette = new Palette(1, 5);
+        Palette test_palette = new Palette(1, "A", 5);
         app = inter;
         setLocationByPlatform(true);
         initComponents();
         liste_def_palette = new String[MAXPAL];
         liste_def_palette[i] = test_palette.ToString();
         j_palette.setListData(liste_def_palette);
-        /*for(;;){
+        for(;;){
             // Boucle infinie pour écouter les messages provenant de Linux
             try {
                 msg = app.network.listen_messages();
@@ -74,16 +74,17 @@ public class Suivi extends javax.swing.JFrame {
                 
                 String decoupe[] = msg.split(" ");
                 int id_palette = Integer.parseInt(decoupe[2]);
-                int horaire = Integer.parseInt(decoupe[3]); 
+                String type_palette = decoupe[3];
+                int horaire = Integer.parseInt(decoupe[4]); 
                 
-                Palette palette = new Palette(id_palette, horaire);
+                Palette palette = new Palette(id_palette, type_palette, horaire);
                 liste_palette[i] = palette;
                 
                 //MAJ de la liste de palettes
                 liste_def_palette[i] = test_palette.ToString();
                 j_palette.setListData(liste_def_palette);
             }
-        }*/
+        }
     }
     
     /**
@@ -144,7 +145,7 @@ public class Suivi extends javax.swing.JFrame {
         jScrollPane1.setViewportView(j_palette);
 
         j_carton.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "Pas de carton selectionné" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -217,7 +218,7 @@ public class Suivi extends javax.swing.JFrame {
     private void B_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_commandeActionPerformed
         // Envoi d'une commande
         System.out.println("Commande");
-        Commande fc = new Commande(app);
+        Commande fc = new Commande(app, liste_palette);
         fc.setVisible(true);
     }//GEN-LAST:event_B_commandeActionPerformed
 

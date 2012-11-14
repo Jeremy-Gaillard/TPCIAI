@@ -5,6 +5,7 @@
 package vue;
 
 import interface_windows_ciai.Interface_windows_CIAI;
+import interface_windows_ciai.Palette;
 import java.io.IOException;
 
 /**
@@ -17,11 +18,11 @@ public class Commande extends javax.swing.JFrame {
     /**
      * Creates new form Commande
      */
-    public Commande(Interface_windows_CIAI inter) {
+    public Commande(Interface_windows_CIAI inter, Palette[] liste_palette) {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        initData();
+        initData(liste_palette);
     }
 
     /**
@@ -144,12 +145,26 @@ public class Commande extends javax.swing.JFrame {
     /**
      * Initialise avec le nombre de cartons actuellement dans l'entrepôt
      */
-    private void initData() {
+    private void initData(Palette[] liste_palette) {
         
-        String nb_palette_actuel_A = "10"; //A modifier pour avoir la bonne valeur
-        String nb_palette_actuel_B = "10";
-        j_nb_palette_actuel_A.setText(nb_palette_actuel_A);
-        j_nb_palette_actuel_B.setText(nb_palette_actuel_B);
+        int nb_palette_actuel_A = 0;
+        int nb_palette_actuel_B = 0;
+        for(int j = 0; j < liste_palette.length; j++){
+            
+            if("A".equals(liste_palette[j].getType_palette()))
+            {
+                nb_palette_actuel_A++;
+            }
+            else
+            {
+                nb_palette_actuel_B++;
+            }
+            
+        }
+        String palette_actuel_A = String.valueOf(nb_palette_actuel_A); //A modifier pour avoir la bonne valeur
+        String palette_actuel_B = String.valueOf(nb_palette_actuel_B);
+        j_nb_palette_actuel_A.setText(palette_actuel_A);
+        j_nb_palette_actuel_B.setText(palette_actuel_B);
         
     }
     
@@ -165,14 +180,12 @@ public class Commande extends javax.swing.JFrame {
  
             int nb_palette_commande_A =-1;
             int nb_palette_commande_B =-1;
-            int nb_palette_actuel_A = 10;
-            int nb_palette_actuel_B = 10;        
+            int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
+            int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());        
         
         try{
             nb_palette_commande_A = Integer.parseInt(j_nb_palette_commande_A.getText());
-            nb_palette_commande_B = Integer.parseInt(j_nb_palette_commande_B.getText());
-            nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
-            nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());            
+            nb_palette_commande_B = Integer.parseInt(j_nb_palette_commande_B.getText());           
         }
         catch (Exception ex){
             System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
