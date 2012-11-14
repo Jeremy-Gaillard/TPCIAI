@@ -83,61 +83,61 @@ void simulation(arg_simulation_t* ipc)
 		}
 		else if( !strcmp(commande, "presence_carton") )
 		{
-			*shm_statut[ ST_PRESENCE_CARTON ] = 1;
+			*(shm_statut)[ ST_PRESENCE_CARTON ] = 1;
 		}
 		else if( !strcmp(commande, "absence_carton") )
 		{
-			*shm_statut[ ST_PRESENCE_CARTON ] = 0;
+			*(shm_statut)[ ST_PRESENCE_CARTON ] = 0;
 		}
 		else if( !strcmp(commande, "presence_palette") )
 		{
-			*shm_statut[ ST_PRESENCE_PALETTE ] = 1;
+			*(shm_statut)[ ST_PRESENCE_PALETTE ] = 1;
 		}
 		else if( !strcmp(commande, "absence_palette") )
 		{
-			*shm_statut[ ST_PRESENCE_PALETTE ] = 0;
+			*(shm_statut)[ ST_PRESENCE_PALETTE ] = 0;
 		}
 		else if( !strcmp(commande, "imprimante_OK") )
 		{
-			*shm_statut[ ST_IMPRIMANTE ] = 1;
+			*(shm_statut)[ ST_IMPRIMANTE ] = 1;
 		}
 		else if( !strcmp(commande, "err_imprimante_KO") )
 		{
-			*shm_statut[ ST_IMPRIMANTE ] = 0;
+			*(shm_statut)[ ST_IMPRIMANTE ] = 0;
 		}
 		else if( !strcmp(commande, "presence_carton") )
 		{
-			*shm_statut[ ST_PRESENCE_CARTON ] = 1;
+			*(shm_statut)[ ST_PRESENCE_CARTON ] = 1;
 		}
 		else if( !strcmp(commande, "absence_carton") )
 		{
-			*shm_statut[ ST_PRESENCE_CARTON ] = 0;
+			*(shm_statut)[ ST_PRESENCE_CARTON ] = 0;
 		}
 		else if( !strcmp(commande, "piece_OK") )
 		{
-			*shm_statut[ ST_PIECE ] = 1;
+			*(shm_statut)[ ST_PIECE ] = 1;
 		}
 		else if( !strcmp(commande, "piece_KO") )
 		{
-			*shm_statut[ ST_PIECE ] = 0;
+			*(shm_statut)[ ST_PIECE ] = 0;
 		}
 		else if( !strcmp(commande, "film_OK") )
 		{
-			*shm_statut[ ST_FILM ] = 1;
+			*(shm_statut)[ ST_FILM ] = 1;
 		}
 		else if( !strcmp(commande, "film_KO") )
 		{
-			*shm_statut[ ST_FILM ] = 0;
+			*(shm_statut)[ ST_FILM ] = 0;
 		}
 		else if( !strcmp(commande, "clapet_ouvert") )
 		{
-			*shm_statut[ ST_CLAPET_OUVERT ] = 1;
+			*(shm_statut)[ ST_CLAPET_OUVERT ] = 1;
 			sem_post( sem_clapet );
 			pthread_join( t_envoi_piece, NULL );
 		}
 		else if( !strcmp(commande, "clapet_ferme") )
 		{
-			*shm_statut[ ST_CLAPET_OUVERT ] = 0;
+			*(shm_statut)[ ST_CLAPET_OUVERT ] = 0;
 		}
 		if( !strcmp(commande, "q") )
 		{
