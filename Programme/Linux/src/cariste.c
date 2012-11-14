@@ -10,7 +10,7 @@
 #include "config.h"
 #include "prod_utils.h"
  
- int cariste( arg_cariste_t args ){
+int cariste( arg_cariste_t* args ){
 	
 	/* Récupération des ressources */
 

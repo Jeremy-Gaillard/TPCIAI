@@ -19,7 +19,7 @@ void AU_carton(int signum)
 	sem_wait(sem_AU);
 }
 
-int carton( arg_carton_t args ){
+int carton( arg_carton_t* args ){
 
 	/* Récupération des ressources */
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);

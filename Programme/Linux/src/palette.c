@@ -18,7 +18,7 @@ void AU_palette(int signum)
 	sem_wait(sem_AU);
 }
 
-int palette( arg_palette_t args ){
+int palette( arg_palette_t* args ){
          
 	/* Récupération des ressources */
 	/* mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY); */
