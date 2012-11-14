@@ -8,6 +8,7 @@ import interface_windows_ciai.Carton;
 import interface_windows_ciai.Interface_windows_CIAI;
 import interface_windows_ciai.Palette;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,22 +19,26 @@ import javax.swing.ListModel;
  * @author michael
  */
 public class Suivi extends javax.swing.JFrame {
-
-    Interface_windows_CIAI app;
-    String[] liste_palette;
     
+    int MAXPAL=100;
+    Interface_windows_CIAI app;
+    String[] liste_def_palette;
+    String[] liste_def_carton;
+    Palette[] liste_palette;
+    List liste_carton = new LinkedList();
     /**
      * Creates new form Suivi
      */
     public Suivi(Interface_windows_CIAI inter) {
+        int i = 0;
         String msg ="";       
         Palette test_palette = new Palette(1, 5);
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        liste_palette = new String[10];
-        liste_palette[1] = test_palette.Definition();
-        j_palette.setListData(liste_palette);
+        liste_def_palette = new String[MAXPAL];
+        liste_def_palette[i] = test_palette.ToString();
+        j_palette.setListData(liste_def_palette);
         for(;;){
             try {
                 msg = app.network.listen_messages();
@@ -50,11 +55,28 @@ public class Suivi extends javax.swing.JFrame {
             }
             else if ("L C".equals(msg.substring(0, 3))){
                 //Reception d'un carton
-                Carton carton = new Carton();
+                
+                String decoupe[] = msg.split(" ");
+                int id_carton = Integer.parseInt(decoupe[2]);
+                String type_piece = decoupe[3];
+                int pourcentage = Integer.parseInt(decoupe[4]);
+                int horaire = Integer.parseInt(decoupe[5]);
+                
+                Carton carton = new Carton(id_carton, type_piece, pourcentage, horaire);
+                liste_palette[i].Ajouter_carton(carton);
+                
             }
             else if ("L P".equals(msg.substring(0, 3))){
+                i++;
                 //Reception d'une palette
-                Palette palette = new Palette(1, 5);
+                
+                String decoupe[] = msg.split(" ");
+                int id_palette = Integer.parseInt(decoupe[2]);
+                int horaire = Integer.parseInt(decoupe[3]);               
+                Palette palette = new Palette(id_palette, horaire);
+                liste_palette[i] = palette;
+                liste_def_palette[i] = test_palette.ToString();
+                j_palette.setListData(liste_def_palette);
             }
         }
     }
@@ -108,6 +130,12 @@ public class Suivi extends javax.swing.JFrame {
 
         j_erreur.setText("Pas d'erreur detectée");
 
+        j_palette.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        j_palette.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                j_paletteValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(j_palette);
 
         j_carton.setModel(new javax.swing.AbstractListModel() {
@@ -187,7 +215,7 @@ public class Suivi extends javax.swing.JFrame {
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         System.out.println("Message de reprise");
         try {
-            app.error("The server responded...", app.network.send_message("2")); //Ajouter ici l'id de l'erreur
+            app.network.send_message("2"); //Ajouter ici l'id de l'erreur
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
@@ -203,6 +231,18 @@ public class Suivi extends javax.swing.JFrame {
             ex.printStackTrace(System.err);
         }        
     }//GEN-LAST:event_B_arretActionPerformed
+
+    private void j_paletteValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_j_paletteValueChanged
+        int index_palette = j_palette.getSelectedIndex();
+        liste_carton = liste_palette[index_palette].getListeCarton();
+        for(int j = 0; j < liste_carton.size(); j++){
+            
+            liste_def_carton[j]=liste_carton.toString();
+            
+        }
+        j_carton.setListData(liste_def_carton);
+        
+    }//GEN-LAST:event_j_paletteValueChanged
 
     /*
     public static void main(String args[]) {
