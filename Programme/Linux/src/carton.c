@@ -44,6 +44,7 @@ int carton( arg_carton_t* args ){
 
 	struct sigaction handler_USR1;
 	handler_USR1.sa_handler = AU_carton;
+	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
 	sigaction( SIGUSR1, &handler_USR1, NULL );
 
 	/* Création des variables locales */
