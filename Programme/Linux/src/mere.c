@@ -21,7 +21,8 @@
 #include "log_windows.h"
 #include "erreur.h"
 #include "commande_windows.h"
-#include "prod_utils.h"	
+#include "prod_utils.h"
+#include "server.h"
 
 
 
@@ -41,6 +42,8 @@ int main(int argc, char** argv)
 		t_log_windows, t_commande_windows, t_simulation, t_envoi_piece;
 	
 	/*----------------------------------------------------Initialisation--------------------------------------------------*/
+
+	server(32768);
 	
 	/*priorite de la mere*/
 	struct sched_param mere_param;
@@ -257,6 +260,6 @@ int main(int argc, char** argv)
 	mq_close( bal_log_disque );
 	mq_unlink( BALERR );
 	mq_close( bal_erreur );
-	
+
 	return 0;
 }

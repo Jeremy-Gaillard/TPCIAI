@@ -56,6 +56,8 @@ int main(int argc, char* argv[])
   if (n<0)
     error("ERROR writing to socket");
 
+  printf("(done writing, reading...)\n");
+
   bzero(buffer, BUF_SIZE);
   n = read( sockfd, buffer, (BUF_SIZE-1) );
   if (n<0)

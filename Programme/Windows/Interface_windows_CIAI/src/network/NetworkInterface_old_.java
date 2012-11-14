@@ -14,32 +14,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class NetworkInterface {
-
-        public class ServerInitThread extends Thread {
+    
+        public class HelloThread extends Thread {
             
             NetworkInterface network;
-            public ServerInitThread(NetworkInterface network) {
+            public HelloThread(NetworkInterface network) {
                 this.network = network;
             }
             public void run() {
-            System.out.println("Starting server socket...");
                 try {
                     //System.out.println("Hello from a thread!");
-                    //network.listen_messages();
-network.server = new ServerSocket(32767);
-            Socket clientSocket = null;
-            //try {
-                    clientSocket = server.accept();
-            //BufferedReader in = 
-network.client_reader = 
-                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            System.out.println("Server socket established.");
-
+                    network.listen_messages();
                 } catch (IOException ex) {
                     Logger.getLogger(NetworkInterface.class.getName()).log(Level.SEVERE, null, ex);
                     
                     
-                    System.err.println("Could not establish server socket!");
+                    
                     
                 }
             }
@@ -48,17 +38,15 @@ network.client_reader =
     
 	Socket client;
 	ServerSocket server;
-	BufferedReader client_reader;
         
 	public NetworkInterface() throws UnknownHostException, IOException {
             //this("134.214.105.197");
             this("if219-06.insa-lyon.fr"); // 134.214.161.160
         }
 	public NetworkInterface(String ip) throws UnknownHostException, IOException {
-            (new ServerInitThread(this)).start();
             System.out.println("Starting client socket...");
-            //client = new Socket(ip, 32768);
-client = new Socket("localhost", 32768);
+            client = new Socket(ip, 32768);
+            (new HelloThread(this)).start();
 	}
 	/*
 	public void recovery_order() {
@@ -73,7 +61,7 @@ client = new Socket("localhost", 32768);
 	
 	}
 	*/
-	public void send_message(String msg) throws IOException {
+	public String send_message(String msg) throws IOException {
                 System.out.println("Sending message: '"+msg+"'");
 		OutputStream oStream = client.getOutputStream();
 		BufferedOutputStream bOStream = new BufferedOutputStream(oStream);
@@ -81,17 +69,34 @@ client = new Socket("localhost", 32768);
 			bOStream.write(c);
 		}
 		bOStream.flush();
+//System.out.println("lolwrote");
+		InputStream feedback = client.getInputStream();
+		char r;
+		StringBuilder sb = new StringBuilder();
+//System.out.println("lolinp");
+		while ((r = (char) feedback.read()) != '\n') {
+			//System.out.print((int)r);
+			//System.out.print(r);
+//System.out.println(r);
+			sb.append(r);
+		}
+                String resp = sb.toString();
+                System.out.println("Received response message: '"+resp+"'");
+		return resp;
 	}
 
-	public void listen_messages() throws IOException {
-/*
+	public String listen_messages() throws IOException {
             System.out.println("Starting server socket...");
             server = new ServerSocket(32767);
             Socket clientSocket = null;
+            //try {
                     clientSocket = server.accept();
+            /*} catch (IOException e) {
+                    System.out.println("Accept failed: 4444");
+                    System.exit(-1);
+            }*/
             BufferedReader in = 
                     new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-*/
             /*
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             String inputLine, outputLine;
@@ -107,27 +112,15 @@ client = new Socket("localhost", 32768);
             break;
             }*/
 
-            StringBuilder sb = new StringBuilder();
-            
             char r;
-while ((r = (char) client_reader.read()) != '\n') {
-System.out.println(r);
+            StringBuilder sb = new StringBuilder();
+            while ((r = (char) in.read()) != '!') {
                     sb.append(r);
             }
-/*
-int r;
-while ((r = in.read()) != -1) {
-System.out.println(r);
-System.out.println((char)r);
-                    sb.append((char)r);
-            }
-*/
-
-
-
             //System.out.println(sb.toString());
             String msg = sb.toString();
             System.out.println("Received message: '"+msg+"'");
+            return msg;
 	}
         
         @Override
