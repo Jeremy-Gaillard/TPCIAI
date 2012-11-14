@@ -20,6 +20,7 @@ static sem_t* sem_clapet;
 static statut_t* shm_statut;
 static pthread_t t_envoi_piece;
 
+/*INUTILISE
 void fin_simulation(int signum)
 {
 	printf("Simulation catching : %i\n", signum);
@@ -33,7 +34,7 @@ void fin_envoi_piece(int signum)
 {
 	printf("Envoi piece catching : %i\n", signum);
 	pthread_exit( 0 );
-}
+}*/
 
 void envoi_piece(sem_t* sem_piece)
 {
@@ -44,7 +45,7 @@ void envoi_piece(sem_t* sem_piece)
 	for( ; ; )
 	{
 		sem_post( sem_piece );
-		sleep(10);
+		sleep(1);
 	}
 	pthread_exit( 0 );
 }

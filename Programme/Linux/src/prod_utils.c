@@ -30,6 +30,7 @@ void fin_production(int signum)
 void gerer_erreur( int erreur_id,
                    sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque )
 {
+	printf("err: %d\n", erreur_id);
 	char heure[7];
 	time_t rawtime;
 	struct tm * timeinfo;
