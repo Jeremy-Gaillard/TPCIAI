@@ -15,15 +15,23 @@ public class Palette {
     int id_palette;
     List listeCarton = new LinkedList();
     int horaire;
+    String type_palette;
 
-    public Palette(int id_palette, int horaire) {
+    public Palette(int id_palette, String type_palette, int horaire) {
         this.id_palette = id_palette;
+        this.type_palette = type_palette;
         this.horaire = horaire;
     }
 
     public List getListeCarton() {
         return listeCarton;
     }
+
+    public String getType_palette() {
+        return type_palette;
+    }
+    
+    
     
     public void Ajouter_carton(Carton carton){
         listeCarton.add(carton);
