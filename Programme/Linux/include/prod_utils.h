@@ -55,7 +55,7 @@ typedef struct arg_cariste
 
 typedef struct arg_prod
 {
-	sem_t* sem_AU
+	sem_t* sem_AU;
 } arg_prod_t;
 static sem_t* sem_AU;
 void init_prod( arg_prod_t* args );
