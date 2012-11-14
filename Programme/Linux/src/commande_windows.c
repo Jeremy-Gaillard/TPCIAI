@@ -103,4 +103,5 @@ void commande_windows(arg_commande_windows_t* ipc)
 	sem_erreur_carton = ipc->carton;
 	sem_AU = ipc->AU;
 	sem_clapet = ipc->clapet;
+	sleep(2);
 }
