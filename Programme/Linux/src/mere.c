@@ -173,6 +173,7 @@ int main(int argc, char** argv)
 	/*---------------------------------------------------------Moteur----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );
 	pthread_kill( t_simulation, SIGUSR2 );
+	sleep(2);
 	/*--------------------------------------------------------Destruction-------------------------------------------------------------*/
 	
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), 2);
