@@ -7,8 +7,8 @@
 #define PALETTE_PLEINE 4
 #define MAX_REBUS 10
 
-#define BAL_PRIO_ERREUR 1
-#define BAL_PRIO_ELSE 2
+#define BAL_PRIO_FIN 2
+#define BAL_PRIO_ELSE 1
 
 #define STATUT_SIZE 6
 #define ST_PRESENCE_CARTON 0

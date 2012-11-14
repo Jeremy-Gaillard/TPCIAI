@@ -30,9 +30,9 @@ void erreur(struct arg_erreur *ipc/*statut_t* shm_statut, sem_t* erreur, sem_t* 
 		mq_receive(bal_log_erreur, (void*) &message, sizeof(erreur_t), NULL);
 		*shm_statut[ST_CLAPET_OUVERT] = 0;
 		strcat( log, message );
-		mq_send(bal_log_windows, log, sizeof(log_t), 1);
+		mq_send(bal_log_windows, log, sizeof(log_t), BAL_PRIO_ELSE);
 		sem_post(sem_bal_log_windows);
-		mq_send(bal_log_disque, log, sizeof(log_t), 1);
+		mq_send(bal_log_disque, log, sizeof(log_t), BAL_PRIO_ELSE);
 		sem_post(sem_bal_log_disque);
 	}
 	while( strcmp(message, TRAME_FIN) );

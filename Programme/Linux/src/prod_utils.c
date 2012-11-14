@@ -45,9 +45,9 @@ void gerer_erreur( int erreur_id,
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mq_send( bal_erreur, message_erreur, sizeof( message_erreur ),
-	         BAL_PRIO_ERREUR );
+	         BAL_PRIO_ELSE );
 	sem_post(sem_bal_erreur);
 	mq_send( bal_log_disque, message_log, sizeof( message_log ),
-	         BAL_PRIO_ERREUR );
+	         BAL_PRIO_ELSE );
 	sem_post(sem_bal_log_disque);
 }
