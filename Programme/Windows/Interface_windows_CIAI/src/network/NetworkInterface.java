@@ -12,7 +12,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class NetworkInterface {
-
+/*
         public class ServerInitThread extends Thread {
             
             NetworkInterface network;
@@ -43,7 +43,7 @@ network.client_reader =
             }
 
         }
-    
+    */
 	Socket client;
 	ServerSocket server;
 	BufferedReader client_reader;
@@ -53,10 +53,10 @@ network.client_reader =
             this("if219-06.insa-lyon.fr");
         }
 	public NetworkInterface(String ip) throws UnknownHostException, IOException {
-            (new ServerInitThread(this)).start();
+            //(new ServerInitThread(this)).start();
             System.out.println("Starting client socket...");
-            client = new Socket(ip, 32768);
-//client = new Socket("localhost", 32768);
+            //client = new Socket(ip, 32768);
+client = new Socket("localhost", 32768);
 	}
 	/*
 	public void recovery_order() {

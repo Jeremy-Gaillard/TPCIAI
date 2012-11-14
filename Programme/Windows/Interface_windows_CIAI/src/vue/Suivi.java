@@ -40,8 +40,8 @@ public class Suivi extends javax.swing.JFrame {
         liste_def_palette = new String[MAXPAL];
         liste_def_palette[i] = test_palette.ToString();
         j_palette.setListData(liste_def_palette);
-        for(;;){
-            /*Boucle infinie pour écouter les messages provenant de Linux*/
+        /*for(;;){
+            // Boucle infinie pour écouter les messages provenant de Linux
             try {
                 msg = app.network.listen_messages();
             } catch (IOException ex) {
@@ -83,7 +83,7 @@ public class Suivi extends javax.swing.JFrame {
                 liste_def_palette[i] = test_palette.ToString();
                 j_palette.setListData(liste_def_palette);
             }
-        }
+        }*/
     }
     
     /**
@@ -229,6 +229,7 @@ public class Suivi extends javax.swing.JFrame {
         System.out.println("Message de reprise");
         try {
             app.network.send_message("2"); //Ajouter ici l'id de l'erreur
+            //app.network.send_message(null);
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
