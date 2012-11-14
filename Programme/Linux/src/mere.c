@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 	mask.sa_handler = SIG_IGN;
 
 	/*Masquage de SIGUSR1*/
-	sigaction( SIGUSR2, &mask, NULL );
+	sigaction( SIGUSR1, &mask, NULL );
 	/*Masquage de SIGUSR2*/
 	sigaction( SIGUSR2, &mask, NULL );
 	
