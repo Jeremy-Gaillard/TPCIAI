@@ -13,6 +13,7 @@ typedef struct arg_simulation
 	sem_t* piece;
 } arg_simulation_t;
 
+void envoi_piece(sem_t* sem_piece);
 void simulation(arg_simulation_t* ipc);
 
 #endif

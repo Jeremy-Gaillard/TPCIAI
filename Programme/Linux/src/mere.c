@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 	entrepot_t * shm_entrepot;
 	
 	pthread_t t_carton, t_palette, t_cariste, t_erreur, t_log_disque, 
-		t_log_windows, t_commande_windows, t_simulation;
+		t_log_windows, t_commande_windows, t_simulation, t_envoi_piece;
 	
 	/*----------------------------------------------------Initialisation--------------------------------------------------*/
 	
@@ -170,11 +170,18 @@ int main(int argc, char** argv)
 	windows_arg.clapet = &sem_clapet;
 	pthread_create( &t_commande_windows, NULL, (void*) commande_windows, (void*) &windows_arg );
 	
+	printf("lol\n");
+	pthread_create( &t_envoi_piece, NULL, (void*) envoi_piece, (void*) &sem_piece );
+	printf("lol\n");
 	/*---------------------------------------------------------Moteur----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );
 	pthread_kill( t_simulation, SIGUSR2 );
-	sleep(2);
 	/*--------------------------------------------------------Destruction-------------------------------------------------------------*/
+	
+	pthread_join(t_simulation, NULL);
+	
+	pthread_kill(t_envoi_piece, SIGUSR2);
+	pthread_join(t_envoi_piece, NULL);
 	
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), 2);
 	sem_post(&sem_bal_erreur);

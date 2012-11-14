@@ -53,12 +53,7 @@ typedef struct arg_cariste
 	pthread_mutex_t* mutex_entrepot;
 } arg_cariste_t;
 
-typedef struct arg_prod
-{
-	sem_t* sem_AU;
-} arg_prod_t;
-static sem_t* sem_AU;
-void init_prod( arg_prod_t* args );
+void init_prod( sem_t* sem_arret_urgence );
 void arret_urgence_prod(int signum);
 
 void fin_production(int signum);
