@@ -35,7 +35,9 @@ void log_disque(sem_t* disque)
 		sem_wait(sem_bal_log_disque);
 		mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
 		/*Analyser le message ici*/
-		log_t log = "";
+		log_t log;
+		log[0] = '\0';
+		printf("%s\n", message);
 		
 		if( !strcmp(message, TRAME_FIN) )
 			fprintf(fichier_log, "Fin de session\n");
@@ -64,40 +66,44 @@ void log_disque(sem_t* disque)
 					}
 					break;
 				case 'E':
-					strcat( log, "Erreur : ");
+					log_t logtemp;
+					sprintf( logtemp, "Erreur : ");
 					switch (message[2] - '0')
 					{
 						case ERR_AU:
-							strcat( log, "arrêt d'urgence\n");
+							sprintf( log, "%s arrêt d'urgence", logtemp );
 							break;
 						case ERR_TROP_DE_REBUS:
-							strcat( log, "trop de rebus\n");
+							sprintf( log, "%s trop de rebusn", logtemp );
 							break;
 						case ERR_PAS_DE_CARTON:
-							strcat( log, "plus de carton\n");
+							sprintf( log, "%s plus de carton", logtemp );
 							break;
 						case ERR_IMPRIMANTE_KO:
-							strcat( log, "imprimante hors service\n");
+							sprintf( log, "%s imprimante hors service", logtemp );
 							break;
 						case ERR_FILE_D_ATTENTE:
-							strcat( log, "trop de carton en attente d'être empaletté\n");
+							sprintf( log, "%s trop de carton en attente d'être empaletté", logtemp );
 							break;
 						case ERR_PAS_DE_PALETTE:
-							strcat( log, "plus de palette\n");
+							sprintf( log, "%s plus de palette", logtemp);
 							break;
 						case ERR_FILM_KO:
-							strcat( log, "dysfonction du film palette\n");
+							sprintf( log, "%s dysfonction du film palette", logtemp);
 							break;
 						default:
 							log[0] = '\0';
 							break;
 					}
+					break;
 				default:
 					log[0] = '\0';
 					break;
-			}	
+			}
 			if( log[0] != '\0' )
+			{
 				fprintf(fichier_log, "log_disque : %s\n", log);
+			}
 		}
 	}
 	
