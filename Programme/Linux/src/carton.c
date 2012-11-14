@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <pthread.h>
+#include <mqueue.h>
 #include <semaphore.h>
 #include <signal.h>
 #include <time.h>
@@ -18,14 +18,11 @@ void AU_carton(int signum)
 
 int carton( arg_carton_t args ){
 
-	int nb_piece = 0;
-	int nb_carton = 0;
-	int nb_rebus =0;
-	int place_file_attente;
+	/* Récupération des ressources */
 	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 
-	statut_t* shm_statut = args.shm_statut;
+	statut_t shm_statut = args.shm_statut;
 
 	sem_t* sem_bal_erreur = args.bal_erreur;
 	sem_t* sem_bal_log_win = args.bal_log_win;
@@ -36,7 +33,8 @@ int carton( arg_carton_t args ){
 	sem_t* sem_erreur_carton = args.sem_erreur_carton;
 
 	static sem_t* sem_AU = args.sem_AU;
-	
+
+	/* Définition des handlers */	
 	struct sigaction handler_USR2;
 	handler_USR2.sa_handler = fin_production;
 	sigaction( SIGUSR2, &handler_USR2, NULL );
@@ -44,6 +42,12 @@ int carton( arg_carton_t args ){
 	struct sigaction handler_USR1;
 	handler_USR1.sa_handler = AU_carton;
 	sigaction( SIGUSR1, &handler_USR1, NULL );
+
+	/* Création des variables locales */
+	int nb_piece = 0;
+	int nb_carton = 0;
+	int nb_rebus =0;
+	int place_file_attente;
 
 	for( ; ; ){
 		/* attente piece */
@@ -96,15 +100,18 @@ int carton( arg_carton_t args ){
 				char* message= malloc(30);/*id erreur(int=15) + heure (=6) + +erreur (2) +reste ressage (7) = 16*/
 				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
 
-				mq_send( bal_log_disque, message, sizeof( message ), BAL_PRIO_ELSE );
+				mq_send( bal_log_disque, message, sizeof( message ),
+				         BAL_PRIO_ELSE );
 				sem_post( sem_bal_log_disque );
-				mq_send( bal_log_windows, message, sizeof( message ), BAL_PRIO_ELSE );
+				mq_send( bal_log_windows, message, sizeof( message ),
+				         BAL_PRIO_ELSE );
 				sem_post( sem_bal_log_win );
 				/*fin envoi logs*/
 				
 				nb_piece = 0;
 				nb_rebus = 0;
-				nb_carton = (nb_carton==PALETTE_PLEINE) ? 0 : nb_carton+1;
+				if (++nb_carton==PALETTE_PLEINE)
+					nb_carton=0;
 			}
 			/*end of if carton plein*/
 		
