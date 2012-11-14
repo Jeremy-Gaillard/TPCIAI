@@ -97,15 +97,15 @@ int main(int argc, char** argv)
 	/*initialisation des mémoires*/
 	int i;
 	for ( i = 0; i < STATUT_SIZE; i++)
-		*shm_statut[i] = 1;
+		(*shm_statut)[i] = 1;
 	/**shm_statut[ST_CLAPET_OUVERT] = 1; /*clapet ouvert*/
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
 		
 	for ( i = 0; i < 2; i++)
-		*shm_lot[i] = 0;
-	
+		(*shm_lot)[i] = 0;
+	printf("shm stat piece %d\n",(*shm_statut)[ ST_PIECE ]);
 	/*Threads*/
 	
 	arg_carton_t carton_arg;
