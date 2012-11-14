@@ -28,7 +28,10 @@ public class Palette {
     public void Ajouter_carton(Carton carton){
         listeCarton.add(carton);
     }
-    
+    /*
+     * Fonction ToSTring pour récuperer les différents paramètres sous forme d'une string
+     * 
+     */
     public String ToString(){
         String definition = "Palette " + this.id_palette + " finie à " + this.horaire;
         return definition;
