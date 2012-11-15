@@ -27,14 +27,51 @@ public class Suivi extends javax.swing.JFrame {
             
             public void run() {
                 System.out.println("Starting message receiver...");
+                String msg = "";
+                int i = 0;
                 while (true) {
                     try {
-                        String msg = suivi.app.network.listen_message();
-                        
-                        // ...
-                        
+                        msg = suivi.app.network.listen_messages();
                     } catch (IOException ex) {
                         System.err.println("Could not establish server socket!");
+                    }
+                    
+                    if ("".equals(msg))
+                    {
+
+                    }
+                    else if ("E".equals(msg.substring(0, 1))){
+                            //Reception et traitement d'une erreur
+                            j_erreur.setText("erreur détectée");
+                    }
+                    else if ("L C".equals(msg.substring(0, 3))){
+                            //Reception d'un carton et ajout dans sa palette
+
+                            String decoupe[] = msg.split(" ");
+                            int id_carton = Integer.parseInt(decoupe[2]);
+                            String type_piece = decoupe[3];
+                            int pourcentage = Integer.parseInt(decoupe[4]);
+                            int horaire = Integer.parseInt(decoupe[5]);
+
+                            Carton carton = new Carton(id_carton, type_piece, pourcentage, horaire);
+                            liste_palette[i].Ajouter_carton(carton);
+
+                    }
+                    else if ("L P".equals(msg.substring(0, 3))){
+                            i++;
+                            //Reception d'une palette
+
+                            String decoupe[] = msg.split(" ");
+                            int id_palette = Integer.parseInt(decoupe[2]);
+                            String type_palette = decoupe[3];
+                            int horaire = Integer.parseInt(decoupe[4]); 
+
+                            Palette palette = new Palette(id_palette, type_palette, horaire);
+                            liste_palette[i] = palette;
+
+                            //MAJ de la liste de palettes
+                            liste_def_palette[i] = palette.ToString();
+                            j_palette.setListData(liste_def_palette);
                     }
                 }
             }
