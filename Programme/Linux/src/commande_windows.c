@@ -20,7 +20,7 @@ static sem_t* sem_erreur_carton;
 static sem_t* sem_AU;
 static sem_t* sem_clapet;
 
-void reprise(int erreur_id) 
+void reprise(int erreur_id)
 {
 	switch(erreur_id) 
 	{
@@ -106,3 +106,6 @@ void commande_windows(arg_commande_windows_t* ipc)
 	sem_clapet = ipc->clapet;
 	sleep(60);
 }
+
+
+

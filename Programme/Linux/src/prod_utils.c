@@ -37,10 +37,10 @@ void gerer_erreur( int erreur_id )
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	strftime ( heure, 7, "%H%M%S", timeinfo );
-	erreur_t* message_erreur= malloc(sizeof(erreur_t));
-	sprintf(*message_erreur, "%d %s", erreur_id,heure);
+	char* message_erreur = malloc(sizeof(erreur_t));
+	sprintf(message_erreur, "%d %s", erreur_id, heure);
 
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
-	mq_send( bal_erreur, *message_erreur, sizeof( erreur_t ),
+	mq_send( bal_erreur, message_erreur, sizeof( erreur_t ),
 	         BAL_PRIO_ELSE );
 }

@@ -9,6 +9,7 @@
 
 #include "server.h"
 #include "log_windows.h"
+#include "commande_windows.h"
 
 
 #define MSG_MAX_SIZE 256
@@ -81,7 +82,7 @@ int server(int portno)
 	
 	//printf(".%d\n",newsockfd);
 	
-	envoyer("INIT..\n");
+	//envoyer("INIT..\n");
 	
 /*
 	client(portno-1);
@@ -94,11 +95,42 @@ int server(int portno)
 	close(newsockfd);
 	close(sockfd);
 */
+			//printf("LOOOOOOOOOOOOOOOL\n");
+	
+	
 	return 0;
 }
 
 void process_message(char * message)
+/*
+    initialisation -> "0 nombre_palettes_A nombre_palettes_B %_d'erreurs"
+    commande -> "1 nombre_palettes_A nombre_palettes_B"
+    reprise -> "2 id_erreur"
+    arrêt -> "3"
+*/
 {
+	
+	int id_error, nb_A=-1, nb_B=-1, err_prct=-1;
+	switch(message[0]) 
+	{
+		case '0': // initialisation
+			sscanf(message, "0 %d %d %d", &nb_A, &nb_B, &err_prct);
+			printf("> Initialisation, A: %d, B: %d, prct_err: %d\n", nb_A, nb_B, err_prct);
+			break;
+		case '1': // commande
+			sscanf(message, "1 %d %d", &nb_A, &nb_B);
+			printf("> Commande, A: %d, B: %d\n", nb_A, nb_B);
+			break;
+		case '2': // reprise
+			id_error = atoi(message+1);
+			printf("> Reprise, id_err: %d\n", id_error);
+			reprise(0);
+			break;
+		case '3': // arrêt
+			printf("> Arrêt\n");
+			terminaison();
+			break;
+	}
 	
 }
 
@@ -111,11 +143,24 @@ void wait_order(int newsockfd)
 		int n = read( newsockfd, msg_buffer, (MSG_MAX_SIZE-1) );
 		if (n<0)
 			error("Connection interrupted.");
-		printf("Here is the message: %s\n", msg_buffer);
+		printf("Received new message: %s\n", msg_buffer);
 		process_message(msg_buffer);
 		//envoyer("TEST!!!");
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
