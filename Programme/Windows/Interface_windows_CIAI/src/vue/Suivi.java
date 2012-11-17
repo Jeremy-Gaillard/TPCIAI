@@ -31,9 +31,17 @@ public class Suivi extends javax.swing.JFrame {
                 int i = 0;
                 while (true) {
                     try {
-                        msg = suivi.app.network.listen_messages();
+                        msg = suivi.app.network.listen_message();
                     } catch (IOException ex) {
                         System.err.println("Could not establish server socket!");
+                    }
+                    
+                    System.out.println("Received message: '"+msg+"'");
+                    
+                    if (msg.length() == 0)
+                    {
+                        app.error("Null message received!", "A null message was received. Stopping listening.");
+                        throw new Error("Null message received!");
                     }
                     
                     if ("".equals(msg))

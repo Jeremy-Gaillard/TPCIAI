@@ -135,7 +135,7 @@ System.out.println((char)r);
 
             //System.out.println(sb.toString());
             String msg = sb.toString();
-            System.out.println("Received message: '"+msg+"'");
+            //System.out.println("Received message: '"+msg+"'");
             return msg;
 	}
         @Override
