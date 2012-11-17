@@ -28,6 +28,7 @@ void envoyer(log_t message)
 	//message[len-2] = '\n';
 	//message[len-1] = '\0'; // TODO: fix possible overflow
 	printf("%s\n",message);*/
+	printf("Sending message: %s\n",message);
 	int len = strlen(message);
 	char buffer[len+1]; // alloca POWA
 	strcpy(buffer,message);
@@ -54,7 +55,7 @@ void log_windows()
 	do
 	{
 		mq_receive(bal_log_windows, message, sizeof(log_t), NULL);
-		//envoyer(message);
+		envoyer(message);
 	}
 	while( strcmp(message, TRAME_FIN) );
 	printf("Fin log win\n");
