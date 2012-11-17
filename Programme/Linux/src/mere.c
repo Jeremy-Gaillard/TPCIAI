@@ -31,8 +31,7 @@ int main(int argc, char** argv)
 {
 	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
 	sem_t sem_clapet, sem_piece, sem_carton, sem_palette, 
-		sem_erreur_carton, sem_erreur_palette, sem_AU, sem_bal_log_disque,
-		sem_bal_log_windows, sem_bal_erreur;	/*semaphores*/
+		sem_erreur_carton, sem_erreur_palette, sem_AU;	/*semaphores*/
 	pthread_mutex_t mutex_entrepot; /*mutex*/
 	statut_t * shm_statut;	
 	lot_t * shm_lot;	
@@ -89,9 +88,6 @@ int main(int argc, char** argv)
 	sem_init( &sem_erreur_carton, 0, 0 );
 	sem_init( &sem_erreur_palette, 0, 0 );
 	sem_init( &sem_AU, 0, 0 );
-	sem_init( &sem_bal_log_disque, 0, 0);
-	sem_init( &sem_bal_log_windows, 0, 0);
-	sem_init( &sem_bal_erreur, 0, 0);
 	
 	
 	/*Mutex*/
@@ -117,9 +113,6 @@ int main(int argc, char** argv)
 	
 	arg_carton_t carton_arg;
 	carton_arg.shm_statut = shm_statut;
-	carton_arg.bal_erreur = &sem_bal_erreur;
-	carton_arg.bal_log_win = &sem_bal_log_windows;
-	carton_arg.bal_log_disque = &sem_bal_log_disque;
 	carton_arg.sem_piece = &sem_piece;
 	carton_arg.sem_carton = &sem_carton;
 	carton_arg.sem_erreur_carton = &sem_erreur_carton;
@@ -127,22 +120,17 @@ int main(int argc, char** argv)
 
 	arg_simulation_t simulation_arg;
 	simulation_arg.statut = shm_statut;
-	simulation_arg.erreur = &sem_bal_erreur;
-	simulation_arg.windows = &sem_bal_log_windows;
-	simulation_arg.disque = &sem_bal_log_disque;
 	simulation_arg.clapet = &sem_clapet;
 	simulation_arg.piece = &sem_piece;
-	pthread_create( &t_log_disque, NULL, (void*) log_disque, (void*) &sem_bal_log_disque );
+	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	
 	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );
 	
-	pthread_create( &t_log_windows, NULL, (void*) log_windows, (void*) &sem_bal_log_windows );
+	pthread_create( &t_log_windows, NULL, (void*) log_windows, NULL );
 	
 	arg_palette_t palette_arg;
 	palette_arg.shm_statut = shm_statut;
 	palette_arg.shm_lot = shm_lot;
-	palette_arg.bal_erreur = &sem_bal_erreur;
-	palette_arg.bal_log_disque = &sem_bal_log_disque;
 	palette_arg.sem_carton = &sem_carton;
 	palette_arg.sem_palette = &sem_palette;
   	palette_arg.sem_erreur_palette = &sem_erreur_palette;
@@ -151,17 +139,12 @@ int main(int argc, char** argv)
 	arg_cariste_t cariste_arg;
 	cariste_arg.shm_lot = shm_lot;
 	cariste_arg.shm_entrepot = shm_entrepot;
-	cariste_arg.bal_log_win = &sem_bal_log_windows;
-	cariste_arg.bal_log_disque = &sem_bal_log_disque;
 	cariste_arg.sem_palette = &sem_palette;
 	cariste_arg.mutex_entrepot = &mutex_entrepot;
 	pthread_create( &t_cariste, NULL, (void*) cariste, (void*) &cariste_arg );
 	
 	arg_erreur_t erreur_arg;
 	erreur_arg.statut = shm_statut;
-	erreur_arg.bal_erreur = &sem_bal_erreur;
-	erreur_arg.bal_log_win = &sem_bal_log_windows;
-	erreur_arg.bal_log_disque = &sem_bal_log_disque;
 	pthread_create( &t_erreur, NULL, (void*) erreur, (void*) &erreur_arg );
 	
 	arg_commande_windows_t windows_arg;
@@ -212,15 +195,12 @@ int main(int argc, char** argv)
 	pthread_join(t_envoi_piece, NULL);
 	
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), BAL_PRIO_FIN);
-	sem_post(&sem_bal_erreur);
 	pthread_join( t_erreur, NULL );
 	
 	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
-	sem_post(&sem_bal_log_disque);
 	pthread_join( t_log_disque, NULL );
 	
 	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
-	sem_post(&sem_bal_log_windows);
 	pthread_join( t_log_windows, NULL );
 	
 	pthread_kill(t_carton, SIGUSR2);
@@ -247,9 +227,6 @@ int main(int argc, char** argv)
 	sem_destroy( &sem_carton );
 	sem_destroy( &sem_piece );
 	sem_destroy( &sem_clapet );
-	sem_destroy( &sem_bal_log_disque );
-	sem_destroy( &sem_bal_log_windows );
-	sem_destroy( &sem_bal_erreur );
 	
 	/*Boîtes aux lettres*/
 	mq_unlink( BALWIN );

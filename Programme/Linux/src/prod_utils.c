@@ -27,8 +27,7 @@ void fin_production(int signum)
 	pthread_exit( 0 );
 }
 
-void gerer_erreur( int erreur_id,
-                   sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque )
+void gerer_erreur( int erreur_id )
 {
 	printf("err: %d\n", erreur_id);
 	char heure[7];
@@ -41,14 +40,7 @@ void gerer_erreur( int erreur_id,
 	erreur_t* message_erreur= malloc(sizeof(erreur_t));
 	sprintf(*message_erreur, "%d %s", erreur_id,heure);
 
-	log_t* message_log= malloc(sizeof(log_t));
-	sprintf(*message_log, "E %d %s", erreur_id,heure);
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
-	mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY);
 	mq_send( bal_erreur, *message_erreur, sizeof( erreur_t ),
 	         BAL_PRIO_ELSE );
-	sem_post(sem_bal_erreur);/*
-	mq_send( bal_log_disque, *message_log, sizeof( log_t ),
-	         BAL_PRIO_ELSE );
-	sem_post(sem_bal_log_disque);*/
 }

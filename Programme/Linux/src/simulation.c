@@ -66,9 +66,6 @@ void simulation(arg_simulation_t* ipc)
 	shm_statut = ipc->statut;
 	sem_clapet = ipc->clapet;
 	sem_t* sem_piece = ipc->piece;
-	sem_t* sem_disque = ipc->disque;
-	sem_t* sem_windows = ipc->windows;
-	sem_t* sem_erreur = ipc->erreur;
 
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
@@ -79,12 +76,10 @@ void simulation(arg_simulation_t* ipc)
 		if( !strcmp(commande, "logd") )
 		{
 			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), BAL_PRIO_ELSE);
-			sem_post(sem_disque);
 		}
 		if( !strcmp(commande, "logdf") )
 		{
 			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
-			sem_post(sem_disque);
 		}
 		else if( !strcmp(commande, "presence_carton") )
 		{

@@ -23,10 +23,6 @@ int cariste( arg_cariste_t* args ){
 	pthread_mutex_t* mutex_entrepot = args->mutex_entrepot;
 	sem_t* sem_palette = args->sem_palette;
 
-	/* sem_t* sem_bal_erreur = args->bal_erreur; */
-	sem_t* sem_bal_log_win = args->bal_log_win;
-	sem_t* sem_bal_log_disque = args->bal_log_disque;
-
  	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
 	struct sigaction handler_USR2;
 	handler_USR2.sa_handler = fin_production;
@@ -77,9 +73,7 @@ int cariste( arg_cariste_t* args ){
 		log_t* message= malloc(sizeof(log_t));/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
 
 		sprintf(*message, "L P %d %s", nb_palette,heure);
-		sem_post( sem_bal_log_disque );
 		mq_send( bal_log_disque, *message, sizeof( log_t ), BAL_PRIO_ELSE );
-		sem_post( sem_bal_log_win );
 		mq_send( bal_log_windows, *message, sizeof( log_t ), BAL_PRIO_ELSE );
 		/*fin envoi logs*/
 		

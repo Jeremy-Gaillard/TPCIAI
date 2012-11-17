@@ -15,9 +15,6 @@ typedef struct arg_carton
 {
 	statut_t* shm_statut;
 
-	sem_t* bal_erreur;
-	sem_t* bal_log_win;
-	sem_t* bal_log_disque;
 
   sem_t* sem_piece;
   sem_t* sem_carton;
@@ -30,10 +27,6 @@ typedef struct arg_palette
 	statut_t* shm_statut;
 	lot_t* shm_lot;
 
-	sem_t* bal_erreur;
-	/* sem_t* bal_log_win; */
-	sem_t* bal_log_disque;
-
 	sem_t* sem_carton;
 	sem_t* sem_palette;
   sem_t* sem_erreur_palette;
@@ -44,10 +37,6 @@ typedef struct arg_cariste
 {
 	lot_t* shm_lot;
 	entrepot_t* shm_entrepot;
-
-	/* sem_t* bal_erreur; */
-	sem_t* bal_log_win;
-	sem_t* bal_log_disque;
 
 	sem_t* sem_palette;
 	pthread_mutex_t* mutex_entrepot;
@@ -64,7 +53,6 @@ int palette( arg_palette_t* args );
 
 int cariste( arg_cariste_t* args );
 
-void gerer_erreur( int erreur_id,
-                   sem_t* sem_bal_erreur, sem_t* sem_bal_log_disque );
+void gerer_erreur( int erreur_id );
 
 #endif
