@@ -22,15 +22,6 @@ int carton( arg_carton_t* args ){
 	sem_t* sem_carton = args->sem_carton;
 	sem_t* sem_erreur_carton = args->sem_erreur_carton;
 
-	/* Définition des handlers */	
-	struct sigaction handler_USR2;
-	handler_USR2.sa_handler = fin_production;
-	sigaction( SIGUSR2, &handler_USR2, NULL );
-
-	struct sigaction handler_USR1;
-	handler_USR1.sa_handler = arret_urgence_prod;
-	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
-	sigaction( SIGUSR1, &handler_USR1, NULL );
 
 	/* Création des variables locales */
 	int nb_piece = 0;

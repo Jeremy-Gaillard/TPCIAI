@@ -23,17 +23,6 @@ int palette( arg_palette_t* args ){
 	sem_t* sem_palette = args->sem_palette;
 	sem_t* sem_erreur_palette = args->sem_erreur_palette;
 
-	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
-	struct sigaction handler_USR2;
-	handler_USR2.sa_handler = fin_production;
-	sigaction ( SIGUSR2, &handler_USR2, NULL );
- 	
- 	/*Création du Handler d'arret d urgence et démasquage de SIGUSR1*/
-	struct sigaction handler_USR1;
-	handler_USR1.sa_handler = arret_urgence_prod;
-	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
-	sigaction ( SIGUSR1, &handler_USR1, NULL );
-
 	/* Création des variables locales */
 	int nb_carton = 0;
 	int nb_palette = 0;

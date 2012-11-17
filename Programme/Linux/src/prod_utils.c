@@ -9,24 +9,6 @@
 #include "config.h"
 #include "prod_utils.h"
 
-static sem_t* sem_AU;
-
-void init_prod( sem_t* sem_arret_urgence )
-{
-	sem_AU = sem_arret_urgence;
-}
-
-void arret_urgence_prod(int signum) {
-	printf("PRODUCTION: ARRÊT D'URGENCE !\n");
-	sem_wait(sem_AU);
-}
-
-void fin_production(int signum)
-{
-	printf("PRODUCTION: signal %d reçu\n", signum);
-	pthread_exit( 0 );
-}
-
 void gerer_erreur( int erreur_id )
 {
 	printf("err: %d\n", erreur_id);

@@ -43,9 +43,6 @@ typedef struct arg_cariste
 } arg_cariste_t;
 
 void init_prod( sem_t* sem_arret_urgence );
-void arret_urgence_prod(int signum);
-
-void fin_production(int signum);
 
 int carton( arg_carton_t* args );
 

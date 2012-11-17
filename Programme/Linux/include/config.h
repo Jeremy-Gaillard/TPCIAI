@@ -3,8 +3,8 @@
 
 #include <sys/types.h>
 
-#define CARTON_PLEIN 10
-#define PALETTE_PLEINE 4
+#define CARTON_PLEIN 1
+#define PALETTE_PLEINE 2
 #define MAX_REBUS 10
 
 #define BAL_PRIO_FIN 2
@@ -66,5 +66,7 @@ typedef struct entrepot {
 #define BALWIN "/bal_windows"
 
 #define NOM_LOG "log.txt"
+
+void fin_thread(int signum);
 
 #endif

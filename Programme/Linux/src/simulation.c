@@ -21,22 +21,6 @@ static sem_t* sem_clapet;
 static statut_t* shm_statut;
 static pthread_t t_envoi_piece;
 
-/*INUTILISE
-void fin_simulation(int signum)
-{
-	printf("Simulation catching : %i\n", signum);
-	pthread_kill( t_envoi_piece, SIGUSR2 );
-	pthread_join( t_envoi_piece, NULL );
-	printf("Envoi piece termine! Fin simulation");
-	pthread_exit( 0 );
-}
-
-void fin_envoi_piece(int signum)
-{
-	printf("Envoi piece catching : %i\n", signum);
-	pthread_exit( 0 );
-}*/
-
 void envoi_piece(sem_t* sem_piece)
 {
 	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
@@ -58,14 +42,12 @@ void envoi_piece(sem_t* sem_piece)
 
 void simulation(arg_simulation_t* ipc)
 {
-	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
-	/*struct sigaction handler_USR2;
-	handler_USR2.sa_handler = fin_simulation;
-	sigaction ( SIGUSR2, &handler_USR2, NULL );*/
 	
 	shm_statut = ipc->statut;
 	sem_clapet = ipc->clapet;
 	sem_t* sem_piece = ipc->piece;
+	pthread_t t_carton = ipc->t_carton;
+	pthread_t t_palette = ipc->t_palette;
 
 	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
@@ -138,6 +120,13 @@ void simulation(arg_simulation_t* ipc)
 		else if( !strcmp(commande, "clapet_ferme") )
 		{
 			(*shm_statut)[ ST_CLAPET_OUVERT ] = 0;
+		}
+		else if( !strcmp(commande, "AU") )
+		{
+			pthread_kill( t_carton, SIGUSR1 );
+			printf("Ok 1\n");
+			pthread_kill( t_palette, SIGUSR1 );
+			printf("Ok 2\n");
 		}
 		if( !strcmp(commande, "q") )
 		{

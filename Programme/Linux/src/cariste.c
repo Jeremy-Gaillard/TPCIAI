@@ -23,17 +23,6 @@ int cariste( arg_cariste_t* args ){
 	pthread_mutex_t* mutex_entrepot = args->mutex_entrepot;
 	sem_t* sem_palette = args->sem_palette;
 
- 	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
-	struct sigaction handler_USR2;
-	handler_USR2.sa_handler = fin_production;
-	sigaction ( SIGUSR2, &handler_USR2, NULL );
- 	
- 	/* /\*Création du Handler d'arret d urgence et démasquage de SIGUSR1*\/ */
-	/* struct sigaction handler_USR1; */
-	/* handler_USR1.sa_handler = AU; */
-	/* sigdelset( &handler_USR1.sa_mask, SIGUSR2 ); */
-	/* sigaction ( SIGUSR1, &handler_USR1, NULL ); */
-
 	/* Création des variables locales */
  	int nb_palette = 0;
 	int i = 0;

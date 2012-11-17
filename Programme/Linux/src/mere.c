@@ -25,13 +25,26 @@
 #include "server.h"
 
 
+static sem_t sem_AU;
+
+void fin_thread(int signum)
+{
+	printf("Signal %d reçu\n", signum);
+	if( signum == SIGUSR2 )
+		pthread_exit( 0 );
+}
+
+void arret_urgence_prod(int signum) {
+	printf("PRODUCTION: ARRÊT D'URGENCE ! %i\n");
+	sem_wait(&sem_AU);
+}
 
 
 int main(int argc, char** argv)
 {
 	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
 	sem_t sem_clapet, sem_piece, sem_carton, sem_palette, 
-		sem_erreur_carton, sem_erreur_palette, sem_AU;	/*semaphores*/
+		sem_erreur_carton, sem_erreur_palette;	/*semaphores*/
 	pthread_mutex_t mutex_entrepot; /*mutex*/
 	statut_t * shm_statut;	
 	lot_t * shm_lot;	
@@ -48,15 +61,17 @@ int main(int argc, char** argv)
 	struct sched_param mere_param;
 	mere_param.sched_priority = PRIO_MERE;
 	pthread_setschedparam(pthread_self(), SCHED_FIFO, &mere_param);
-	
-	/*Définition d'un comportement de masquage de signal*/
-	struct sigaction mask;
-	mask.sa_handler = SIG_IGN;
 
-	/*Masquage de SIGUSR1*/
-	sigaction( SIGUSR1, &mask, NULL );
-	/*Masquage de SIGUSR2*/
-	sigaction( SIGUSR2, &mask, NULL );
+	/*Création du handler d'arrêt d'urgence*/
+	struct sigaction handler_USR1;
+	handler_USR1.sa_handler = arret_urgence_prod;
+	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
+	sigaction( SIGUSR1, &handler_USR1, NULL );
+	
+	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
+	struct sigaction handler_USR2;
+	handler_USR2.sa_handler = fin_thread;
+	sigaction ( SIGUSR2, &handler_USR2, NULL );
 	
 	/*Boîtes aux lettres*/
 	struct mq_attr attributs_err;
@@ -102,7 +117,6 @@ int main(int argc, char** argv)
 	int i;
 	for ( i = 0; i < STATUT_SIZE; i++)
 		(*shm_statut)[i] = 1;
-	/**shm_statut[ST_CLAPET_OUVERT] = 1; /*clapet ouvert*/
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
@@ -122,6 +136,8 @@ int main(int argc, char** argv)
 	simulation_arg.statut = shm_statut;
 	simulation_arg.clapet = &sem_clapet;
 	simulation_arg.piece = &sem_piece;
+	simulation_arg.t_carton = t_carton;
+	simulation_arg.t_palette = t_palette;
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	
 	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );
@@ -186,9 +202,9 @@ int main(int argc, char** argv)
 	
 	/*---------------------------------------------------------Moteur----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );
-	pthread_kill( t_simulation, SIGUSR2 );
 	/*--------------------------------------------------------Destruction-------------------------------------------------------------*/
 	
+	pthread_kill( t_simulation, SIGUSR2 );
 	pthread_join(t_simulation, NULL);
 	
 	pthread_kill(t_envoi_piece, SIGUSR2);
