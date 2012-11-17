@@ -131,16 +131,8 @@ int main(int argc, char** argv)
 	carton_arg.sem_carton = &sem_carton;
 	carton_arg.sem_erreur_carton = &sem_erreur_carton;
 	pthread_create( &t_carton, NULL, (void*) carton, (void*) &carton_arg );
-
-	arg_simulation_t simulation_arg;
-	simulation_arg.statut = shm_statut;
-	simulation_arg.clapet = &sem_clapet;
-	simulation_arg.piece = &sem_piece;
-	simulation_arg.t_carton = t_carton;
-	simulation_arg.t_palette = t_palette;
-	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	
-	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );
+	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
 	
 	pthread_create( &t_log_windows, NULL, (void*) log_windows, NULL );
 	
@@ -151,6 +143,14 @@ int main(int argc, char** argv)
 	palette_arg.sem_palette = &sem_palette;
   	palette_arg.sem_erreur_palette = &sem_erreur_palette;
 	pthread_create( &t_palette, NULL, (void*) palette, (void*) &palette_arg );
+	
+	arg_simulation_t simulation_arg;
+	simulation_arg.statut = shm_statut;
+	simulation_arg.clapet = &sem_clapet;
+	simulation_arg.piece = &sem_piece;
+	simulation_arg.t_carton = t_carton;
+	simulation_arg.t_palette = t_palette;
+	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );
 	
 	arg_cariste_t cariste_arg;
 	cariste_arg.shm_lot = shm_lot;

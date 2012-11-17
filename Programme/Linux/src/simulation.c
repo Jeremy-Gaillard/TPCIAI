@@ -124,9 +124,7 @@ void simulation(arg_simulation_t* ipc)
 		else if( !strcmp(commande, "AU") )
 		{
 			pthread_kill( t_carton, SIGUSR1 );
-			printf("Ok 1\n");
 			pthread_kill( t_palette, SIGUSR1 );
-			printf("Ok 2\n");
 		}
 		if( !strcmp(commande, "q") )
 		{
