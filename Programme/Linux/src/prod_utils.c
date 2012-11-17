@@ -19,7 +19,7 @@ void gerer_erreur( int erreur_id )
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	strftime ( heure, 7, "%H%M%S", timeinfo );
-	char* message_erreur = malloc(sizeof(erreur_t));
+	erreur_t message_erreur;
 	sprintf(message_erreur, "%d %s", erreur_id, heure);
 
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);

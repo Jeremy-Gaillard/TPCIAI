@@ -31,7 +31,7 @@ void log_disque()
 	
 	while( strcmp(message, TRAME_FIN) )
 	{
-		mq_receive(bal_log_disque, (void*) &message, sizeof(log_t), NULL);
+		mq_receive(bal_log_disque, message, sizeof(log_t), NULL);
 		/*Analyser le message ici*/
 		log_t log;
 		log[0] = '\0';

@@ -77,12 +77,12 @@ int carton( arg_carton_t* args ){
 				timeinfo = localtime ( &rawtime );
 				strftime ( heure, 7, "%H%M%S", timeinfo );
 				int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
-				log_t* message= malloc(sizeof(log_t));
-				sprintf(*message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
+				log_t message;
+				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
 
-				mq_send( bal_log_disque, *message, sizeof( log_t ),
+				mq_send( bal_log_disque, message, sizeof( log_t ),
 				         BAL_PRIO_ELSE );
-				mq_send( bal_log_windows, *message, sizeof( log_t ),
+				mq_send( bal_log_windows, message, sizeof( log_t ),
 				         BAL_PRIO_ELSE );
 				/*fin envoi logs*/
 				

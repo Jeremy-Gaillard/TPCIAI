@@ -35,7 +35,7 @@ void fin_thread(int signum)
 }
 
 void arret_urgence_prod(int signum) {
-	printf("PRODUCTION: ARRÊT D'URGENCE ! %i\n");
+	printf("PRODUCTION: ARRÊT D'URGENCE !\n");
 	sem_wait(&sem_AU);
 }
 

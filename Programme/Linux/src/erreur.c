@@ -23,14 +23,12 @@ void erreur(struct arg_erreur *ipc)
 	
 	do
 	{
-		mq_receive(bal_log_erreur, (void*) &message, sizeof(erreur_t), NULL);
+		mq_receive(bal_log_erreur, message, sizeof(erreur_t), NULL);
 		*shm_statut[ST_CLAPET_OUVERT] = 0;
-		log_t* log = malloc( sizeof(log_t) );
-		log_t* log2 = malloc( sizeof(log_t) );
-		sprintf( *log, "E %s", message );
-		sprintf( *log2, "E %s", message );
-		mq_send(bal_log_windows, *log, sizeof(log_t), BAL_PRIO_ELSE);
-		mq_send(bal_log_disque, *log2, sizeof(log_t), BAL_PRIO_ELSE);
+		log_t log;
+		sprintf( log, "E %s", message );
+		mq_send(bal_log_windows, log, sizeof(log_t), BAL_PRIO_ELSE);
+		mq_send(bal_log_disque, log, sizeof(log_t), BAL_PRIO_ELSE);
 	}
 	while( strcmp(message, TRAME_FIN) );
 	printf("Fin thread erreur\n");

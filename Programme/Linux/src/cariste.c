@@ -62,11 +62,11 @@ int cariste( arg_cariste_t* args ){
 		timeinfo = localtime ( &rawtime );
 		strftime ( heure, 7, "%H%M%S", timeinfo );
 
-		log_t* message= malloc(sizeof(log_t));/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
+		log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
 
-		sprintf(*message, "L P %d %s", nb_palette,heure);
-		mq_send( bal_log_disque, *message, sizeof( log_t ), BAL_PRIO_ELSE );
-		mq_send( bal_log_windows, *message, sizeof( log_t ), BAL_PRIO_ELSE );
+		sprintf(message, "L P %d %s", nb_palette,heure);
+		mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
+		mq_send( bal_log_windows, message, sizeof( log_t ), BAL_PRIO_ELSE );
 		/*fin envoi logs*/
 		
 		/*Fin de production d'un lot: mise a 0 du lot a produire*/

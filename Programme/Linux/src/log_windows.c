@@ -53,7 +53,7 @@ void log_windows()
 	
 	do
 	{
-		mq_receive(bal_log_windows, (void*) &message, sizeof(log_t), NULL);
+		mq_receive(bal_log_windows, message, sizeof(log_t), NULL);
 		//envoyer(message);
 	}
 	while( strcmp(message, TRAME_FIN) );
