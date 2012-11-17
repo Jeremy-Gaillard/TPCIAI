@@ -43,7 +43,13 @@ int cariste( arg_cariste_t* args ){
 		nb_palette += 1;
 		pthread_mutex_lock ( mutex_entrepot );
 		i = 0;
-		for( ; shm_entrepot->palettes[ i ].id == 0 || i < 20 ; i += 1 ){
+		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < 20 ; i += 1 );
+		
+		if ( i == 20 ){
+			printf("j ai mange une palette. Om Nom Nom Nom \n Affectueusement le cariste\n");
+		}
+		else
+		{
 			shm_entrepot->palettes[ i ].id = nb_palette;
 			if ( (*shm_lot)[ LOT_A ] == 0 ){
 				shm_entrepot->palettes[ i ].type = 'B';
@@ -57,9 +63,6 @@ int cariste( arg_cariste_t* args ){
 			timeinfo = localtime ( &rawtime );
 			strftime ( shm_entrepot->palettes[ i ].heure, 7, "%H%M%S", timeinfo );
 		}/*palette rangee*/
-		if ( i == 20 ){
-			printf("j ai mange une palette. Om Nom Nom Nom \n Affectueusement le cariste\n");
-		}
 		pthread_mutex_unlock( mutex_entrepot );
 		
 		/*envoi logs*/
