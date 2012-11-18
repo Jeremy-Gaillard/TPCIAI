@@ -20,7 +20,7 @@ typedef struct arg_commande_windows
 void init_commande_windows(int asocket);
 void reprise(int erreur_id);
 void terminaison();
-void commander_lot(int nb_A, int nb_B);
+void commander_lot(int nb_A, int nb_B, int prc_max_rebus);
 void expedier_lot(int nb_A, int nb_B);
 void commande_windows(arg_commande_windows_t* ipc);
 

@@ -17,6 +17,7 @@ int carton( arg_carton_t* args ){
 	mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY);
 
 	statut_t* shm_statut = args->shm_statut;
+	lot_t* shm_lot = args->shm_lot;
 
 	sem_t* sem_piece = args->sem_piece;
 	sem_t* sem_carton = args->sem_carton;
@@ -26,7 +27,8 @@ int carton( arg_carton_t* args ){
 	/* Création des variables locales */
 	int nb_piece = 0;
 	int nb_carton = 0;
-	int nb_rebus =0;
+	int nb_rebus = 0;
+	int max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
 	int place_file_attente;
 
 	for( ; ; ){
@@ -98,7 +100,7 @@ int carton( arg_carton_t* args ){
 		
 		else{
 			nb_rebus +=1;
-			if ( nb_rebus == MAX_REBUS ){
+			if ( nb_rebus >= max_rebus ){
 				/*si trop de mauvaise piece
 				  envoie d'un message d'erreur avec hhmmss et type erreur
 				  puis attente sur semaphore de reprise d'erreur
@@ -106,6 +108,7 @@ int carton( arg_carton_t* args ){
 			 	
 				gerer_erreur(ERR_TROP_DE_REBUS);
 				sem_wait( sem_erreur_carton );
+				printf("Fin erreur rebus\n");
 
 				nb_piece = 0;
 				nb_rebus = 0;

@@ -69,10 +69,11 @@ void terminaison()
 	pthread_exit(0);
 }
 
-void commander_lot(int nb_A, int nb_B)
+void commander_lot(int nb_A, int nb_B, int prc_max_rebus)
 {
 	*lot[0] = nb_A;
 	*lot[1] = nb_B;
+	*lot[2] = prc_max_rebus;
 }
 
 void expedier_lot(int nb_A, int nb_B)

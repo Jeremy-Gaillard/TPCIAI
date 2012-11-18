@@ -70,7 +70,7 @@ void log_disque()
 							sprintf( log, "Erreur : arrêt d'urgence" );
 							break;
 						case ERR_TROP_DE_REBUS:
-							sprintf( log, "Erreur : trop de rebusn" );
+							sprintf( log, "Erreur : trop de rebus" );
 							break;
 						case ERR_PAS_DE_CARTON:
 							sprintf( log, "Erreur : plus de carton");

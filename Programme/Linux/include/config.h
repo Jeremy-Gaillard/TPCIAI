@@ -30,12 +30,14 @@
 #define PRIO_LOG_DISQUE 8
 		
 typedef char log_t[128];
-typedef int lot_t[2];
+typedef int lot_t[3];
+/*lot[0] = nb palette A / lot[1] = nb palette B / lot[2] = max rebus*/
 typedef int statut_t[STATUT_SIZE];
 typedef char erreur_t[8];
 
 #define LOT_A 0
 #define LOT_B 1
+#define REBUS 2
 
 #define ERR_AU 0
 #define ERR_TROP_DE_REBUS 1

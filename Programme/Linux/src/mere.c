@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
 		
-	for ( i = 0; i < 2; i++)
+	for ( i = 0; i < 3; i++)
 		(*shm_lot)[i] = 0;
 		
 	/*Création du handler d'arrêt d'urgence*/
@@ -128,6 +128,7 @@ int main(int argc, char** argv)
 	
 	arg_carton_t carton_arg;
 	carton_arg.shm_statut = shm_statut;
+	carton_arg.shm_lot = shm_lot;
 	carton_arg.sem_piece = &sem_piece;
 	carton_arg.sem_carton = &sem_carton;
 	carton_arg.sem_erreur_carton = &sem_erreur_carton;

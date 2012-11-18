@@ -14,6 +14,7 @@
 typedef struct arg_carton
 {
 	statut_t* shm_statut;
+	lot_t* shm_lot;
 
 
   sem_t* sem_piece;

@@ -90,7 +90,7 @@ void process_message(char * message)
 		case '0': // initialisation
 			sscanf(message, "0 %d %d %d", &nb_A, &nb_B, &err_prct);
 			printf("> Initialisation, A: %d, B: %d, prct_err: %d\n", nb_A, nb_B, err_prct);
-			commander_lot(nb_A, nb_B);
+			commander_lot(nb_A, nb_B, err_prct);
 			break;
 		case '1': // commande
 			sscanf(message, "1 %d %d", &nb_A, &nb_B);
