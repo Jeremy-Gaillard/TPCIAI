@@ -10,6 +10,34 @@
 #include "prod_utils.h"
 
 
+void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
+                 int carton_id, char type_piece, int nb_rebus ,
+		 pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque) {
+
+	char heure[7];
+	time_t rawtime;
+	struct tm * timeinfo;
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	strftime ( heure, 7, "%H%M%S", timeinfo );
+
+	int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
+	log_t message;
+
+	sprintf(message, "L C %d %c %d %s",
+	        carton_id, type_piece, pourcent_rebus, heure);
+
+	pthread_mutex_lock( mutex_disque );
+	mq_send( bal_log_disque, message, sizeof( log_t ),
+	         BAL_PRIO_ELSE );
+	pthread_mutex_unlock( mutex_disque );
+
+	pthread_mutex_lock( mutex_windows );
+	mq_send( bal_log_windows, message, sizeof( log_t ),
+	         BAL_PRIO_ELSE );
+	pthread_mutex_unlock( mutex_windows );
+}
+
 int carton( arg_carton_t* args ){
 
 	/* Récupération des ressources */
@@ -26,17 +54,22 @@ int carton( arg_carton_t* args ){
 	pthread_mutex_t* mutex_disque = args->mutex_disque;
 	pthread_mutex_t* mutex_windows = args->mutex_windows;
 	pthread_mutex_t* mutex_erreur = args->mutex_erreur;
-	
 
 	/* Création des variables locales */
 	int nb_piece = 0;
 	int nb_carton = 0;
 	int nb_rebus = 0;
 	int max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
+	char type_piece = 'A';
 	int place_file_attente;
 
 	for( ; ; ){
 		/* attente piece */
+		type_piece = ( (*shm_lot)[LOT_A] > 0 ? 'A' : 'B' );
+		/* réassigner à chaque fois peut paraître lourd ;
+		   mais dans une vraie situation, on récupérerait
+		   le type de pièce à chaque fois via le capteur anyway... */
+
 		sem_wait( sem_piece ); 
 
 		if ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
@@ -75,27 +108,10 @@ int carton( arg_carton_t* args ){
 				
 				sem_post( sem_carton );
 				
-				/*envoi logs*/
-				char heure[7];
-				time_t rawtime;
-				struct tm * timeinfo;
-				time ( &rawtime );
-				timeinfo = localtime ( &rawtime );
-				strftime ( heure, 7, "%H%M%S", timeinfo );
-				int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
-				log_t message;
-				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
+				log_carton(bal_log_disque, bal_log_windows,
+				           nb_carton, type_piece, nb_rebus,
+				           mutex_windows, mutex_disque);
 
-				pthread_mutex_lock( mutex_disque );
-				mq_send( bal_log_disque, message, sizeof( log_t ),
-				         BAL_PRIO_ELSE );
-				pthread_mutex_unlock( mutex_disque );
-				
-				pthread_mutex_lock( mutex_windows );
-				mq_send( bal_log_windows, message, sizeof( log_t ),
-				         BAL_PRIO_ELSE );
-				pthread_mutex_unlock( mutex_windows );
-				/*fin envoi logs*/
 				
 				nb_piece = 0;
 				nb_rebus = 0;
