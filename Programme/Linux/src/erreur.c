@@ -20,6 +20,8 @@ void erreur(struct arg_erreur *ipc)
 	mqd_t bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	erreur_t message;
 	statut_t* shm_statut = ipc->statut;	
+	pthread_mutex_t* mutex_disque = ipc->mutex_disque;
+	pthread_mutex_t* mutex_windows = ipc->mutex_windows;
 	
 	do
 	{
@@ -27,8 +29,12 @@ void erreur(struct arg_erreur *ipc)
 		(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 		log_t log;
 		sprintf( log, "E %s", message );
+		pthread_mutex_lock ( mutex_windows );
 		mq_send(bal_log_windows, log, sizeof(log_t), BAL_PRIO_ELSE);
+		pthread_mutex_unlock ( mutex_windows );
+		pthread_mutex_lock ( mutex_disque );
 		mq_send(bal_log_disque, log, sizeof(log_t), BAL_PRIO_ELSE);
+		pthread_mutex_unlock ( mutex_disque );
 	}
 	while( strcmp(message, TRAME_FIN) );
 	printf("Fin thread erreur\n");

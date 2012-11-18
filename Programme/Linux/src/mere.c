@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
 	sem_t sem_clapet, sem_piece, sem_carton, sem_palette, 
 		sem_erreur_carton, sem_erreur_palette;	/*semaphores*/
-	pthread_mutex_t mutex_entrepot; /*mutex*/
+	pthread_mutex_t mutex_entrepot, mutex_disque, mutex_windows, mutex_erreur; /*mutex*/
 	statut_t * shm_statut;	
 	lot_t * shm_lot;	
 	entrepot_t * shm_entrepot;
@@ -96,6 +96,9 @@ int main(int argc, char** argv)
 	
 	/*Mutex*/
 	pthread_mutex_init( &mutex_entrepot, NULL );
+	pthread_mutex_init( &mutex_disque, NULL );
+	pthread_mutex_init( &mutex_windows, NULL );
+	pthread_mutex_init( &mutex_erreur, NULL );
 	
 	/*Mémoire partagées*/
 	shm_statut = malloc( sizeof( statut_t ) );
@@ -165,6 +168,8 @@ int main(int argc, char** argv)
 	
 	arg_erreur_t erreur_arg;
 	erreur_arg.statut = shm_statut;
+	erreur_arg.mutex_disque = &mutex_disque;
+	erreur_arg.mutex_windows = &mutex_windows;
 	pthread_create( &t_erreur, NULL, (void*) erreur, (void*) &erreur_arg );
 	
 	arg_commande_windows_t windows_arg;
@@ -241,8 +246,12 @@ int main(int argc, char** argv)
 	free( shm_lot );
 	free( shm_entrepot );
 	free( shm_statut );
+	
 	/*Mutex*/
 	pthread_mutex_destroy( &mutex_entrepot );
+	pthread_mutex_destroy( &mutex_disque );
+	pthread_mutex_destroy( &mutex_windows );
+	pthread_mutex_destroy( &mutex_erreur );
 	
 	/*Sémaphores*/
 	sem_destroy( &sem_AU );
