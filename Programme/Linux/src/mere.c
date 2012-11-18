@@ -61,17 +61,6 @@ int main(int argc, char** argv)
 	struct sched_param mere_param;
 	mere_param.sched_priority = PRIO_MERE;
 	pthread_setschedparam(pthread_self(), SCHED_FIFO, &mere_param);
-
-	/*Création du handler d'arrêt d'urgence*/
-	struct sigaction handler_USR1;
-	handler_USR1.sa_handler = arret_urgence_prod;
-	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
-	sigaction( SIGUSR1, &handler_USR1, NULL );
-	
-	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
-	struct sigaction handler_USR2;
-	handler_USR2.sa_handler = fin_thread;
-	sigaction ( SIGUSR2, &handler_USR2, NULL );
 	
 	/*Boîtes aux lettres*/
 	struct mq_attr attributs_err;
@@ -123,6 +112,18 @@ int main(int argc, char** argv)
 		
 	for ( i = 0; i < 2; i++)
 		(*shm_lot)[i] = 0;
+		
+	/*Création du handler d'arrêt d'urgence*/
+	struct sigaction handler_USR1;
+	handler_USR1.sa_handler = arret_urgence_prod;
+	sigdelset( &handler_USR1.sa_mask, SIGUSR2 );
+	sigaction( SIGUSR1, &handler_USR1, NULL );
+	
+	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
+	struct sigaction handler_USR2;
+	handler_USR2.sa_handler = fin_thread;
+	sigaction ( SIGUSR2, &handler_USR2, NULL );
+		
 	/*Threads*/
 	
 	arg_carton_t carton_arg;
