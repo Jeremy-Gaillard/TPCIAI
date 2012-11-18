@@ -18,15 +18,12 @@
 #include "commande_windows.h"
 
 static sem_t* sem_clapet;
-static statut_t* shm_statut;
 static pthread_t t_envoi_piece;
 
-void envoi_piece(sem_t* sem_piece)
+void envoi_piece(arg_envoi_piece_t* ipc)
 {
-	/*Création du Handler de fin de tâche et démasquage de SIGUSR2*/
-	/*struct sigaction handler_USR2;
-	handler_USR2.sa_handler = fin_envoi_piece;
-	sigaction ( SIGUSR2, &handler_USR2, NULL );*/
+	statut_t* shm_statut = ipc->statut;
+	sem_t* sem_piece = ipc->piece;
 	for( ; ; )
 	{
 		if( (*shm_statut)[ST_CLAPET_OUVERT] == 1 )
@@ -42,10 +39,8 @@ void envoi_piece(sem_t* sem_piece)
 
 void simulation(arg_simulation_t* ipc)
 {
-	
-	shm_statut = ipc->statut;
+	statut_t* shm_statut = ipc->statut;
 	sem_clapet = ipc->clapet;
-	sem_t* sem_piece = ipc->piece;
 	pthread_t t_carton = ipc->t_carton;
 	pthread_t t_palette = ipc->t_palette;
 
