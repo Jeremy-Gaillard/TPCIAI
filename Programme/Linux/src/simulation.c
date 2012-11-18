@@ -18,7 +18,6 @@
 #include "commande_windows.h"
 
 static sem_t* sem_clapet;
-static sem_t* sem_AU;
 static pthread_t t_envoi_piece;
 
 void envoi_piece(arg_envoi_piece_t* ipc)
@@ -42,7 +41,7 @@ void simulation(arg_simulation_t* ipc)
 {
 	statut_t* shm_statut = ipc->statut;
 	sem_clapet = ipc->clapet;
-	sem_AU = ipc->AU;
+	sem_t* sem_AU = ipc->AU;
 	pthread_t t_carton = ipc->t_carton;
 	pthread_t t_palette = ipc->t_palette;
 

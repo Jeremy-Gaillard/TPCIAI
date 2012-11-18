@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
