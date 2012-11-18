@@ -18,6 +18,15 @@ import java.util.logging.Logger;
  * @author michael
  */
 public class Suivi extends javax.swing.JFrame {
+
+        //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
+    int MAXPAL = 100;
+    Interface_windows_CIAI app;
+    /*Utilisé pour avoir un bon format dans les listes*/
+    String[] liste_def_palette = new String[MAXPAL];
+    String[] liste_def_carton = new String[MAXPAL];
+    Palette[] liste_palette = new Palette[MAXPAL];
+    List liste_carton = new LinkedList();
     
     class MessageReceiver extends Thread {
             Suivi suivi;
@@ -31,17 +40,9 @@ public class Suivi extends javax.swing.JFrame {
                 int i = 0;
                 while (true) {
                     try {
-                        msg = suivi.app.network.listen_message();
+                        msg = suivi.app.network.listen_messages();
                     } catch (IOException ex) {
                         System.err.println("Could not establish server socket!");
-                    }
-                    
-                    System.out.println("Received message: '"+msg+"'");
-                    
-                    if (msg.length() == 0)
-                    {
-                        app.error("Null message received!", "A null message was received. Stopping listening.");
-                        throw new Error("Null message received!");
                     }
                     
                     if ("".equals(msg))
@@ -81,19 +82,13 @@ public class Suivi extends javax.swing.JFrame {
                             liste_def_palette[i] = palette.ToString();
                             j_palette.setListData(liste_def_palette);
                     }
+                    
+                    msg = "";
                 }
             }
 
         }
     
-    //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
-    int MAXPAL = 100;
-    Interface_windows_CIAI app;
-    /*Utilisé pour avoir un bon format dans les listes*/
-    String[] liste_def_palette;
-    String[] liste_def_carton;
-    Palette[] liste_palette;
-    List liste_carton = new LinkedList();
     /**
      * Creation d'une nouvelle forme Suivi
      */
