@@ -69,7 +69,7 @@ public class Identification extends javax.swing.JFrame {
 
         jLabel3.setText("IP de la machine Linux");
 
-        j_IP_linux.setText("134.214.161.30");
+        j_IP_linux.setText("134.214.161.86");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
