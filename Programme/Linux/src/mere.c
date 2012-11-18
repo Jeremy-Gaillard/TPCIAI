@@ -106,6 +106,8 @@ int main(int argc, char** argv)
 	int i;
 	for ( i = 0; i < STATUT_SIZE; i++)
 		(*shm_statut)[i] = 1;
+	/*Le clapet est fermé au lancement du programme*/
+	(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
@@ -179,6 +181,7 @@ int main(int argc, char** argv)
 	arg_envoi_piece_t envoi_piece_arg;
 	envoi_piece_arg.statut = shm_statut;
 	envoi_piece_arg.piece = &sem_piece;
+	envoi_piece_arg.clapet = &sem_clapet;
 	
 	pthread_create( &t_envoi_piece, NULL, (void*) envoi_piece, (void*) &envoi_piece_arg );
 	 

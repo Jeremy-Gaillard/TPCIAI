@@ -15,6 +15,7 @@ typedef struct arg_simulation
 typedef struct arg_envoi_piece
 {
 	sem_t* piece;
+	sem_t* clapet;
 	statut_t* statut;
 } arg_envoi_piece_t;
 

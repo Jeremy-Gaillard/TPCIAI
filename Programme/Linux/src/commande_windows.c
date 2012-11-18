@@ -51,14 +51,14 @@ void reprise(int erreur_id)
 	}
 	
 	int i;
-	for ( i = 0; i < STATUT_SIZE - 1; i++) /*dernière case : clapet ouvert -> 0, on verifie que tout le matériel est OK*/
+	for ( i = 0; i < STATUT_SIZE; i++) /*on verifie que tout le matériel est OK*/
 	{
-		if((*statut)[i] == 0)
+		if((*statut)[i] == 0 && i != ST_CLAPET_OUVERT && i != ST_PIECE)
 			break;
 	}
-	if(i == STATUT_SIZE - 2)
+	if(i == STATUT_SIZE)
 	{
-		(*statut)[STATUT_SIZE - 1] = 1;
+		(*statut)[ST_CLAPET_OUVERT] = 1;
 		sem_post(sem_clapet);
 	}
 	
@@ -74,6 +74,8 @@ void commander_lot(int nb_A, int nb_B, int prc_max_rebus)
 	*lot[0] = nb_A;
 	*lot[1] = nb_B;
 	*lot[2] = prc_max_rebus;
+	(*statut)[ST_CLAPET_OUVERT] = 1;
+	sem_post(sem_clapet);
 }
 
 void expedier_lot(int nb_A, int nb_B)

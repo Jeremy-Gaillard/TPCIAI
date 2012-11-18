@@ -17,13 +17,13 @@
 #include "simulation.h"
 #include "commande_windows.h"
 
-static sem_t* sem_clapet;
 static pthread_t t_envoi_piece;
 
 void envoi_piece(arg_envoi_piece_t* ipc)
 {
 	statut_t* shm_statut = ipc->statut;
 	sem_t* sem_piece = ipc->piece;
+	sem_t* sem_clapet = ipc->clapet;
 	for( ; ; )
 	{
 		if( (*shm_statut)[ST_CLAPET_OUVERT] == 1 )
@@ -40,7 +40,7 @@ void envoi_piece(arg_envoi_piece_t* ipc)
 void simulation(arg_simulation_t* ipc)
 {
 	statut_t* shm_statut = ipc->statut;
-	sem_clapet = ipc->clapet;
+	sem_t* sem_clapet = ipc->clapet;
 	sem_t* sem_AU = ipc->AU;
 	pthread_t t_carton = ipc->t_carton;
 	pthread_t t_palette = ipc->t_palette;
@@ -127,9 +127,13 @@ void simulation(arg_simulation_t* ipc)
 			sem_post(sem_AU);
 			sem_post(sem_AU);
 		}
-		if( !strcmp(commande, "q") )
+		else if( !strcmp(commande, "go") )
 		{
-			break;
+			commander_lot(10, 10, 200);
+		}
+		else if( !strcmp(commande, "reprise_rebus") )
+		{
+			reprise(ERR_TROP_DE_REBUS);
 		}
 	}
 	pthread_exit(0);
