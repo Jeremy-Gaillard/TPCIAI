@@ -47,11 +47,12 @@ void init_prod( sem_t* sem_arret_urgence );
 
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int carton_id, char type_piece, int nb_rebus );
-
 int carton( arg_carton_t* args );
 
 int palette( arg_palette_t* args );
 
+void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
+                 int palette_id, char type_piece );
 int cariste( arg_cariste_t* args );
 
 void gerer_erreur( int erreur_id );

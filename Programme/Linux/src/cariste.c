@@ -9,7 +9,25 @@
 
 #include "config.h"
 #include "prod_utils.h"
- 
+
+void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
+                  int palette_id, char type_piece ) {
+
+		char heure[7];
+		time_t rawtime;
+		struct tm * timeinfo;
+		time ( &rawtime );
+		timeinfo = localtime ( &rawtime );
+		strftime ( heure, 7, "%H%M%S", timeinfo );
+
+		log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
+
+		sprintf(message, "L P %d %c %s", palette_id, type_piece, heure);
+		mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
+		mq_send( bal_log_windows, message, sizeof( log_t ), BAL_PRIO_ELSE );
+
+}
+
 int cariste( arg_cariste_t* args ){
 	
 	/* Récupération des ressources */
@@ -26,9 +44,12 @@ int cariste( arg_cariste_t* args ){
 	/* Création des variables locales */
  	int nb_palette = 0;
 	int i = 0;
+	char type_piece = 'A';
 
  	for ( ; ; ){
 		sem_wait( sem_palette );
+		type_piece = ( (*shm_lot)[LOT_A] > 0 ? 'A' : 'B' );
+
 		nb_palette += 1;
 		pthread_mutex_lock ( mutex_entrepot );
 		i = 0;
@@ -40,12 +61,7 @@ int cariste( arg_cariste_t* args ){
 		else
 		{
 			shm_entrepot->palettes[ i ].id = nb_palette;
-			if ( (*shm_lot)[ LOT_A ] == 0 ){
-				shm_entrepot->palettes[ i ].type = 'B';
-			}
-			else{
-				shm_entrepot->palettes[ i ].type = 'A';
-			}
+			shm_entrepot->palettes[i].type = type_piece;
 			time_t rawtime;
 			struct tm * timeinfo;	
 			time ( &rawtime );
@@ -54,20 +70,8 @@ int cariste( arg_cariste_t* args ){
 		}/*palette rangee*/
 		pthread_mutex_unlock( mutex_entrepot );
 		
-		/*envoi logs*/
-		char heure[7];
-		time_t rawtime;
-		struct tm * timeinfo;
-		time ( &rawtime );
-		timeinfo = localtime ( &rawtime );
-		strftime ( heure, 7, "%H%M%S", timeinfo );
-
-		log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
-
-		sprintf(message, "L P %d %s", nb_palette,heure);
-		mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
-		mq_send( bal_log_windows, message, sizeof( log_t ), BAL_PRIO_ELSE );
-		/*fin envoi logs*/
+		log_cariste( bal_log_disque, bal_log_windows,
+		             nb_palette, type_piece );
 		
 		/*Fin de production d'un lot: mise a 0 du lot a produire*/
 		if ( (*shm_lot)[ LOT_A ] == nb_palette ){
