@@ -17,6 +17,7 @@ typedef struct arg_commande_windows
 	sem_t* clapet;
 } arg_commande_windows_t;
 
+void init_commande_windows(int asocket);
 void reprise(int erreur_id);
 void terminaison();
 void commander_lot(int nb_A, int nb_B);

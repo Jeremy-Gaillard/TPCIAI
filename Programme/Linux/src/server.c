@@ -32,7 +32,7 @@ int server(int portno)
 	int sockfd, newsockfd;
 	socklen_t clilen;
 	struct sockaddr_in serv_addr, cli_addr;
-	int n;
+	//int n;
 	
 	printf("Launching server...\n"); 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,40 +63,14 @@ int server(int portno)
 	
 	if (newsockfd < 0)
 		error("ERROR on accept 1");
-	
+	/*
 	pthread_t t_receive;
 	pthread_create( &t_receive, NULL, (void*) wait_order, (void*) newsockfd );
-	/*
-	printf("First socket aqcuired.\n");
-	
-	newsockfd = accept( sockfd,
-						(struct sockaddr*)&cli_addr,
-						&clilen );
-	
-	if (newsockfd < 0)
-		error("ERROR on accept 2");
 	*/
 	init_log_windows(newsockfd);
+	init_commande_windows(newsockfd);
 	
 	printf("Connection initiated.\n");
-	
-	//printf(".%d\n",newsockfd);
-	
-	//envoyer("INIT..\n");
-	
-/*
-	client(portno-1);
-	while(1) {
-		wait_order();
-	}
-*/
-/*
-	pthread_join(t_receive, NULL);
-	close(newsockfd);
-	close(sockfd);
-*/
-			//printf("LOOOOOOOOOOOOOOOL\n");
-	
 	
 	return 0;
 }
@@ -116,15 +90,17 @@ void process_message(char * message)
 		case '0': // initialisation
 			sscanf(message, "0 %d %d %d", &nb_A, &nb_B, &err_prct);
 			printf("> Initialisation, A: %d, B: %d, prct_err: %d\n", nb_A, nb_B, err_prct);
+			commander_lot(nb_A, nb_B);
 			break;
 		case '1': // commande
 			sscanf(message, "1 %d %d", &nb_A, &nb_B);
 			printf("> Commande, A: %d, B: %d\n", nb_A, nb_B);
+			expedier_lot(nb_A, nb_B);
 			break;
 		case '2': // reprise
 			id_error = atoi(message+1);
 			printf("> Reprise, id_err: %d\n", id_error);
-			reprise(0);
+			reprise(id_error);
 			break;
 		case '3': // arrêt
 			printf("> Arrêt\n");

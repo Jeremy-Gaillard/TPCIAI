@@ -3,6 +3,7 @@
 
 #include "config.h"
 
+void init_log_windows(int asocket);
 void envoyer(log_t message);
 void log_windows();
 

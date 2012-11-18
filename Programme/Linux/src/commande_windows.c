@@ -1,5 +1,6 @@
 #include "commande_windows.h"
 #include "config.h"
+#include "server.h"
 
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -19,6 +20,13 @@ static sem_t* sem_erreur_palette;
 static sem_t* sem_erreur_carton;
 static sem_t* sem_AU;
 static sem_t* sem_clapet;
+
+static int my_socket;
+
+void init_commande_windows(int asocket)
+{
+	my_socket = asocket;
+}
 
 void reprise(int erreur_id)
 {
@@ -104,7 +112,8 @@ void commande_windows(arg_commande_windows_t* ipc)
 	sem_erreur_carton = ipc->carton;
 	sem_AU = ipc->AU;
 	sem_clapet = ipc->clapet;
-	sleep(10);
+	//sleep(10);
+	wait_order(my_socket);
 }
 
 
