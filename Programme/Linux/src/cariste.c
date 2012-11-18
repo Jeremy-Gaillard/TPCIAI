@@ -21,6 +21,8 @@ int cariste( arg_cariste_t* args ){
 	entrepot_t* shm_entrepot = args->shm_entrepot;
 
 	pthread_mutex_t* mutex_entrepot = args->mutex_entrepot;
+	pthread_mutex_t* mutex_disque = args->mutex_disque;
+	pthread_mutex_t* mutex_windows = args->mutex_windows;
 	sem_t* sem_palette = args->sem_palette;
 
 	/* Création des variables locales */
@@ -65,8 +67,14 @@ int cariste( arg_cariste_t* args ){
 		log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
 
 		sprintf(message, "L P %d %s", nb_palette,heure);
+		
+		pthread_mutex_lock( mutex_disque );
 		mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
+		pthread_mutex_unlock( mutex_disque );
+		
+		pthread_mutex_lock( mutex_windows );
 		mq_send( bal_log_windows, message, sizeof( log_t ), BAL_PRIO_ELSE );
+		pthread_mutex_unlock( mutex_windows );
 		/*fin envoi logs*/
 		
 		/*Fin de production d'un lot: mise a 0 du lot a produire*/

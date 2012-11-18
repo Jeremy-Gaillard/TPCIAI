@@ -137,6 +137,9 @@ int main(int argc, char** argv)
 	carton_arg.sem_piece = &sem_piece;
 	carton_arg.sem_carton = &sem_carton;
 	carton_arg.sem_erreur_carton = &sem_erreur_carton;
+	carton_arg.mutex_disque = &mutex_disque;
+	carton_arg.mutex_windows = &mutex_windows;
+	carton_arg.mutex_erreur = &mutex_erreur;
 	pthread_create( &t_carton, NULL, (void*) carton, (void*) &carton_arg );
 	
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
@@ -149,6 +152,7 @@ int main(int argc, char** argv)
 	palette_arg.sem_carton = &sem_carton;
 	palette_arg.sem_palette = &sem_palette;
   	palette_arg.sem_erreur_palette = &sem_erreur_palette;
+	palette_arg.mutex_erreur = &mutex_erreur;
 	pthread_create( &t_palette, NULL, (void*) palette, (void*) &palette_arg );
 	
 	arg_simulation_t simulation_arg;
@@ -164,6 +168,8 @@ int main(int argc, char** argv)
 	cariste_arg.shm_entrepot = shm_entrepot;
 	cariste_arg.sem_palette = &sem_palette;
 	cariste_arg.mutex_entrepot = &mutex_entrepot;
+	cariste_arg.mutex_disque = &mutex_disque;
+	cariste_arg.mutex_windows = &mutex_windows;
 	pthread_create( &t_cariste, NULL, (void*) cariste, (void*) &cariste_arg );
 	
 	arg_erreur_t erreur_arg;

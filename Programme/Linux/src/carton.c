@@ -22,7 +22,11 @@ int carton( arg_carton_t* args ){
 	sem_t* sem_piece = args->sem_piece;
 	sem_t* sem_carton = args->sem_carton;
 	sem_t* sem_erreur_carton = args->sem_erreur_carton;
-
+	
+	pthread_mutex_t* mutex_disque = args->mutex_disque;
+	pthread_mutex_t* mutex_windows = args->mutex_windows;
+	pthread_mutex_t* mutex_erreur = args->mutex_erreur;
+	
 
 	/* Création des variables locales */
 	int nb_piece = 0;
@@ -40,7 +44,7 @@ int carton( arg_carton_t* args ){
 			  envoi d'un message d'erreur avec hhmmss et type erreur
 			  puis attente sur semaphore de reprise d'erreur*/
 		 		
-			gerer_erreur(ERR_PAS_DE_CARTON);
+			gerer_erreur(ERR_PAS_DE_CARTON, mutex_erreur );
 			sem_wait( sem_erreur_carton );
 		}
 		/*end of absence carton*/
@@ -53,7 +57,7 @@ int carton( arg_carton_t* args ){
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
 
-					gerer_erreur(ERR_IMPRIMANTE_KO);
+					gerer_erreur(ERR_IMPRIMANTE_KO, mutex_erreur);
 					sem_wait( sem_erreur_carton );
 				}
 				/*end of if imprimante HS*/
@@ -64,7 +68,7 @@ int carton( arg_carton_t* args ){
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
 				 
-					gerer_erreur(ERR_FILE_D_ATTENTE);
+					gerer_erreur(ERR_FILE_D_ATTENTE, mutex_erreur);
 					sem_wait( sem_erreur_carton );
 				}
 				/*end of if file attente pleine*/
@@ -82,10 +86,15 @@ int carton( arg_carton_t* args ){
 				log_t message;
 				sprintf(message, "L C %d %d %s", nb_carton,pourcent_rebus,heure);
 
+				pthread_mutex_lock( mutex_disque );
 				mq_send( bal_log_disque, message, sizeof( log_t ),
 				         BAL_PRIO_ELSE );
+				pthread_mutex_unlock( mutex_disque );
+				
+				pthread_mutex_lock( mutex_windows );
 				mq_send( bal_log_windows, message, sizeof( log_t ),
 				         BAL_PRIO_ELSE );
+				pthread_mutex_unlock( mutex_windows );
 				/*fin envoi logs*/
 				
 				nb_piece = 0;
@@ -106,7 +115,7 @@ int carton( arg_carton_t* args ){
 				  puis attente sur semaphore de reprise d'erreur
 				  puis on jette le carton en cours*/
 			 	
-				gerer_erreur(ERR_TROP_DE_REBUS);
+				gerer_erreur(ERR_TROP_DE_REBUS, mutex_erreur);
 				sem_wait( sem_erreur_carton );
 				printf("Fin erreur rebus\n");
 
