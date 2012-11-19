@@ -70,6 +70,7 @@ public class Suivi extends javax.swing.JFrame {
                             int horaire = Integer.parseInt(decoupe[2]);
                             j_erreur.setText("erreur détectée d'id " + id_erreur + " a l'horaire " + horaire);
                             erreur = id_erreur;
+                            B_reprise.setEnabled(true);
                     }
                     else if ("L C".equals(msg.substring(0, 3)))
                     {
@@ -158,6 +159,7 @@ public class Suivi extends javax.swing.JFrame {
         });
 
         B_reprise.setText("Reprise");
+        B_reprise.setEnabled(false);
         B_reprise.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 B_repriseActionPerformed(evt);
@@ -281,7 +283,7 @@ public class Suivi extends javax.swing.JFrame {
             app.network.send_message("2 " + erreur);
             erreur = 10;
             j_erreur.setText(" ");
-            //app.network.send_message(null);
+            B_reprise.setEnabled(false);
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
