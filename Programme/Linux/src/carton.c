@@ -121,7 +121,7 @@ int carton( arg_carton_t* args ){
 						type_piece = 'B';
 						nb_palette = 0;
 					}
-					else if ( type_piece=='B' && nb_palette=(*shm_lot)[LOT_B] ) {
+					else if ( type_piece=='B' && nb_palette==(*shm_lot)[LOT_B] ) {
 						(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 					}
 				}
