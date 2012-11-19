@@ -33,6 +33,20 @@ void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
 		pthread_mutex_unlock( mutex_windows );
 }
 
+void ranger_palette( int place, int nb_palette, char type_piece,
+                     entrepot_t* shm_entrepot ) {
+
+	shm_entrepot->palettes[place].id = nb_palette;
+	shm_entrepot->palettes[place].type = type_piece;
+	time_t rawtime;
+	struct tm * timeinfo;	
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	strftime ( shm_entrepot->palettes[ place ].heure, 7, "%H%M%S", timeinfo );
+
+}
+
+
 int cariste( arg_cariste_t* args ){
 	
 	/* Récupération des ressources */
@@ -55,9 +69,13 @@ int cariste( arg_cariste_t* args ){
 
  	for ( ; ; ){
 		sem_wait( sem_palette );
-		type_piece = ( (*shm_lot)[LOT_A] > 0 ? 'A' : 'B' );
 
 		nb_palette += 1;
+		if ( type_piece=='A' && nb_palette==(*shm_lot)[LOT_A] ) {
+			type_piece = 'B';
+			nb_palette = 0;
+		}
+
 		pthread_mutex_lock ( mutex_entrepot );
 		i = 0;
 		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < 20 ; i += 1 );
@@ -66,15 +84,8 @@ int cariste( arg_cariste_t* args ){
 			printf("j ai mange une palette. Om Nom Nom Nom \n Affectueusement le cariste\n");
 		}
 		else
-		{
-			shm_entrepot->palettes[ i ].id = nb_palette;
-			shm_entrepot->palettes[i].type = type_piece;
-			time_t rawtime;
-			struct tm * timeinfo;	
-			time ( &rawtime );
-			timeinfo = localtime ( &rawtime );
-			strftime ( shm_entrepot->palettes[ i ].heure, 7, "%H%M%S", timeinfo );
-		}/*palette rangee*/
+			ranger_palette( i, nb_palette, type_piece, shm_entrepot );
+
 		pthread_mutex_unlock( mutex_entrepot );
 		
 		log_cariste( bal_log_disque, bal_log_windows,

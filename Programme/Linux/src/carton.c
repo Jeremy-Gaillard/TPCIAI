@@ -12,7 +12,7 @@
 
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int carton_id, char type_piece, int nb_rebus ,
-		 pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque) {
+                 pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque ) {
 
 	char heure[7];
 	time_t rawtime;
@@ -60,15 +60,12 @@ int carton( arg_carton_t* args ){
 	int nb_carton = 0;
 	int nb_rebus = 0;
 	int max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
+	int nb_palette = 0;
 	char type_piece = 'A';
 	int place_file_attente;
 
 	for( ; ; ){
 		/* attente piece */
-		type_piece = ( (*shm_lot)[LOT_A] > 0 ? 'A' : 'B' );
-		/* réassigner à chaque fois peut paraître lourd ;
-		   mais dans une vraie situation, on récupérerait
-		   le type de pièce à chaque fois via le capteur anyway... */
 
 		sem_wait( sem_piece ); 
 
@@ -107,16 +104,25 @@ int carton( arg_carton_t* args ){
 				/*end of if file attente pleine*/
 				
 				sem_post( sem_carton );
+				nb_carton++;
 				
 				log_carton(bal_log_disque, bal_log_windows,
 				           nb_carton, type_piece, nb_rebus,
 				           mutex_windows, mutex_disque);
 
-				
 				nb_piece = 0;
 				nb_rebus = 0;
-				if (++nb_carton==PALETTE_PLEINE)
+
+				if (nb_carton==PALETTE_PLEINE) {
 					nb_carton=0;
+					nb_palette++;
+
+					if ( type_piece=='A' && nb_palette==(*shm_lot)[LOT_A] ) {
+						type_piece = 'B';
+						nb_palette = 0;
+					}
+				}
+					
 			}
 			/*end of if carton plein*/
 		
