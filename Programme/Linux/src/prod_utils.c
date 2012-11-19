@@ -12,7 +12,6 @@
 void gerer_erreur( int erreur_id, pthread_mutex_t* mutex_erreur )
 {
 	
-	printf("err: %d\n", erreur_id);
 	char heure[7];
 	time_t rawtime;
 	struct tm * timeinfo;
