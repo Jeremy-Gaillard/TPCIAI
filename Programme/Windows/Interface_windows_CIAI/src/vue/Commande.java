@@ -18,11 +18,11 @@ public class Commande extends javax.swing.JFrame {
     /**
      * Creates new form Commande
      */
-    public Commande(Interface_windows_CIAI inter, Palette[] liste_palette) {
+    public Commande(Interface_windows_CIAI inter, int nb_palette_A, int nb_palette_B) {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        initData(liste_palette);
+        initData(nb_palette_A, nb_palette_B);
     }
 
     /**
@@ -145,22 +145,11 @@ public class Commande extends javax.swing.JFrame {
     /**
      * Initialise avec le nombre de cartons actuellement dans l'entrepôt
      */
-    private void initData(Palette[] liste_palette) {
+    private void initData(int nb_palette_A, int nb_palette_B) {
         
-        int nb_palette_actuel_A = 0;
-        int nb_palette_actuel_B = 0;
-        for(int j = 0; j < liste_palette.length; j++){
-            
-            if("A".equals(liste_palette[j].getType_palette()))
-            {
-                nb_palette_actuel_A++;
-            }
-            else
-            {
-                nb_palette_actuel_B++;
-            }
-            
-        }
+        int nb_palette_actuel_A = nb_palette_A;
+        int nb_palette_actuel_B = nb_palette_B;
+
         String palette_actuel_A = String.valueOf(nb_palette_actuel_A); //A modifier pour avoir la bonne valeur
         String palette_actuel_B = String.valueOf(nb_palette_actuel_B);
         j_nb_palette_actuel_A.setText(palette_actuel_A);
@@ -209,7 +198,6 @@ public class Commande extends javax.swing.JFrame {
             System.out.println("Commande OK");
             try {
                 String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
-                //System.out.println(commande);
                 app.network.send_message(commande);
                 this.dispose();
             } catch (IOException ex) {

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Palette {
     int id_palette;
-    List listeCarton = new LinkedList();
+    List<Carton> listeCarton = new LinkedList<Carton>();
     int horaire;
     String type_palette;
 
@@ -23,7 +23,7 @@ public class Palette {
         this.horaire = horaire;
     }
 
-    public List getListeCarton() {
+    public List<Carton> getListeCarton() {
         return listeCarton;
     }
 
@@ -41,7 +41,7 @@ public class Palette {
      * 
      */
     public String ToString(){
-        String definition = "Palette " + this.id_palette + " finie à " + this.horaire;
+        String definition = "Palette " + this.id_palette + " de type " + this.type_palette + " finie à " + this.horaire;
         return definition;
     }
 }
