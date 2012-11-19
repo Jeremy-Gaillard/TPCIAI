@@ -61,7 +61,7 @@ int carton( arg_carton_t* args ){
 	int nb_rebus = 0;
 	int max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
 	int nb_palette = 0;
-	char type_piece = 'A';
+	char type_piece = ((*shm_lot)[LOT_A] > 0) ? 'A' : 'B';
 	int place_file_attente;
 
 	for( ; ; ){
@@ -120,6 +120,9 @@ int carton( arg_carton_t* args ){
 					if ( type_piece=='A' && nb_palette==(*shm_lot)[LOT_A] ) {
 						type_piece = 'B';
 						nb_palette = 0;
+					}
+					else if ( type_piece=='B' && nb_palette=(*shm_lot)[LOT_B] ) {
+						(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 					}
 				}
 					
