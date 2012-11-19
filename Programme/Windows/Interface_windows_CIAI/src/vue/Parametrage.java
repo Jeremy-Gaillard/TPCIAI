@@ -43,7 +43,12 @@ public class Parametrage extends javax.swing.JFrame {
         j_nb_pourcentage = new javax.swing.JTextField();
         B_annuler = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                closing(evt);
+            }
+        });
 
         jLabel1.setText("Interface de paramétrage du lot de fabrication");
 
@@ -64,7 +69,7 @@ public class Parametrage extends javax.swing.JFrame {
 
         j_nb_palette_B.setText("42");
 
-        j_nb_pourcentage.setText("80");
+        j_nb_pourcentage.setText("50");
 
         B_annuler.setText("Annuler");
         B_annuler.addActionListener(new java.awt.event.ActionListener() {
@@ -140,7 +145,7 @@ public class Parametrage extends javax.swing.JFrame {
             pourcentage = Integer.parseInt(j_nb_pourcentage.getText());
             if (nb_palette_commande_A < 0 || nb_palette_commande_B < 0 || pourcentage < 0)
             {
-                app.error("Données invalides", "Rentrez des valeurs positives pour les différentes paramètres.");
+                app.error("Données invalides", "Entrez des valeurs positives pour les différentes paramètres.");
             }
             else
             { /* censé veréifier si la commande est possible ici ? C'est passé ou ?*/
@@ -150,7 +155,7 @@ public class Parametrage extends javax.swing.JFrame {
                     this.dispose();
                 } catch (IOException ex) {
                     app.error("IO Exception", "Could not send the command to the host!");
-                    ex.printStackTrace(System.err);
+                    //ex.printStackTrace(System.err);
                 }    
                 //ouverture de la fenêtre de suivi
                 Suivi fv = new Suivi(app);
@@ -158,15 +163,21 @@ public class Parametrage extends javax.swing.JFrame {
                 this.dispose();
             }
         } catch (java.lang.NumberFormatException ex){
-            System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
+            //System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
+            app.error("Format numérique", "Entrez des valeurs valides pour les différentes paramètres.", ex);
         }
         
     }//GEN-LAST:event_B_envoi_parametrageActionPerformed
 
     private void B_annulerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_annulerActionPerformed
-        // TODO add your handling code here:
-        System.exit(0);
+        dispose();
+        app.quit();
     }//GEN-LAST:event_B_annulerActionPerformed
+
+    private void closing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closing
+        dispose();
+        app.quit();
+    }//GEN-LAST:event_closing
 
     
     /*public static void main(String args[]) {

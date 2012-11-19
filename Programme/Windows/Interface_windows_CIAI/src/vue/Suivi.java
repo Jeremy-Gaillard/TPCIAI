@@ -24,6 +24,8 @@ public class Suivi extends javax.swing.JFrame {
     int erreur = 10;
     int nb_palette = 1;
     Interface_windows_CIAI app;
+    MessageReceiver message_receiver = new MessageReceiver(this);
+    
     /*Variable utilisée pour avoir un bon format dans les listes*/
     String[] liste_def_palette = new String[MAXPAL];
     String[] liste_def_carton = new String[MAXPAL];
@@ -47,7 +49,8 @@ public class Suivi extends javax.swing.JFrame {
                         //ecoute d'un message du serveur
                         msg = suivi.app.network.listen_message();
                     } catch (IOException ex) {
-                        System.err.println("Could not establish server socket!");
+                        //System.err.println("Could not establish server socket!");
+                        app.error("Socket", "Could not establish client socket!", ex);
                     }
                     System.out.println("Received message: '"+msg+"'");
                     
@@ -56,60 +59,76 @@ public class Suivi extends javax.swing.JFrame {
                         app.error("Null message received!", "A null message was received. Stopping listening.");
                         throw new Error("Null message received!");
                     }
-                    
+                    /* inutile
                     if ("".equals(msg))
                     {
                          //pas forcément utile.
                     }
-                    else if ("E".equals(msg.substring(0, 1)))
-                    {
-                        
-                            //Reception et traitement d'une erreur
-                            String decoupe[] = msg.split(" ");
-                            int id_erreur = Integer.parseInt(decoupe[1]);
-                            int horaire = Integer.parseInt(decoupe[2]);
-                            j_erreur.setText("erreur détectée d'id " + id_erreur + " a l'horaire " + horaire);
-                            erreur = id_erreur;
-                            B_reprise.setEnabled(true);
+                    else */
+                    try {
+                        if ("E".equals(msg.substring(0, 1)))
+                        {
+
+                                //Reception et traitement d'une erreur
+                                String decoupe[] = msg.split(" ");
+                                if (decoupe[1].equals("Fi")) {
+                                    app.info("Quitting", "Received a stop message, quitting...");
+                                    quit_app();
+                                    return;
+                                } else {
+                                    int id_erreur = Integer.parseInt(decoupe[1]);
+                                    int horaire = Integer.parseInt(decoupe[2]);
+                                    j_erreur.setText("erreur détectée d'id " + id_erreur + " a l'horaire " + horaire);
+                                    erreur = id_erreur;
+                                    B_reprise.setEnabled(true);
+                                }
+                        }
+                        else if ("L C".equals(msg.substring(0, 3)))
+                        {
+
+                                //Reception d'un carton
+                                String decoupe[] = msg.split(" ");
+                                int id_carton = Integer.parseInt(decoupe[2]);
+                                String type_piece = decoupe[3];
+                                int pourcentage = Integer.parseInt(decoupe[4]);
+                                int horaire = Integer.parseInt(decoupe[5]);
+
+                                //ajout dans sa palette
+                                Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
+                                liste_palette[i].Ajouter_carton(carton);
+
+                        }
+                        else if ("L P".equals(msg.substring(0, 3)))
+                        {
+
+                                //Reception d'une palette
+
+                                i++; //mise à jour de l'indice de la liste de palette
+                                nb_palette++; //mise à jour du nombre de palette
+
+                                String decoupe[] = msg.split(" ");
+                                int id_palette = Integer.parseInt(decoupe[2]);
+                                String type_palette = decoupe[3];
+                                int horaire = Integer.parseInt(decoupe[4]); 
+
+                                Palette palette = new Palette(id_palette, type_palette, horaire);
+                                liste_palette[i] = palette;
+
+                                //MAJ de la liste de palettes
+                                liste_def_palette[i] = palette.ToString();
+                                j_palette.setListData(liste_def_palette);
+                        }
+                    } catch (NumberFormatException ex) {
+                        app.error("Invalid message received", "An invalid message was received: "+msg, ex);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        app.error("Invalid message received", "Error while parsing message: "+msg, ex);
                     }
-                    else if ("L C".equals(msg.substring(0, 3)))
-                    {
-                        
-                            //Reception d'un carton
-                            String decoupe[] = msg.split(" ");
-                            int id_carton = Integer.parseInt(decoupe[2]);
-                            String type_piece = decoupe[3];
-                            int pourcentage = Integer.parseInt(decoupe[4]);
-                            int horaire = Integer.parseInt(decoupe[5]);
-
-                            //ajout dans sa palette
-                            Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
-                            liste_palette[i].Ajouter_carton(carton);
-
-                    }
-                    else if ("L P".equals(msg.substring(0, 3)))
-                    {
-                        
-                            //Reception d'une palette
-                        
-                            i++; //mise à jour de l'indice de la liste de palette
-                            nb_palette++; //mise à jour du nombre de palette
-
-                            String decoupe[] = msg.split(" ");
-                            int id_palette = Integer.parseInt(decoupe[2]);
-                            String type_palette = decoupe[3];
-                            int horaire = Integer.parseInt(decoupe[4]); 
-
-                            Palette palette = new Palette(id_palette, type_palette, horaire);
-                            liste_palette[i] = palette;
-
-                            //MAJ de la liste de palettes
-                            liste_def_palette[i] = palette.ToString();
-                            j_palette.setListData(liste_def_palette);
-                    }
-                    
-                    msg = "";
                 }
+            }
+
+            private void quit_app() {
+                dispose();
+                app.quit();
             }
 
         }
@@ -121,7 +140,7 @@ public class Suivi extends javax.swing.JFrame {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        new MessageReceiver(this).start();
+        message_receiver.start();
         
     }
     
@@ -298,7 +317,7 @@ public class Suivi extends javax.swing.JFrame {
         System.out.println("Message d'arrêt");
         try {
             app.network.send_message("3");
-            this.dispose();
+            //this.dispose(); // attendre message de retour pour quitter !
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);

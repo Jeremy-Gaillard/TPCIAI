@@ -45,8 +45,9 @@ network.client_reader =
         }
     */
 	Socket client;
-	ServerSocket server;
+	//ServerSocket server;
 	BufferedReader client_reader;
+        boolean open;
         
 	public NetworkInterface() throws UnknownHostException, IOException {
             //this("134.214.105.197");
@@ -64,6 +65,7 @@ network.client_reader =
             //listen_messages();
             
 //client = new Socket("localhost", 32768);
+            open = true;
 	}
 	/*
 	public void recovery_order() {
@@ -138,10 +140,18 @@ System.out.println((char)r);
             //System.out.println("Received message: '"+msg+"'");
             return msg;
 	}
+        
+        public void close() throws IOException {
+            if (open) {
+                client.close();
+                //server.close();
+                open = false;
+            }
+        }
+        
         @Override
         protected void finalize() throws Throwable {
-            client.close();
-            server.close();
+            close();
             super.finalize();
         }
 

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import network.NetworkInterface;
 import vue.Identification;
@@ -43,8 +45,21 @@ public class Interface_windows_CIAI {
     }
     
     public void error(String title, String msg) {
-        //throw new UnsupportedOperationException("Not yet implemented");
         JOptionPane.showMessageDialog(null, msg, title, 0);
         System.err.println("Error: "+title+"\n\t"+msg);
+    }
+    
+    public void info(String title, String msg) {
+        JOptionPane.showMessageDialog(null, msg, title, 1);
+        System.out.println("Info: "+title+"\n\t"+msg);
+    }
+    
+    public void quit() {
+        System.out.println("Quitting...");
+        try {
+            network.close();
+        } catch (IOException ex) {
+            error("Error on quitting", "Error closing the client connection", ex);
+        }
     }
 }
