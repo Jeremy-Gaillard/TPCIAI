@@ -133,11 +133,11 @@ int carton( arg_carton_t* args ){
 					nb_carton=0;
 					nb_palette++;
 
-					if ( type_piece=='A' && nb_palette==(*shm_lot)[LOT_A] ) {
+					if ( type_piece=='A' && nb_palette==lot_A ) {
 						type_piece = 'B';
 						nb_palette = 0;
 					}
-					else if ( type_piece=='B' && nb_palette==(*shm_lot)[LOT_B] ) {
+					else if ( type_piece=='B' && nb_palette==lot_B ) {
 						(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 					}
 				}
