@@ -158,7 +158,7 @@ int carton( arg_carton_t* args ){
 			 	
 				gerer_erreur(ERR_TROP_DE_REBUS, mutex_erreur);
 				sem_wait( sem_erreur_carton );
-				printf("Fin erreur rebus\n");
+				/* printf("Fin erreur rebus\n"); */
 
 				nb_piece = 0;
 				nb_rebus = 0;
