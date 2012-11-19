@@ -9,7 +9,44 @@
 
 #include "config.h"
 #include "prod_utils.h"
- 
+
+void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
+                  int palette_id, char type_piece, pthread_mutex_t* mutex_windows,
+                  pthread_mutex_t* mutex_disque) {
+
+		char heure[7];
+		time_t rawtime;
+		struct tm * timeinfo;
+		time ( &rawtime );
+		timeinfo = localtime ( &rawtime );
+		strftime ( heure, 7, "%H%M%S", timeinfo );
+
+		log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
+
+		sprintf(message, "L P %d %c %s", palette_id, type_piece, heure);
+		pthread_mutex_lock( mutex_disque );
+		mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
+		pthread_mutex_unlock( mutex_disque );
+		
+		pthread_mutex_lock( mutex_windows );
+		mq_send( bal_log_windows, message, sizeof( log_t ), BAL_PRIO_ELSE );
+		pthread_mutex_unlock( mutex_windows );
+}
+
+void ranger_palette( int place, int nb_palette, char type_piece,
+                     entrepot_t* shm_entrepot ) {
+
+	shm_entrepot->palettes[place].id = nb_palette;
+	shm_entrepot->palettes[place].type = type_piece;
+	time_t rawtime;
+	struct tm * timeinfo;	
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	strftime ( shm_entrepot->palettes[ place ].heure, 7, "%H%M%S", timeinfo );
+
+}
+
+
 int cariste( arg_cariste_t* args ){
 	
 	/* Récupération des ressources */
@@ -21,53 +58,39 @@ int cariste( arg_cariste_t* args ){
 	entrepot_t* shm_entrepot = args->shm_entrepot;
 
 	pthread_mutex_t* mutex_entrepot = args->mutex_entrepot;
+	pthread_mutex_t* mutex_disque = args->mutex_disque;
+	pthread_mutex_t* mutex_windows = args->mutex_windows;
 	sem_t* sem_palette = args->sem_palette;
 
 	/* Création des variables locales */
  	int nb_palette = 0;
 	int i = 0;
+	char type_piece = 'A';
 
  	for ( ; ; ){
 		sem_wait( sem_palette );
+
 		nb_palette += 1;
+		if ( type_piece=='A' && nb_palette==(*shm_lot)[LOT_A] ) {
+			type_piece = 'B';
+			nb_palette = 0;
+		}
+
 		pthread_mutex_lock ( mutex_entrepot );
 		i = 0;
-		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < 20 ; i += 1 );
+		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < TAILLE_ENTREPOT ; i += 1 );
 		
-		if ( i == 20 ){
+		if ( i == TAILLE_ENTREPOT ){
 			printf("j ai mange une palette. Om Nom Nom Nom \n Affectueusement le cariste\n");
 		}
 		else
-		{
-			shm_entrepot->palettes[ i ].id = nb_palette;
-			if ( (*shm_lot)[ LOT_A ] == 0 ){
-				shm_entrepot->palettes[ i ].type = 'B';
-			}
-			else{
-				shm_entrepot->palettes[ i ].type = 'A';
-			}
-			time_t rawtime;
-			struct tm * timeinfo;	
-			time ( &rawtime );
-			timeinfo = localtime ( &rawtime );
-			strftime ( shm_entrepot->palettes[ i ].heure, 7, "%H%M%S", timeinfo );
-		}/*palette rangee*/
+			ranger_palette( i, nb_palette, type_piece, shm_entrepot );
+
 		pthread_mutex_unlock( mutex_entrepot );
 		
-		/*envoi logs*/
-		char heure[7];
-		time_t rawtime;
-		struct tm * timeinfo;
-		time ( &rawtime );
-		timeinfo = localtime ( &rawtime );
-		strftime ( heure, 7, "%H%M%S", timeinfo );
+		log_cariste( bal_log_disque, bal_log_windows,
+		             nb_palette, type_piece, mutex_windows, mutex_disque);
 
-		log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
-
-		sprintf(message, "L P %d %s", nb_palette,heure);
-		mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
-		mq_send( bal_log_windows, message, sizeof( log_t ), BAL_PRIO_ELSE );
-		/*fin envoi logs*/
 		
 		/*Fin de production d'un lot: mise a 0 du lot a produire*/
 		if ( (*shm_lot)[ LOT_A ] == nb_palette ){

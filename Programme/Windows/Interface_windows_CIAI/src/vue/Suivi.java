@@ -22,12 +22,14 @@ public class Suivi extends javax.swing.JFrame {
         //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
     int MAXPAL = 100;
     int erreur = 10;
+    int nb_palette = 1;
     Interface_windows_CIAI app;
-    /*Utilisé pour avoir un bon format dans les listes*/
+    /*Variable utilisée pour avoir un bon format dans les listes*/
     String[] liste_def_palette = new String[MAXPAL];
     String[] liste_def_carton = new String[MAXPAL];
-    Palette[] liste_palette = new Palette[MAXPAL];
-    List liste_carton = new LinkedList();
+    Palette liste_palette[] = new Palette[MAXPAL];
+    Palette palette_initiale = new Palette(0, "A", 0);
+    List<Carton> liste_carton = new LinkedList<Carton>();
     
     class MessageReceiver extends Thread {
             Suivi suivi;
@@ -38,9 +40,11 @@ public class Suivi extends javax.swing.JFrame {
             public void run() {
                 System.out.println("Starting message receiver...");
                 String msg = "";
+                liste_palette[0] = palette_initiale;
                 int i = 0;
                 while (true) {
                     try {
+                        //ecoute d'un message du serveur
                         msg = suivi.app.network.listen_message();
                     } catch (IOException ex) {
                         System.err.println("Could not establish server socket!");
@@ -55,31 +59,41 @@ public class Suivi extends javax.swing.JFrame {
                     
                     if ("".equals(msg))
                     {
-
+                         //pas forcément utile.
                     }
-                    else if ("E".equals(msg.substring(0, 1))){
+                    else if ("E".equals(msg.substring(0, 1)))
+                    {
+                        
                             //Reception et traitement d'une erreur
                             String decoupe[] = msg.split(" ");
-                            int id_erreur = Integer.parseInt(decoupe[2]);
-                            j_erreur.setText("erreur détectée d'id " + id_erreur);
+                            int id_erreur = Integer.parseInt(decoupe[1]);
+                            int horaire = Integer.parseInt(decoupe[2]);
+                            j_erreur.setText("erreur détectée d'id " + id_erreur + " a l'horaire " + horaire);
                             erreur = id_erreur;
+                            B_reprise.setEnabled(true);
                     }
-                    else if ("L C".equals(msg.substring(0, 3))){
-                            //Reception d'un carton et ajout dans sa palette
-
+                    else if ("L C".equals(msg.substring(0, 3)))
+                    {
+                        
+                            //Reception d'un carton
                             String decoupe[] = msg.split(" ");
                             int id_carton = Integer.parseInt(decoupe[2]);
                             String type_piece = decoupe[3];
                             int pourcentage = Integer.parseInt(decoupe[4]);
                             int horaire = Integer.parseInt(decoupe[5]);
 
-                            Carton carton = new Carton(id_carton, type_piece, pourcentage, horaire);
+                            //ajout dans sa palette
+                            Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
                             liste_palette[i].Ajouter_carton(carton);
 
                     }
-                    else if ("L P".equals(msg.substring(0, 3))){
-                            i++;
+                    else if ("L P".equals(msg.substring(0, 3)))
+                    {
+                        
                             //Reception d'une palette
+                        
+                            i++; //mise à jour de l'indice de la liste de palette
+                            nb_palette++; //mise à jour du nombre de palette
 
                             String decoupe[] = msg.split(" ");
                             int id_palette = Integer.parseInt(decoupe[2]);
@@ -145,6 +159,7 @@ public class Suivi extends javax.swing.JFrame {
         });
 
         B_reprise.setText("Reprise");
+        B_reprise.setEnabled(false);
         B_reprise.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 B_repriseActionPerformed(evt);
@@ -242,7 +257,19 @@ public class Suivi extends javax.swing.JFrame {
     private void B_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_commandeActionPerformed
         // Envoi d'une commande
         System.out.println("Commande");
-        Commande fc = new Commande(app, liste_palette);
+        int nb_palette_actuel_A = 0;
+        int nb_palette_actuel_B = 0;
+        for(int j = 0; j < nb_palette; j++){  
+            if("A".equals(liste_palette[j].getType_palette()))
+            {
+                nb_palette_actuel_A++;
+            }
+            else
+            {
+                nb_palette_actuel_B++;
+            }           
+        }
+        Commande fc = new Commande(app, nb_palette_actuel_A, nb_palette_actuel_B);
         fc.setVisible(true);
     }//GEN-LAST:event_B_commandeActionPerformed
 
@@ -255,7 +282,8 @@ public class Suivi extends javax.swing.JFrame {
         try {
             app.network.send_message("2 " + erreur);
             erreur = 10;
-            //app.network.send_message(null);
+            j_erreur.setText(" ");
+            B_reprise.setEnabled(false);
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
@@ -270,6 +298,7 @@ public class Suivi extends javax.swing.JFrame {
         System.out.println("Message d'arrêt");
         try {
             app.network.send_message("3");
+            this.dispose();
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
@@ -282,13 +311,21 @@ public class Suivi extends javax.swing.JFrame {
     private void j_paletteValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_j_paletteValueChanged
         
         int index_palette = j_palette.getSelectedIndex();
-        liste_carton = liste_palette[index_palette].getListeCarton();
-        for(int j = 0; j < liste_carton.size(); j++){
-            
-            liste_def_carton[j]=liste_carton.toString();
-            
+        if (index_palette == -1)
+        {
+            //cas ou rien n'est sélectionné pour cause de mise à jour de la liste
         }
-        j_carton.setListData(liste_def_carton);
+        else
+        {
+            
+            liste_carton = liste_palette[index_palette].getListeCarton();
+            for(int j = 0; j < liste_carton.size(); j++)
+            {
+                Carton carton = (Carton)liste_carton.get(j);
+                liste_def_carton[j]=carton.ToString();
+            }
+            j_carton.setListData(liste_def_carton);
+        }
         
     }//GEN-LAST:event_j_paletteValueChanged
 

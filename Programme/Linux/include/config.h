@@ -6,6 +6,7 @@
 #define CARTON_PLEIN 1
 #define PALETTE_PLEINE 2
 #define MAX_REBUS 10
+#define TAILLE_ENTREPOT 20
 
 #define BAL_PRIO_FIN 2
 #define BAL_PRIO_ELSE 1
@@ -54,7 +55,7 @@ typedef struct palette {
 } palette_t;
 
 typedef struct entrepot {
-	palette_t palettes[20];
+	palette_t palettes[TAILLE_ENTREPOT];
 } entrepot_t;
 
 

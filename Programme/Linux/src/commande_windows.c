@@ -82,7 +82,7 @@ void expedier_lot(int nb_A, int nb_B)
 {
 	int i;
 	pthread_mutex_lock(mtx_entrepot);
-	for ( i = 0; i < 20; i++)
+	for ( i = 0; i < TAILLE_ENTREPOT; i++)
 	{
 		if( entrepot->palettes[i].id != NO_PALETTE)
 		{

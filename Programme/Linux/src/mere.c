@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
 	sem_t sem_clapet, sem_piece, sem_carton, sem_palette, 
 		sem_erreur_carton, sem_erreur_palette;	/*semaphores*/
-	pthread_mutex_t mutex_entrepot; /*mutex*/
+	pthread_mutex_t mutex_entrepot, mutex_disque, mutex_windows, mutex_erreur; /*mutex*/
 	statut_t * shm_statut;	
 	lot_t * shm_lot;	
 	entrepot_t * shm_entrepot;
@@ -96,6 +96,9 @@ int main(int argc, char** argv)
 	
 	/*Mutex*/
 	pthread_mutex_init( &mutex_entrepot, NULL );
+	pthread_mutex_init( &mutex_disque, NULL );
+	pthread_mutex_init( &mutex_windows, NULL );
+	pthread_mutex_init( &mutex_erreur, NULL );
 	
 	/*Mémoire partagées*/
 	shm_statut = malloc( sizeof( statut_t ) );
@@ -134,6 +137,9 @@ int main(int argc, char** argv)
 	carton_arg.sem_piece = &sem_piece;
 	carton_arg.sem_carton = &sem_carton;
 	carton_arg.sem_erreur_carton = &sem_erreur_carton;
+	carton_arg.mutex_disque = &mutex_disque;
+	carton_arg.mutex_windows = &mutex_windows;
+	carton_arg.mutex_erreur = &mutex_erreur;
 	pthread_create( &t_carton, NULL, (void*) carton, (void*) &carton_arg );
 	
 	pthread_create( &t_log_disque, NULL, (void*) log_disque, NULL );
@@ -146,6 +152,7 @@ int main(int argc, char** argv)
 	palette_arg.sem_carton = &sem_carton;
 	palette_arg.sem_palette = &sem_palette;
   	palette_arg.sem_erreur_palette = &sem_erreur_palette;
+	palette_arg.mutex_erreur = &mutex_erreur;
 	pthread_create( &t_palette, NULL, (void*) palette, (void*) &palette_arg );
 	
 	arg_simulation_t simulation_arg;
@@ -161,10 +168,14 @@ int main(int argc, char** argv)
 	cariste_arg.shm_entrepot = shm_entrepot;
 	cariste_arg.sem_palette = &sem_palette;
 	cariste_arg.mutex_entrepot = &mutex_entrepot;
+	cariste_arg.mutex_disque = &mutex_disque;
+	cariste_arg.mutex_windows = &mutex_windows;
 	pthread_create( &t_cariste, NULL, (void*) cariste, (void*) &cariste_arg );
 	
 	arg_erreur_t erreur_arg;
 	erreur_arg.statut = shm_statut;
+	erreur_arg.mutex_disque = &mutex_disque;
+	erreur_arg.mutex_windows = &mutex_windows;
 	pthread_create( &t_erreur, NULL, (void*) erreur, (void*) &erreur_arg );
 	
 	arg_commande_windows_t windows_arg;
@@ -241,8 +252,12 @@ int main(int argc, char** argv)
 	free( shm_lot );
 	free( shm_entrepot );
 	free( shm_statut );
+	
 	/*Mutex*/
 	pthread_mutex_destroy( &mutex_entrepot );
+	pthread_mutex_destroy( &mutex_disque );
+	pthread_mutex_destroy( &mutex_windows );
+	pthread_mutex_destroy( &mutex_erreur );
 	
 	/*Sémaphores*/
 	sem_destroy( &sem_AU );

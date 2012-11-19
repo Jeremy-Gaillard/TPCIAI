@@ -13,8 +13,6 @@
 int palette( arg_palette_t* args ){
          
 	/* Récupération des ressources */
-	/* mqd_t bal_log_disque = mq_open(BALDIS, O_WRONLY); */
-	/* mqd_t bal_log_windows = mq_open(BALWIN, O_WRONLY); */
 
 	statut_t* shm_statut = args->shm_statut;
 	lot_t* shm_lot = args->shm_lot;
@@ -22,6 +20,8 @@ int palette( arg_palette_t* args ){
 	sem_t* sem_carton = args->sem_carton;
 	sem_t* sem_palette = args->sem_palette;
 	sem_t* sem_erreur_palette = args->sem_erreur_palette;
+	
+	pthread_mutex_t* mutex_erreur = args->mutex_erreur;
 
 	/* Création des variables locales */
 	int nb_carton = 0;
@@ -31,7 +31,7 @@ int palette( arg_palette_t* args ){
 		sem_wait( sem_carton );
 		if ( nb_carton == 0 && (*shm_statut)[ ST_PRESENCE_PALETTE ] != 1 ){
 			
-			gerer_erreur( ERR_PAS_DE_PALETTE );
+			gerer_erreur( ERR_PAS_DE_PALETTE, mutex_erreur );
 			sem_wait( sem_erreur_palette );
 		}/*end if palette absente*/
 		
@@ -39,7 +39,7 @@ int palette( arg_palette_t* args ){
 		if ( nb_carton == PALETTE_PLEINE ){
 			if ( (*shm_statut)[ ST_FILM ] != 1 ){
 
-				gerer_erreur( ERR_FILM_KO );
+				gerer_erreur( ERR_FILM_KO, mutex_erreur);
 				sem_wait( sem_erreur_palette );	
 			}/*end if film_KO*/
 			

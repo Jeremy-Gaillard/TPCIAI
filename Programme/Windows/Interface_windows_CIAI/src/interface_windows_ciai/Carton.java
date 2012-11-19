@@ -21,11 +21,11 @@ public class Carton {
         this.pourcentage = pourcentage;
     }
     /*
-     * Fonction ToSTring pour récuperer les différents paramètres sous forme d'une string
+     * Fonction ToString pour récuperer les différents paramètres sous forme d'une string
      * 
      */    
     public String ToString(){
-        String definition = "Carton "+ this.id_carton + " de type  " + this.type_piece+ 
+        String definition = "Carton "+ this.id_carton + " de type " + this.type_piece+ 
                 " finie à " + this.horaire + " avec taux de pièces defectueuses " + this.pourcentage;
         return definition;
     }
