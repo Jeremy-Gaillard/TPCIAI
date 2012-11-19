@@ -166,44 +166,49 @@ public class Commande extends javax.swing.JFrame {
      */
     private void B_envoyer_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_envoyer_commandeActionPerformed
         // TODO add your handling code here:
- 
-            int nb_palette_commande_A =-1;
-            int nb_palette_commande_B =-1;
-            int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
-            int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());        
         
-        try{
+        int nb_palette_commande_A = -1;
+        int nb_palette_commande_B = -1;
+        int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
+        int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());        
+        
+        try {
             nb_palette_commande_A = Integer.parseInt(j_nb_palette_commande_A.getText());
             nb_palette_commande_B = Integer.parseInt(j_nb_palette_commande_B.getText());           
         }
-        catch (Exception ex){
-            System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
+        catch (NumberFormatException ex){
+            //System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
+            app.error("Format numérique", "Entrez des valeurs valides pour les différentes paramètres.", ex);
         }
 
         if (nb_palette_commande_A < 0 && nb_palette_commande_B < 0)
         {
-            System.out.println("Veuillez mettre des nombres positifs");            
+            //System.out.println("Veuillez mettre des nombres positifs");
+            app.error("Format numérique", "Veuillez entrer des nombres positifs.");
         }
             
         else if(nb_palette_commande_A > nb_palette_actuel_A)
         {
-            System.out.println("Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production");
+            //System.out.println("Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production");
+            app.error("Stock", "Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production.");
         }
         else if(nb_palette_commande_B > nb_palette_actuel_B)
         {
-            System.out.println("Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production");            
+            //System.out.println("Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production");
+            app.error("Stock", "Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production.");
         }
         else
         {
-            System.out.println("Commande OK");
+            //System.out.println("Commande OK");
             try {
                 String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
                 app.network.send_message(commande);
                 this.dispose();
             } catch (IOException ex) {
                 app.error("IO Exception", "Could not send the command to the host!");
-                ex.printStackTrace(System.err);
-            }                                
+                //ex.printStackTrace(System.err);
+            }
+            app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
         }
         
     }//GEN-LAST:event_B_envoyer_commandeActionPerformed
@@ -213,7 +218,6 @@ public class Commande extends javax.swing.JFrame {
     }//GEN-LAST:event_j_nb_palette_commande_BActionPerformed
 
     private void B_annuler_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_annuler_commandeActionPerformed
-        // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_B_annuler_commandeActionPerformed
 
