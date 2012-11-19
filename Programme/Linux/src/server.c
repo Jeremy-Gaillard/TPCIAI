@@ -117,8 +117,11 @@ void wait_order(int newsockfd)
 	{
 		bzero(msg_buffer, MSG_MAX_SIZE);
 		int n = read( newsockfd, msg_buffer, (MSG_MAX_SIZE-1) );
-		if (n<0)
+		if (n < 0)
 			error("Connection interrupted.");
+		if (n == 0)
+			error("Connection closed");
+		//printf("%d\n", n);
 		printf("Received new message: %s\n", msg_buffer);
 		process_message(msg_buffer);
 		//envoyer("TEST!!!");
