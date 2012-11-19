@@ -93,15 +93,5 @@ int cariste( arg_cariste_t* args ){
 		log_cariste( bal_log_disque, bal_log_windows,
 		             nb_palette, type_piece, mutex_windows, mutex_disque);
 
-		
-		/*Fin de production d'un lot: mise a 0 du lot a produire*/
-		if ( (*shm_lot)[ LOT_A ] == nb_palette ){
-			(*shm_lot) [ LOT_A ] = 0;
-			nb_palette = 0;
-		}
-		else if ( (*shm_lot)[ LOT_A ] == 0 && (*shm_lot)[ LOT_B ] == nb_palette ){
-			(*shm_lot)[ LOT_B ] = 0;
-			nb_palette = 0;
-		}
 	}
 }
