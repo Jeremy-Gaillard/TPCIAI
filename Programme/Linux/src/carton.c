@@ -38,6 +38,14 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 	pthread_mutex_unlock( mutex_windows );
 }
 
+void init_carton( int* cmd_A, int* cmd_B, char* type_piece,
+                  lot_t* shm_lot ) {
+
+	*cmd_A = (*shm_lot)[LOT_A];
+	*cmd_B = (*shm_lot)[LOT_B];
+	*type_piece = ( (*cmd_A) > 0) ? 'A' : 'B';
+}
+
 int carton( arg_carton_t* args ){
 
 	/* Récupération des ressources */
@@ -56,18 +64,26 @@ int carton( arg_carton_t* args ){
 	pthread_mutex_t* mutex_erreur = args->mutex_erreur;
 
 	/* Création des variables locales */
+	int debut_prod = 1;
 	int nb_piece = 0;
 	int nb_carton = 0;
 	int nb_rebus = 0;
 	int max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
 	int nb_palette = 0;
-	char type_piece = ((*shm_lot)[LOT_A] > 0) ? 'A' : 'B';
+	int cmd_A;
+	int cmd_B;
+	char type_piece;
 	int place_file_attente;
 
 	for( ; ; ){
 		/* attente piece */
 
 		sem_wait( sem_piece ); 
+
+		if (debut_prod) {
+			init_carton(&cmd_A, &cmd_B, &type_piece, shm_lot);
+			debut_prod = 0;
+		}
 
 		if ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
 			/*si premiere piece et absence carton

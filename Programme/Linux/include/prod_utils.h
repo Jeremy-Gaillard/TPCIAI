@@ -52,20 +52,30 @@ typedef struct arg_cariste
 	pthread_mutex_t* mutex_windows;
 } arg_cariste_t;
 
+
 void init_prod( sem_t* sem_arret_urgence );
+
 
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int carton_id, char type_piece, int nb_rebus, 
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque);
+
+void init_carton( int* cmd_A, int* cmd_B, char* type_piece,
+                  lot_t* shm_lot );
+
 int carton( arg_carton_t* args );
 
+
 int palette( arg_palette_t* args );
+
 
 void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int palette_id, char type_piece , 
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque);
+
 int cariste( arg_cariste_t* args );
 
-void gerer_erreur( int erreur_id , pthread_mutex_t* mutex_erreur );
+
+void gerer_erreur( int erreur_id, pthread_mutex_t* mutex_erreur );
 
 #endif
