@@ -64,8 +64,8 @@ int cariste( arg_cariste_t* args ){
 
 	/* Création des variables locales */
 	int nb_palette = 0;
-	int i = 0;
 	char type_piece = 'A';
+	int i;
 
 	for ( ; ; ){
 		sem_wait( sem_palette );
@@ -77,8 +77,7 @@ int cariste( arg_cariste_t* args ){
 		}
 
 		pthread_mutex_lock ( mutex_entrepot );
-		i = 0;
-		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < TAILLE_ENTREPOT ; i += 1 );
+		for( i=0 ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < TAILLE_ENTREPOT ; i++ );
 		
 		if ( i == TAILLE_ENTREPOT ){
 			/* Erreur non supportée : on suppose notre entrepôt de taille infinie.
