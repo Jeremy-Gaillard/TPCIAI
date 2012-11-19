@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 	
 	/*----------------------------------------------------Initialisation--------------------------------------------------*/
 
-	//server(32768);
+	server(32768);
 	
 	/*priorite de la mere*/
 	struct sched_param mere_param;
