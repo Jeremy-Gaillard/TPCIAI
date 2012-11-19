@@ -78,9 +78,9 @@ int cariste( arg_cariste_t* args ){
 
 		pthread_mutex_lock ( mutex_entrepot );
 		i = 0;
-		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < 20 ; i += 1 );
+		for( ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < TAILLE_ENTREPOT ; i += 1 );
 		
-		if ( i == 20 ){
+		if ( i == TAILLE_ENTREPOT ){
 			printf("j ai mange une palette. Om Nom Nom Nom \n Affectueusement le cariste\n");
 		}
 		else
