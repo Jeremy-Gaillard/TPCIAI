@@ -56,7 +56,8 @@ void log_windows()
 	do
 	{
 		mq_receive(bal_log_windows, message, sizeof(log_t), NULL);
-		envoyer(message);
+		if( strcmp(message, TRAME_FIN) ) 
+			envoyer(message);
 	}
 	while( strcmp(message, TRAME_FIN) );
 	printf("Fin log win\n");

@@ -25,7 +25,6 @@ int palette( arg_palette_t* args ){
 
 	/* Création des variables locales */
 	int nb_carton = 0;
-	int nb_palette = 0;
 
 	for ( ; ; ){
 		sem_wait( sem_carton );
@@ -42,23 +41,10 @@ int palette( arg_palette_t* args ){
 				gerer_erreur( ERR_FILM_KO, mutex_erreur);
 				sem_wait( sem_erreur_palette );	
 			}/*end if film_KO*/
-			
-			nb_palette += 1;
 			 
 			sem_post( sem_palette );
 			nb_carton = 0;
 			
-			/*On part du principe qu'on produit du A puis du B
-			  ET que shm_lot[ LOT_A ] est mis à 0 une fois la
-			  production finie*/
-			if ( nb_palette == (*shm_lot)[ LOT_A ] ){
-			/*Si productionde A finie*/
-				nb_palette = 0;
-			}
-			else if ( nb_palette == (*shm_lot)[ LOT_B ] ){
-				/*Si productionde B finie*/
-				nb_palette = 0;
-			}
 		}
 		/*end if palette pleine*/
 	}
