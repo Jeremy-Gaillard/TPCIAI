@@ -15,7 +15,6 @@ int palette( arg_palette_t* args ){
 	/* Récupération des ressources */
 
 	statut_t* shm_statut = args->shm_statut;
-	lot_t* shm_lot = args->shm_lot;
 
 	sem_t* sem_carton = args->sem_carton;
 	sem_t* sem_palette = args->sem_palette;
