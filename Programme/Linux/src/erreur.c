@@ -26,7 +26,7 @@ void erreur(struct arg_erreur *ipc)
 	do
 	{
 		mq_receive(bal_log_erreur, message, sizeof(erreur_t), NULL);
-		if( message != TRAME_FIN )
+		if( !strcmp(message, TRAME_FIN) )
 		{
 			(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 			log_t log;
