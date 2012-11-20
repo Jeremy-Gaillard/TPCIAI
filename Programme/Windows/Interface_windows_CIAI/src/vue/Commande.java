@@ -5,7 +5,6 @@
 package vue;
 
 import interface_windows_ciai.Interface_windows_CIAI;
-import interface_windows_ciai.Palette;
 import java.io.IOException;
 
 /**
@@ -205,6 +204,7 @@ public class Commande extends javax.swing.JFrame {
                 suivi.setNb_palette_A_commande(nb_palette_commande_A);
                 suivi.setNb_palette_B_commande(nb_palette_commande_B);                
                 this.dispose();
+
             } catch (IOException ex) {
                 app.error("IO Exception", "Could not send the command to the host!");
             }
@@ -219,6 +219,7 @@ public class Commande extends javax.swing.JFrame {
 
     private void B_annuler_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_annuler_commandeActionPerformed
         this.dispose();
+
     }//GEN-LAST:event_B_annuler_commandeActionPerformed
 
     /**

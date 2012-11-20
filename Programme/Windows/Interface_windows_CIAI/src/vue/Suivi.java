@@ -307,7 +307,7 @@ public class Suivi extends javax.swing.JFrame {
         System.out.println("Commande");
         int nb_palette_actuel_A = 0;
         int nb_palette_actuel_B = 0;
-        for(int j = 0; j < nb_palette; j++){  
+        for(int j = 1; j < nb_palette; j++){
             if("A".equals(liste_palette[j].getType_palette()) && liste_palette[j].isDisponible())
             {
                 nb_palette_actuel_A++;
@@ -322,9 +322,9 @@ public class Suivi extends javax.swing.JFrame {
         fc.addWindowListener(new WindowAdapter() {
  
             @Override
-            public void windowClosing(WindowEvent e) 
+            public void windowClosed(WindowEvent e)
             {
-                int j = 0;
+                int j = 1;
                 if(nb_palette_A_commande > 0)
                 {
                     while("A".equals(liste_palette[j].getType_palette()) && !liste_palette[j].isDisponible())
@@ -337,6 +337,10 @@ public class Suivi extends javax.swing.JFrame {
                         liste_palette[j].setDisponible(false);
                         liste_def_palette[j]= "Palette envoyé";                        
                     }
+                }
+                while("A".equals(liste_palette[j].getType_palette()))
+                {
+                    j++;
                 }
                 if(nb_palette_B_commande > 0)
                 {
