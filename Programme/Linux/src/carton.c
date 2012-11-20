@@ -87,9 +87,9 @@ int carton( arg_carton_t* args ){
 		}
 
 		while ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
-			/*si premiere piece et absence carton
-			  envoi d'un message d'erreur avec hhmmss et type erreur
-			  puis attente sur semaphore de reprise d'erreur*/
+			/* Si première piece et absence carton
+			   envoi d'un message d'erreur avec hhmmss et type erreur
+			   puis attente sur sémaphore de reprise d'erreur */
 		 		
 			gerer_erreur(ERR_PAS_DE_CARTON, mutex_erreur );
 			sem_wait( sem_erreur_carton );
@@ -100,9 +100,9 @@ int carton( arg_carton_t* args ){
 			nb_piece += 1;
 			if ( nb_piece == CARTON_PLEIN ){
 				while ( (*shm_statut)[ST_IMPRIMANTE] != 1 ){
-					/*si carton plein et imprimante HS
-					  envoie d'un message d'erreur avec hhmmss et type erreur
-					  puis attente sur semaphore de reprise d'erreur*/
+					/* Si carton plein et imprimante HS
+					   envoi d'un message d'erreur avec hhmmss et type erreur
+					   puis attente sur sémaphore de reprise d'erreur */
 
 					gerer_erreur(ERR_IMPRIMANTE_KO, mutex_erreur);
 					sem_wait( sem_erreur_carton );
@@ -111,9 +111,9 @@ int carton( arg_carton_t* args ){
 				
 				sem_getvalue( sem_carton, &place_file_attente );
 				while ( place_file_attente == 10 ){
-					/*si trop de cartons dans la file d'attente
-					  envoie d'un message d'erreur avec hhmmss et type erreur
-					  puis attente sur semaphore de reprise d'erreur*/
+					/* Si trop de cartons dans la file d'attente
+					   envoi d'un message d'erreur avec hhmmss et type erreur
+					   puis attente sur sémaphore de reprise d'erreur */
 				 
 					gerer_erreur(ERR_FILE_D_ATTENTE, mutex_erreur);
 					sem_wait( sem_erreur_carton );
@@ -138,8 +138,10 @@ int carton( arg_carton_t* args ){
 						type_piece = 'B';
 						nb_palette = 0;
 					}
-					/*Plus de pièce à produire : on ferme le clapet et on met à 0 le 
-					lot de production*/
+					/* Plus de pièce à produire : on ferme le clapet
+					   et on met à 0 le lot de production
+					   (commande_windows utilise LOT_A et LOT_B pour vérifier
+					   s'il reste des trucs à produire à la reprise) */
 					else if ( type_piece=='B' && nb_palette==cmd_B ) {
 						(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 						(*shm_lot)[LOT_A] = 0;
@@ -157,10 +159,10 @@ int carton( arg_carton_t* args ){
 		else{
 			nb_rebus +=1;
 			if ( nb_rebus >= max_rebus ){
-				/*si trop de mauvaise piece
-				  envoie d'un message d'erreur avec hhmmss et type erreur
-				  puis attente sur semaphore de reprise d'erreur
-				  puis on jette le carton en cours*/
+				/* Si trop de mauvaises pièces
+				   envoi d'un message d'erreur avec hhmmss et type erreur
+				   puis attente sur sémaphore de reprise d'erreur
+				   puis on jette le carton en cours */
 			 	
 				gerer_erreur(ERR_TROP_DE_REBUS, mutex_erreur);
 				sem_wait( sem_erreur_carton );

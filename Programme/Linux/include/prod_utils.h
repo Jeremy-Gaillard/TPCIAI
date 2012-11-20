@@ -10,8 +10,8 @@
 
 #include "config.h"
 
-/*struct passee en parametre au lancement de carton, elle contient
-les ressources necessaire au bon deroulement de carton*/
+/* struct passée en paramètre au lancement de carton, elle contient
+   les ressources nécessaires au bon déroulement de carton */
 typedef struct arg_carton
 {
 	statut_t* shm_statut;
@@ -28,8 +28,8 @@ typedef struct arg_carton
 
 } arg_carton_t;
 
-/*struct passee en parametre au lancement de palette, elle contient
-les ressources necessaire au bon deroulement de palette*/
+/* struct passée en paramètre au lancement de palette, elle contient
+   les ressources nécessaires au bon déroulement de palette */
 typedef struct arg_palette
 {
 	statut_t* shm_statut;
@@ -42,8 +42,8 @@ typedef struct arg_palette
 
 } arg_palette_t;
 
-/*struct passee en parametre au lancement de cariste, elle contient
-les ressources necessaire au bon deroulement de cariste*/
+/* struct passée en paramètre au lancement de cariste, elle contient
+   les ressources nécessaires au bon déroulement de cariste */
 typedef struct arg_cariste
 {
 	lot_t* shm_lot;
@@ -56,37 +56,37 @@ typedef struct arg_cariste
 	pthread_mutex_t* mutex_windows;
 } arg_cariste_t;
 
-/*envoi message de log a bal_log_disque et bal_log_windows
-celles ci protegees par des mutex nommee identiquement
-message de type "L C id_carton type_pièce %_pièces_défectueuses HHMMSS"*/
+/* Envoi message de log a bal_log_disque et bal_log_windows
+   Celles-ci sont protégées par des mutex nommés identiquement
+   Message de type "L C id_carton type_pièce %_pièces_défectueuses HHMMSS" */
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int carton_id, char type_piece, int nb_rebus, 
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque);
 
-/*initialise les informations sur les commandes a realiser
-cmd_A cmd_B, le type a produire type_piece, en regardant dans la memoire shm_lot*/
+/* Initialise les informations sur les commandes a réaliser
+   cmd_A cmd_B, le type à produire type_piece, en regardant dans la mémoire shm_lot */
 void init_carton( int* cmd_A, int* cmd_B, char* type_piece,
                   int* max_rebus, lot_t* shm_lot );
 
-/*tache carton*/
+/* Tâche carton */
 int carton( arg_carton_t* args );
 
-/*tache palette*/
+/* Tâche palette */
 int palette( arg_palette_t* args );
 
-/*envoi message de log a bal_log_disque et bal_log_windows
-celles ci protegees par des mutex nommee identiquement
-message de type "L P id_palette type_pièce horaire"*/
+/* Envoi message de log a bal_log_disque et bal_log_windows
+   Celles-ci sont protegées par des mutex nommés identiquement
+   Message de type "L P id_palette type_pièce horaire" */
 void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int palette_id, char type_piece , 
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque);
 
-/*tache cariste*/
+/* Tâche cariste*/
 int cariste( arg_cariste_t* args );
 
-/*envoi message de log a bal_log_erreur 
-celle ci protegee par un mutex 
-message de type "E id_erreur HHMMSS"*/
+/* Envoi message de log à bal_log_erreur 
+   Celle-ci est protégée par un mutex 
+   Message de type "E id_erreur HHMMSS"*/
 void gerer_erreur( int erreur_id, pthread_mutex_t* mutex_erreur );
 
 #endif
