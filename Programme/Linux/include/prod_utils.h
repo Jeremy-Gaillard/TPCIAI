@@ -66,7 +66,7 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 /*initialise les informations sur les commandes a realiser
 cmd_A cmd_B, le type a produire type_piece, en regardant dans la memoire shm_lot*/
 void init_carton( int* cmd_A, int* cmd_B, char* type_piece,
-                  lot_t* shm_lot );
+                  int* max_rebus, lot_t* shm_lot );
 
 /*tache carton*/
 int carton( arg_carton_t* args );

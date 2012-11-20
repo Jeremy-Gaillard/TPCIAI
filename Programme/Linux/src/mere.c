@@ -178,7 +178,6 @@ int main(int argc, char** argv)
 	arg_simulation_t simulation_arg;
 	simulation_arg.statut = shm_statut;
 	simulation_arg.clapet = &sem_clapet;
-	simulation_arg.AU = &sem_AU;
 	simulation_arg.t_carton = t_carton;
 	simulation_arg.t_palette = t_palette;
 	pthread_create( &t_simulation, NULL, (void*) simulation, (void*) &simulation_arg );

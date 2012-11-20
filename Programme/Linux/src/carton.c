@@ -39,11 +39,12 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 }
 
 void init_carton( int* cmd_A, int* cmd_B, char* type_piece,
-                  lot_t* shm_lot ) {
+                  int* max_rebus, lot_t* shm_lot ) {
 
 	*cmd_A = (*shm_lot)[LOT_A];
 	*cmd_B = (*shm_lot)[LOT_B];
 	*type_piece = ( (*cmd_A) > 0) ? 'A' : 'B';
+	*max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
 }
 
 int carton( arg_carton_t* args ){
@@ -68,7 +69,7 @@ int carton( arg_carton_t* args ){
 	int nb_piece = 0;
 	int nb_carton = 0;
 	int nb_rebus = 0;
-	int max_rebus = CARTON_PLEIN * (*shm_lot)[REBUS] / 100;
+	int max_rebus;
 	int nb_palette = 0;
 	int cmd_A;
 	int cmd_B;
@@ -81,7 +82,7 @@ int carton( arg_carton_t* args ){
 		sem_wait( sem_piece ); 
 
 		if (debut_prod) {
-			init_carton(&cmd_A, &cmd_B, &type_piece, shm_lot);
+			init_carton(&cmd_A, &cmd_B, &type_piece, &max_rebus, shm_lot);
 			debut_prod = 0;
 		}
 
@@ -137,8 +138,13 @@ int carton( arg_carton_t* args ){
 						type_piece = 'B';
 						nb_palette = 0;
 					}
+					/*Plus de pièce à produire : on ferme le clapet et on met à 0 le 
+					lot de production*/
 					else if ( type_piece=='B' && nb_palette==cmd_B ) {
 						(*shm_statut)[ST_CLAPET_OUVERT] = 0;
+						(*shm_lot)[LOT_A] = 0;
+						(*shm_lot)[LOT_B] = 0;
+						(*shm_lot)[REBUS] = 0;
 					}
 				}
 					

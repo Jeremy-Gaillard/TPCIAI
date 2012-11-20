@@ -7,7 +7,6 @@ typedef struct arg_simulation
 {
 	statut_t* statut;
 	sem_t* clapet;
-	sem_t* AU;
 	pthread_t t_carton;
 	pthread_t t_palette;
 } arg_simulation_t;

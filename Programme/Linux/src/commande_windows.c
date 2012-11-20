@@ -59,7 +59,8 @@ void reprise(int erreur_id)
 		if((*statut)[i] == 0 && i != ST_CLAPET_OUVERT && i != ST_PIECE)
 			break;
 	}
-	if(i == STATUT_SIZE)/*Si tout le materiel est OK, on rouvre le clapet*/
+	if(i == STATUT_SIZE && ( (*lot)[LOT_A] != 0 || (*lot)[LOT_B] != 0) )
+	/*Si tout le materiel est OK et qu'il y a un lot en cours de production, on rouvre le clapet*/
 	{
 		(*statut)[ST_CLAPET_OUVERT] = 1;
 		sem_post(sem_clapet);

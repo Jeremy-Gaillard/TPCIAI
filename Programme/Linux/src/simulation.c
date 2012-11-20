@@ -41,11 +41,9 @@ void simulation(arg_simulation_t* ipc)
 {
 	statut_t* shm_statut = ipc->statut;
 	sem_t* sem_clapet = ipc->clapet;
-	sem_t* sem_AU = ipc->AU;
 	pthread_t t_carton = ipc->t_carton;
 	pthread_t t_palette = ipc->t_palette;
 
-	int bal_log_disque = mq_open( BALDIS, O_WRONLY );
 	char commande[20];
 	
 	for( ; ; )
