@@ -56,8 +56,9 @@ void log_windows()
 	
 	do/*Envoi de message tant qu'on ne reçoit pas de trame de fin*/
 	{
+		/*Reception du message du superviseur*/
 		mq_receive(bal_log_windows, message, sizeof(log_t), NULL);
-		if( strcmp(message, TRAME_FIN) ) 
+		if( strcmp(message, TRAME_FIN) ) /*Si ce n'est pas un message de fin...*/
 			envoyer(message);
 	}
 	while( strcmp(message, TRAME_FIN) );

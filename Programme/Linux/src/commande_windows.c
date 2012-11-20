@@ -33,6 +33,7 @@ void init_commande_windows(int asocket)
 void reprise(int erreur_id)
 {
 	int i;
+	/*Mise de jeton dans les bon semaphore en fonction de l'erreur detectee*/
 	switch(erreur_id) 
 	{
 		case ERR_AU :
@@ -87,6 +88,7 @@ void expedier_lot(int nb_A, int nb_B)
 {
 	int i;
 	pthread_mutex_lock(mtx_entrepot);
+	/*Recherche dans tout l'entrepot pour enlever le bon nombre de palette*/
 	for ( i = 0; i < TAILLE_ENTREPOT; i++)
 	{
 		if( entrepot->palettes[i].id != NO_PALETTE)
@@ -110,6 +112,7 @@ void expedier_lot(int nb_A, int nb_B)
 	pthread_mutex_unlock(mtx_entrepot);	
 }
 
+/*Initialisation des outils necessaires au fontionnement du thread*/
 void commande_windows(arg_commande_windows_t* ipc)
 {	
 	statut = ipc->shm_statut;

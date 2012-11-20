@@ -29,6 +29,7 @@ void erreur(struct arg_erreur *ipc)
 	
 	do/*Tant qu'on ne reçoit pas de trame de fin*/
 	{
+		/*reception du message d'erreur*/
 		mq_receive(bal_log_erreur, message, sizeof(erreur_t), NULL);
 		
 		if( strcmp(message, TRAME_FIN) )/*Si on ne reçoit pas de trame de fin*/

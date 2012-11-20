@@ -24,7 +24,6 @@
 #include "prod_utils.h"
 #include "server.h"
 
-
 static sem_t sem_AU;
 static pthread_mutex_t mutex_erreur;
 static mqd_t bal_erreur;
@@ -242,11 +241,11 @@ int main(int argc, char** argv)
 	pthread_setschedparam(t_commande_windows, SCHED_FIFO, &commande_windows_param);
 	pthread_setschedparam(t_log_disque, SCHED_FIFO, &log_disque_param);
 	
-	/*---------------------------------------------------------Moteur----------------------------------------------------------------*/
+	/*---------------------------------------------------------Moteur-----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );
 	/*--------------------------------------------------------Destruction-------------------------------------------------------------*/
 	
-	/*Destruction des threads*/
+	/*Destruction des threads, on attend que chaque thead prenne fin avant de passer au suivant*/
 	pthread_kill( t_simulation, SIGUSR2 );
 	pthread_join(t_simulation, NULL);
 	

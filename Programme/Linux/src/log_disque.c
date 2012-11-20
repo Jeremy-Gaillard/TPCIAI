@@ -16,55 +16,47 @@
 
 void log_disque()
 {
+	/*Recuperation du fichier, ouverture de la boite aux lettres*/
 	FILE * fichier_log;
 	int bal_log_disque = mq_open( BALDIS, O_RDONLY );
 	log_t message;
 	message[0] = '\0';
 	
-	fichier_log = fopen(NOM_LOG, "w");
+	fichier_log = fopen(NOM_LOG, "w");/*Ouverture du fichier de log*/
 	fprintf(fichier_log, "Début de session\n");
 	
-	
-	/*int idx = 2;
-	int idxn;
-	char buff[10];*/
-	
+	/*Tant que le message reçu n'est pas une trame de fin*/
 	while( strcmp(message, TRAME_FIN) )
 	{
+		/*Reception du message*/
 		mq_receive(bal_log_disque, message, sizeof(log_t), NULL);
-		/*Analyser le message ici*/
 		log_t log;
 		log[0] = '\0';
 		printf("%s\n", message);
 		
+		/*Si c'est un message de fin, on quitte, sinon, on continue*/
 		if( !strcmp(message, TRAME_FIN) )
 			fprintf(fichier_log, "Fin de session\n");
 		else
 		{
-			switch (message[0])
+			switch (message[0])/*Analyse du message*/
 			{
-				case 'L':
+				case 'L':/*Si c'est un log*/
 					switch (message[2])
 					{
-						case 'C':
-							/*idx = 2;
-							buff[0] = '\0';
-							strcat( log, "Id carton : ");
-							idxn = strchr( message+idx, ' ');
-							strncpy( buff, message+idx, idxn-idx);
-							strcat( log, buff);*/
+						case 'C':/*Si c'est un carton produit*/
 							strcat( log, message);
 							break;
-						case 'P':
+						case 'P':/*Si c'est une palette produite*/
 							strcat( log, message);
 							break;
-						default:
+						default:/*Si c'est un message eronne*/
 							log[0] = '\0';
 							break;
 					}
 					break;
-				case 'E':
-					switch (message[2] - '0')
+				case 'E':/*Si c'est une erreur*/
+					switch (message[2] - '0')/*Ecriture du log en fonction de l'erreur detectee*/
 					{
 						case ERR_AU:
 							sprintf( log, "Erreur : arrêt d'urgence" );
@@ -92,18 +84,18 @@ void log_disque()
 							break;
 					}
 					break;
-				default:
+				default:/*Si c'est un message eronne*/
 					log[0] = '\0';
 					break;
 			}
-			if( log[0] != '\0' )
+			if( log[0] != '\0' )/*Si le log n'est pas vide, on l'ecrit dans le fichier de log*/
 			{
 				fprintf(fichier_log, "%s\n", log);
 			}
 		}
 	}
 	
-	fclose(fichier_log);
+	fclose(fichier_log);/*Fermeture du fichier de log*/
 	pthread_exit(0);
 }
 
