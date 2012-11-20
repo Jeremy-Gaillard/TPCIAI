@@ -28,7 +28,7 @@ int palette( arg_palette_t* args ){
 
 	for ( ; ; ){
 		sem_wait( sem_carton );
-		if ( nb_carton == 0 && (*shm_statut)[ ST_PRESENCE_PALETTE ] != 1 ){
+		while ( nb_carton == 0 && (*shm_statut)[ ST_PRESENCE_PALETTE ] != 1 ){
 			
 			gerer_erreur( ERR_PAS_DE_PALETTE, mutex_erreur );
 			sem_wait( sem_erreur_palette );
@@ -36,7 +36,7 @@ int palette( arg_palette_t* args ){
 		
 		nb_carton += 1;
 		if ( nb_carton == PALETTE_PLEINE ){
-			if ( (*shm_statut)[ ST_FILM ] != 1 ){
+			while ( (*shm_statut)[ ST_FILM ] != 1 ){
 
 				gerer_erreur( ERR_FILM_KO, mutex_erreur);
 				sem_wait( sem_erreur_palette );	

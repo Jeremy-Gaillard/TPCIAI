@@ -85,7 +85,7 @@ int carton( arg_carton_t* args ){
 			debut_prod = 0;
 		}
 
-		if ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
+		while ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
 			/*si premiere piece et absence carton
 			  envoi d'un message d'erreur avec hhmmss et type erreur
 			  puis attente sur semaphore de reprise d'erreur*/
@@ -98,7 +98,7 @@ int carton( arg_carton_t* args ){
 		if ( (*shm_statut)[ ST_PIECE ] == 1 ){
 			nb_piece += 1;
 			if ( nb_piece == CARTON_PLEIN ){
-				if ( (*shm_statut)[ST_IMPRIMANTE] != 1 ){
+				while ( (*shm_statut)[ST_IMPRIMANTE] != 1 ){
 					/*si carton plein et imprimante HS
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
@@ -109,7 +109,7 @@ int carton( arg_carton_t* args ){
 				/*end of if imprimante HS*/
 				
 				sem_getvalue( sem_carton, &place_file_attente );
-				if ( place_file_attente == 10 ){
+				while ( place_file_attente == 10 ){
 					/*si trop de cartons dans la file d'attente
 					  envoie d'un message d'erreur avec hhmmss et type erreur
 					  puis attente sur semaphore de reprise d'erreur*/
