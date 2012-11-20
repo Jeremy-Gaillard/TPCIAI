@@ -26,6 +26,8 @@
 
 
 static sem_t sem_AU;
+static pthread_mutex_t mutex_erreur;
+static mqd_t bal_erreur;
 
 void fin_thread(int signum)
 {
@@ -35,17 +37,32 @@ void fin_thread(int signum)
 }
 
 void arret_urgence_prod(int signum) {
+	static int compte = 0;
+	static pthread_mutex_t mutex_compte;
 	printf("PRODUCTION: ARRÊT D'URGENCE !\n");
+	pthread_mutex_lock(&mutex_compte);
+	compte ++;
+	if( compte == NB_THREAD_AU )
+	{
+		compte = 0;
+		pthread_mutex_unlock(&mutex_compte);
+		gerer_erreur( ERR_AU, &mutex_erreur );
+	}
+	else
+	{
+		pthread_mutex_unlock(&mutex_compte);
+	}
+	pthread_mutex_unlock(&mutex_erreur);
 	sem_wait(&sem_AU);
 }
 
 
 int main(int argc, char** argv)
 {
-	mqd_t bal_erreur, bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
+	mqd_t bal_log_disque, bal_log_windows; /*boîtes aux lettres*/
 	sem_t sem_clapet, sem_piece, sem_carton, sem_palette, 
 		sem_erreur_carton, sem_erreur_palette;	/*semaphores*/
-	pthread_mutex_t mutex_entrepot, mutex_disque, mutex_windows, mutex_erreur; /*mutex*/
+	pthread_mutex_t mutex_entrepot, mutex_disque, mutex_windows; /*mutex*/
 	statut_t * shm_statut;	
 	lot_t * shm_lot;	
 	entrepot_t * shm_entrepot;
@@ -229,14 +246,21 @@ int main(int argc, char** argv)
 	
 	pthread_kill(t_envoi_piece, SIGUSR2);
 	pthread_join(t_envoi_piece, NULL);
+
 	
+	pthread_mutex_lock(&mutex_erreur);
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), BAL_PRIO_FIN);
+	pthread_mutex_unlock(&mutex_erreur);
 	pthread_join( t_erreur, NULL );
 	
+	pthread_mutex_lock(&mutex_disque);
 	mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
+	pthread_mutex_unlock(&mutex_disque);
 	pthread_join( t_log_disque, NULL );
 	
+	pthread_mutex_lock(&mutex_windows);
 	mq_send(bal_log_windows, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
+	pthread_mutex_unlock(&mutex_windows);
 	pthread_join( t_log_windows, NULL );
 	
 	pthread_kill(t_carton, SIGUSR2);

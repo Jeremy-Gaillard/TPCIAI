@@ -30,11 +30,12 @@ void init_commande_windows(int asocket)
 
 void reprise(int erreur_id)
 {
+	int i;
 	switch(erreur_id) 
 	{
 		case ERR_AU :
-			sem_post(sem_AU);
-			sem_post(sem_AU);
+			for( i = 0 ; i < NB_THREAD_AU; i++ )
+				sem_post(sem_AU);
 			break;
 		case ERR_TROP_DE_REBUS :
 		case ERR_PAS_DE_CARTON :
@@ -50,7 +51,6 @@ void reprise(int erreur_id)
 			break;
 	}
 	
-	int i;
 	for ( i = 0; i < STATUT_SIZE; i++) /*on verifie que tout le matériel est OK*/
 	{
 		if((*statut)[i] == 0 && i != ST_CLAPET_OUVERT && i != ST_PIECE)

@@ -7,6 +7,7 @@
 #define PALETTE_PLEINE 2
 #define MAX_REBUS 10
 #define TAILLE_ENTREPOT 20
+#define NB_THREAD_AU 2
 
 #define BAL_PRIO_FIN 2
 #define BAL_PRIO_ELSE 1
