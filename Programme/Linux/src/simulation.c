@@ -28,8 +28,8 @@ void envoi_piece(arg_envoi_piece_t* ipc)
 	{
 		if( (*shm_statut)[ST_CLAPET_OUVERT] == 1 )
 		{
-			sleep(1);
 			sem_post( sem_piece );
+			sleep(1);
 		}
 		else
 			sem_wait( sem_clapet );
@@ -129,7 +129,7 @@ void simulation(arg_simulation_t* ipc)
 		}
 		else if( !strcmp(commande, "go") )
 		{
-			commander_lot(10, 10, 200);
+			commander_lot(4, 4, 200);
 		}
 		else if( !strcmp(commande, "reprise_rebus") )
 		{
