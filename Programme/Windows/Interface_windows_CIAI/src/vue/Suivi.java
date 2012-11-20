@@ -21,10 +21,10 @@ public class Suivi extends javax.swing.JFrame {
 
         //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
     int MAXPAL = 100;
-    int erreur = 10;
     int nb_palette = 1;
     Interface_windows_CIAI app;
     MessageReceiver message_receiver = new MessageReceiver(this);
+    String[] liste_erreur = new String[7];
     
     /*Variable utilisée pour avoir un bon format dans les listes*/
     String[] liste_def_palette = new String[MAXPAL];
@@ -59,12 +59,6 @@ public class Suivi extends javax.swing.JFrame {
                         app.error("Null message received!", "A null message was received. Stopping listening.");
                         throw new Error("Null message received!");
                     }
-                    /* inutile
-                    if ("".equals(msg))
-                    {
-                         //pas forcément utile.
-                    }
-                    else */
                     try {
                         if ("E".equals(msg.substring(0, 1)))
                         {
@@ -78,8 +72,18 @@ public class Suivi extends javax.swing.JFrame {
                                 } else {
                                     int id_erreur = Integer.parseInt(decoupe[1]);
                                     int horaire = Integer.parseInt(decoupe[2]);
-                                    j_erreur.setText("erreur détectée d'id " + id_erreur + " a l'horaire " + horaire);
-                                    erreur = id_erreur;
+                                    
+                                    switch(id_erreur){
+                                        case 0: liste_erreur[id_erreur] = id_erreur + " : AU"; break;
+                                        case 1: liste_erreur[id_erreur] = id_erreur + " : trop de pièces defectueuses"; break;
+                                        case 2: liste_erreur[id_erreur] = id_erreur + " : plus de carton"; break;
+                                        case 3: liste_erreur[id_erreur] = id_erreur + " : imprimante HS"; break;
+                                        case 4: liste_erreur[id_erreur] = id_erreur + " : trop d ecartons dans la file d'attente"; break;
+                                        case 5: liste_erreur[id_erreur] = id_erreur + " : plus de palette"; break;
+                                        case 6: liste_erreur[id_erreur] = id_erreur + " : problème de conditionnement de palette"; break;    
+                                    }                                    
+                                    
+                                    j_erreur.setListData(liste_erreur);
                                     B_reprise.setEnabled(true);
                                 }
                         }
@@ -140,6 +144,10 @@ public class Suivi extends javax.swing.JFrame {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
+        for (int j = 0; j<7; j++)
+        {
+            liste_erreur[j] = "";
+        }
         message_receiver.start();
         
     }
@@ -158,11 +166,12 @@ public class Suivi extends javax.swing.JFrame {
         B_commande = new javax.swing.JButton();
         B_reprise = new javax.swing.JButton();
         B_arret = new javax.swing.JButton();
-        j_erreur = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         j_palette = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
         j_carton = new javax.swing.JList();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        j_erreur = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -192,8 +201,6 @@ public class Suivi extends javax.swing.JFrame {
             }
         });
 
-        j_erreur.setText("Pas d'erreur detectée");
-
         j_palette.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         j_palette.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -209,6 +216,13 @@ public class Suivi extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(j_carton);
 
+        j_erreur.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(j_erreur);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -223,6 +237,10 @@ public class Suivi extends javax.swing.JFrame {
                         .addGap(42, 42, 42)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(B_reprise)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(B_arret))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -230,13 +248,9 @@ public class Suivi extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(B_commande))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(B_reprise)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(B_arret))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(j_erreur, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -246,9 +260,9 @@ public class Suivi extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(j_erreur))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(64, 64, 64)
@@ -298,11 +312,22 @@ public class Suivi extends javax.swing.JFrame {
      */
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         System.out.println("Message de reprise");
+        int erreur = j_erreur.getSelectedIndex();
         try {
             app.network.send_message("2 " + erreur);
-            erreur = 10;
-            j_erreur.setText(" ");
-            B_reprise.setEnabled(false);
+            liste_erreur[erreur] = "";
+            j_erreur.setListData(liste_erreur);
+            boolean vide = true;
+            for (int j = 0; j < 7; j++)
+            {
+                if (!"".equals(liste_erreur[j]))
+                {
+                    vide = false;
+                }
+            }
+            if (vide == false){
+                B_reprise.setEnabled(false);
+            }  
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
@@ -366,8 +391,9 @@ public class Suivi extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JList j_carton;
-    private javax.swing.JLabel j_erreur;
+    private javax.swing.JList j_erreur;
     private javax.swing.JList j_palette;
     // End of variables declaration//GEN-END:variables
 }
