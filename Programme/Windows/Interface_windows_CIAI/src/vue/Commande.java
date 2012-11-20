@@ -154,6 +154,8 @@ public class Commande extends javax.swing.JFrame {
         String palette_actuel_B = String.valueOf(nb_palette_actuel_B);
         j_nb_palette_actuel_A.setText(palette_actuel_A);
         j_nb_palette_actuel_B.setText(palette_actuel_B);
+        j_nb_palette_commande_A.setText("0");
+        j_nb_palette_commande_B.setText("0");
         
     }
     
@@ -167,8 +169,8 @@ public class Commande extends javax.swing.JFrame {
     private void B_envoyer_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_envoyer_commandeActionPerformed
         // TODO add your handling code here:
         
-        int nb_palette_commande_A = -1;
-        int nb_palette_commande_B = -1;
+        int nb_palette_commande_A = 0;
+        int nb_palette_commande_B = 0;
         int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
         int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());        
         

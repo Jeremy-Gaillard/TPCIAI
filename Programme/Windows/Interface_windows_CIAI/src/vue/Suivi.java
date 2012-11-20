@@ -202,6 +202,8 @@ public class Suivi extends javax.swing.JFrame {
         });
 
         j_palette.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        j_palette.setMaximumSize(new java.awt.Dimension(80, 100));
+        j_palette.setMinimumSize(new java.awt.Dimension(60, 100));
         j_palette.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 j_paletteValueChanged(evt);
@@ -221,6 +223,9 @@ public class Suivi extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        j_erreur.setMaximumSize(new java.awt.Dimension(80, 100));
+        j_erreur.setMinimumSize(new java.awt.Dimension(60, 100));
+        j_erreur.setVisibleRowCount(2);
         jScrollPane3.setViewportView(j_erreur);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -259,10 +264,10 @@ public class Suivi extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(64, 64, 64)
@@ -320,12 +325,16 @@ public class Suivi extends javax.swing.JFrame {
             boolean vide = true;
             for (int j = 0; j < 7; j++)
             {
-                if (!"".equals(liste_erreur[j]))
+                if ("".equals(liste_erreur[j]))
+                {
+                    vide = true;
+                }
+                else
                 {
                     vide = false;
                 }
             }
-            if (vide == false){
+            if (vide == true){
                 B_reprise.setEnabled(false);
             }  
         } catch (IOException ex) {

@@ -69,12 +69,12 @@ int cariste( arg_cariste_t* args ){
 
 	for ( ; ; ){
 		sem_wait( sem_palette );
-
-		nb_palette += 1;
+		
 		if ( type_piece=='A' && nb_palette==(*shm_lot)[LOT_A] ) {
 			type_piece = 'B';
 			nb_palette = 0;
 		}
+		nb_palette += 1;
 
 		pthread_mutex_lock ( mutex_entrepot );
 		for( i=0 ; shm_entrepot->palettes[ i ].id != NO_PALETTE && i < TAILLE_ENTREPOT ; i++ );
