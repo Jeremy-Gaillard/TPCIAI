@@ -77,9 +77,9 @@ void terminaison()
 /*Debut de production, on initialise la memoire partagee avec le nombre de lot a produire*/
 void commander_lot(int nb_A, int nb_B, int prc_max_rebus)
 {
-	(*lot)[0] = nb_A;
-	(*lot)[1] = nb_B;
-	(*lot)[2] = prc_max_rebus;
+	(*lot)[LOT_A] = nb_A;
+	(*lot)[LOT_B] = nb_B;
+	(*lot)[REBUS] = prc_max_rebus;
 	(*statut)[ST_CLAPET_OUVERT] = 1;
 	sem_post(sem_clapet);
 }
