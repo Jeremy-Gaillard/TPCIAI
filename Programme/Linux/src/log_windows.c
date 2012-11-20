@@ -54,7 +54,7 @@ void log_windows()
 	int bal_log_windows = mq_open( BALWIN, O_RDONLY );
 	log_t message;	
 	
-	do
+	do/*Envoi de message tant qu'on ne reçoit pas de trame de fin*/
 	{
 		mq_receive(bal_log_windows, message, sizeof(log_t), NULL);
 		if( strcmp(message, TRAME_FIN) ) 

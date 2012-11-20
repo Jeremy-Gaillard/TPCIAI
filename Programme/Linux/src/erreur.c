@@ -33,6 +33,7 @@ void erreur(struct arg_erreur *ipc)
 		
 		if( strcmp(message, TRAME_FIN) )/*Si on ne reçoit pas de trame de fin*/
 		{
+		/*Envoie du message dans les boites aux lettres, fermeture du clapet*/
 			(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 			log_t log;
 			sprintf( log, "E %s", message );
