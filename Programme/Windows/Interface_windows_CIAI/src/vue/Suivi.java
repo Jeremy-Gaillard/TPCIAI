@@ -320,12 +320,16 @@ public class Suivi extends javax.swing.JFrame {
             boolean vide = true;
             for (int j = 0; j < 7; j++)
             {
-                if (!"".equals(liste_erreur[j]))
+                if ("".equals(liste_erreur[j]))
+                {
+                    vide = true;
+                }
+                else
                 {
                     vide = false;
                 }
             }
-            if (vide == false){
+            if (vide == true){
                 B_reprise.setEnabled(false);
             }  
         } catch (IOException ex) {
