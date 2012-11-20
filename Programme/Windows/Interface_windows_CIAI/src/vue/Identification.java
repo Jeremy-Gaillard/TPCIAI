@@ -51,6 +51,7 @@ public class Identification extends javax.swing.JFrame {
         j_IP_linux = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Identification");
 
         j_identification.setText("JB");
 
@@ -69,7 +70,7 @@ public class Identification extends javax.swing.JFrame {
 
         jLabel3.setText("IP de la machine Linux");
 
-        j_IP_linux.setText("134.214.161.152");
+        j_IP_linux.setText("134.214.161.20");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

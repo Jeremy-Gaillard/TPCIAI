@@ -18,134 +18,190 @@ import java.util.List;
  * @author michael
  */
 public class Suivi extends javax.swing.JFrame {
-
+    
+    static final int NB_ERREURS = 7;
+    static final int MAXPAL = 1024; // TODO: test si valeur trop grande dans Paramétrage et dans code moteur
+    
         //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
-    int MAXPAL = 100;
-    int nb_palette = 1;
+    //int nb_palettes = 1;
+    int nb_palettes = 0;
     int nb_palette_A_commande = 0;
     int nb_palette_B_commande = 0;
     Interface_windows_CIAI app;
     MessageReceiver message_receiver = new MessageReceiver(this);
-    String[] liste_erreur = new String[7];
+    String[] liste_erreur = new String[NB_ERREURS];
     
     /*Variable utilisée pour avoir un bon format dans les listes*/
-    String[] liste_def_palette = new String[MAXPAL];
-    String[] liste_def_carton = new String[MAXPAL];
+    //String[] liste_def_palette = new String[MAXPAL];
+    //String[] liste_def_carton = new String[MAXPAL];
     Palette liste_palette[] = new Palette[MAXPAL];
-    Palette palette_initiale = new Palette(0, "A", 0);
-    List<Carton> liste_carton = new LinkedList<Carton>();
-
-    public void setNb_palette_A_commande(int nb_palette_A_commande) {
-        this.nb_palette_A_commande = nb_palette_A_commande;
-    }
-
-    public void setNb_palette_B_commande(int nb_palette_B_commande) {
-        this.nb_palette_B_commande = nb_palette_B_commande;
-    }
+    //Palette palette_initiale = new Palette(0, "A", 0);
+    //List<Carton> liste_carton = new LinkedList<>();
+    int nb_palette_actuel_A = 0;
+    int nb_palette_actuel_B = 0;
+    int selected_palette_index;
     
     class MessageReceiver extends Thread {
-            Suivi suivi;
-            public MessageReceiver(Suivi suivi) {
-                this.suivi = suivi;
-            }
-            
-            public void run() {
-                System.out.println("Starting message receiver...");
-                String msg = "";
-                liste_palette[0] = palette_initiale;
-                int i = 0;
-                while (true) {
-                    try {
-                        //ecoute d'un message du serveur
-                        msg = suivi.app.network.listen_message();
-                    } catch (IOException ex) {
-                        //System.err.println("Could not establish server socket!");
-                        app.error("Socket", "Could not establish client socket!", ex);
-                    }
-                    System.out.println("Received message: '"+msg+"'");
+        
+        Suivi suivi;
+        
+        public MessageReceiver(Suivi suivi) {
+            this.suivi = suivi;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("Starting message receiver...");
+            String msg = "";
+            //liste_palette[0] = palette_initiale;
+            //int indice_palettes_ajout_carton = 0;
+            Palette en_remplissage = null;
+            while (true) {
+                try {
+                    //ecoute d'un message du serveur
+                    msg = suivi.app.network.listen_message();
+                } catch (IOException ex) {
+                    //System.err.println("Could not establish server socket!");
+                    app.error("Socket", "Could not establish client socket!", ex);
+                }
+                System.out.println("Received message: '"+msg+"'");
+
+                if (msg.length() == 0)
+                {
+                    app.error("Null message received!", "A null message was received. Stopping listening.");
+                    throw new Error("Null message received!");
+                }
+                try {
+                    String decoupe[] = msg.split(" ");
                     
-                    if (msg.length() == 0)
+                    if ("E".equals(msg.substring(0, 1)))
                     {
-                        app.error("Null message received!", "A null message was received. Stopping listening.");
-                        throw new Error("Null message received!");
+
+                        //Reception et traitement d'une erreur
+                        //String decoupe[] = msg.split(" ");
+                        if (decoupe[1].equals("Fi")) {
+                            app.info("Quitting", "Received a stop message, quitting...");
+                            quit_app();
+                            return;
+                        } else {
+                            int id_erreur = Integer.parseInt(decoupe[1]);
+                            int horaire = Integer.parseInt(decoupe[2]);
+
+                            switch(id_erreur){
+                                case 0: liste_erreur[id_erreur] = id_erreur + " : AU"; break;
+                                case 1: liste_erreur[id_erreur] = id_erreur + " : trop de pièces defectueuses"; break;
+                                case 2: liste_erreur[id_erreur] = id_erreur + " : plus de carton"; break;
+                                case 3: liste_erreur[id_erreur] = id_erreur + " : imprimante HS"; break;
+                                case 4: liste_erreur[id_erreur] = id_erreur + " : trop de cartons dans la file d'attente"; break;
+                                case 5: liste_erreur[id_erreur] = id_erreur + " : plus de palette"; break;
+                                case 6: liste_erreur[id_erreur] = id_erreur + " : problème de conditionnement de palette"; break;    
+                            }                                    
+
+                            j_erreur.setListData(liste_erreur);
+                            B_reprise.setEnabled(true);
+                        }
                     }
-                    try {
-                        if ("E".equals(msg.substring(0, 1)))
-                        {
-
-                                //Reception et traitement d'une erreur
-                                String decoupe[] = msg.split(" ");
-                                if (decoupe[1].equals("Fi")) {
-                                    app.info("Quitting", "Received a stop message, quitting...");
-                                    quit_app();
-                                    return;
-                                } else {
-                                    int id_erreur = Integer.parseInt(decoupe[1]);
-                                    int horaire = Integer.parseInt(decoupe[2]);
-                                    
-                                    switch(id_erreur){
-                                        case 0: liste_erreur[id_erreur] = id_erreur + " : AU"; break;
-                                        case 1: liste_erreur[id_erreur] = id_erreur + " : trop de pièces defectueuses"; break;
-                                        case 2: liste_erreur[id_erreur] = id_erreur + " : plus de carton"; break;
-                                        case 3: liste_erreur[id_erreur] = id_erreur + " : imprimante HS"; break;
-                                        case 4: liste_erreur[id_erreur] = id_erreur + " : trop de cartons dans la file d'attente"; break;
-                                        case 5: liste_erreur[id_erreur] = id_erreur + " : plus de palette"; break;
-                                        case 6: liste_erreur[id_erreur] = id_erreur + " : problème de conditionnement de palette"; break;    
-                                    }                                    
-                                    
-                                    j_erreur.setListData(liste_erreur);
-                                    B_reprise.setEnabled(true);
-                                }
+                    else if ("L C".equals(msg.substring(0, 3)))
+                    {
+                        
+                        //Reception d'un carton
+                        //String decoupe[] = msg.split(" ");
+                        int id_carton = Integer.parseInt(decoupe[2]);
+                        String type_piece = decoupe[3];
+                        int pourcentage = Integer.parseInt(decoupe[4]);
+                        int horaire = Integer.parseInt(decoupe[5]);
+                        
+                        if (en_remplissage == null) {
+                            en_remplissage = new Palette(type_piece);
+                            liste_palette[nb_palettes] = en_remplissage;
+                            nb_palettes++;
                         }
-                        else if ("L C".equals(msg.substring(0, 3)))
-                        {
-
-                                //Reception d'un carton
-                                String decoupe[] = msg.split(" ");
-                                int id_carton = Integer.parseInt(decoupe[2]);
-                                String type_piece = decoupe[3];
-                                int pourcentage = Integer.parseInt(decoupe[4]);
-                                int horaire = Integer.parseInt(decoupe[5]);
-
-                                //ajout dans sa palette
-                                Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
-                                liste_palette[i].Ajouter_carton(carton);
-
-                        }
-                        else if ("L P".equals(msg.substring(0, 3)))
-                        {
-
-                                //Reception d'une palette
-
-                                i++; //mise à jour de l'indice de la liste de palette
-                                nb_palette++; //mise à jour du nombre de palette
-
-                                String decoupe[] = msg.split(" ");
-                                int id_palette = Integer.parseInt(decoupe[2]);
-                                String type_palette = decoupe[3];
-                                int horaire = Integer.parseInt(decoupe[4]); 
-
-                                Palette palette = new Palette(id_palette, type_palette, horaire);
-                                liste_palette[i] = palette;
-
-                                //MAJ de la liste de palettes
-                                liste_def_palette[i] = palette.ToString();
-                                j_palette.setListData(liste_def_palette);
-                        }
-                    } catch (NumberFormatException ex) {
-                        app.error("Invalid message received", "An invalid message was received: "+msg, ex);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        app.error("Invalid message received", "Error while parsing message: "+msg, ex);
+                        
+                        //ajout dans sa palette
+                        Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
+                        //liste_palette[indice_palettes_ajout_carton].ajouter_carton(carton);
+                        //liste_palette[nb_palettes-1].ajouter_carton(carton);
+                        en_remplissage.ajouter_carton(carton);
+                        maj_carton();
+                        maj_palettes();
                     }
+                    else if ("L P".equals(msg.substring(0, 3)))
+                    {
+                        /*
+                        //Reception d'une palette
+                        
+                        //String decoupe[] = msg.split(" ");
+                        int id_palette = Integer.parseInt(decoupe[2]);
+                        String type_palette = decoupe[3];
+                        int horaire = Integer.parseInt(decoupe[4]); 
+                        
+                        switch (type_palette) {
+                            case "A":
+                                nb_palette_actuel_A++;
+                                break;
+                            case "B":
+                                nb_palette_actuel_B++;
+                                break;
+                            default:
+                                throw new Error("Unsupported type of Palette: "+type_palette);
+                        }
+                        
+                        //indice_palettes_ajout_carton++; //mise à jour de l'indice de la liste de palette
+                        nb_palettes++; //mise à jour du nombre de palette
+                        
+                        Palette palette = new Palette(id_palette, type_palette, horaire);
+                        //liste_palette[indice_palettes_ajout_carton] = palette;
+                        liste_palette[nb_palettes-1] = palette;
+                        
+                        //MAJ de la liste de palettes
+                        maj_palettes();*/
+                        
+                        int id_palette = Integer.parseInt(decoupe[2]);
+                        String type_palette = decoupe[3];
+                        int horaire = Integer.parseInt(decoupe[4]); 
+                        
+                        switch (type_palette) {
+                            case "A":
+                                nb_palette_actuel_A++;
+                                break;
+                            case "B":
+                                nb_palette_actuel_B++;
+                                break;
+                            default:
+                                throw new Error("Unsupported type of Palette: "+type_palette);
+                        }
+                        en_remplissage.finaliser(id_palette, horaire);
+                        en_remplissage = null;
+                        maj_palettes();
+                    }
+                } catch (NumberFormatException ex) {
+                    app.error("Invalid message received", "An invalid message was received: "+msg, ex);
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    app.error("Invalid message received", "Error while parsing message: "+msg, ex);
                 }
             }
-
-            private void quit_app() {
-                dispose();
-                app.quit();
-            }
-
         }
+        
+        private void quit_app() {
+            dispose();
+            app.quit();
+        }
+        
+    }
+    
+    void maj_palettes() {
+        String[] liste_def_palette = new String[nb_palettes];
+        //liste_def_palette[i] = palette.toString();
+        for (int i = 0; i < nb_palettes; i++) {
+            /*Palette p = liste_palette[i];
+            liste_def_palette[i] = (p.is_disponible() ? "" : "[Envoyée] ") + p.toString();
+            if (p.is_disponible()) 
+                 liste_def_palette[i] = p.toString();
+            else liste_def_palette[i] = "Palette envoyé";*/
+            liste_def_palette[i] = liste_palette[i].toString();
+        }
+        j_palette.setListData(liste_def_palette);
+    }
     
     /**
      * Creation d'une nouvelle forme Suivi
@@ -154,12 +210,78 @@ public class Suivi extends javax.swing.JFrame {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        for (int j = 0; j<7; j++)
+        for (int j = 0; j<NB_ERREURS; j++)
         {
             liste_erreur[j] = "";
         }
         message_receiver.start();
-        
+    }
+    /*
+    public void set_nb_palettes_A_commande(int nb_palette_A_commande) {
+        this.nb_palette_A_commande = nb_palette_A_commande;
+    }
+
+    public void set_nb_palette_B_commande(int nb_palette_B_commande) {
+        this.nb_palette_B_commande = nb_palette_B_commande;
+    }
+    */
+    
+    public void commande(int nb_palette_A_commande, int nb_palette_B_commande) {
+        //this.nb_palette_B_commande = nb_palette_B_commande;
+        /*
+        int j = 1;
+        if (nb_palette_A_commande > 0) {
+            while("A".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
+            {
+                j++;
+            }
+            for(;nb_palette_A_commande > 0;j++)
+            {
+                nb_palette_A_commande--;
+                liste_palette[j].set_disponible(false);
+                //liste_def_palette[j]= "Palette envoyé";                        
+            }
+        }
+        while ("A".equals(liste_palette[j].get_type_palette())) {
+            j++;
+        }
+        if (nb_palette_B_commande > 0) {
+            while("B".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
+            {
+                j++;
+            }
+            for(;nb_palette_B_commande > 0;j++)
+            {
+                nb_palette_B_commande--;
+                liste_palette[j].set_disponible(false);
+                //liste_def_palette[j]= "Palette envoyé";                        
+            }
+        }
+        //j_palette.setListData(liste_def_palette);*/
+        int i = 0;
+        while (i < nb_palettes && (nb_palette_A_commande > 0 || nb_palette_B_commande > 0)) {
+            //app.info("", liste_palette[i].toString());
+            if (liste_palette[i].is_disponible()) {
+                System.out.println(liste_palette[i]);
+                if (nb_palette_A_commande > 0 && "A".equals(liste_palette[i].get_type_palette())) {
+                    liste_palette[i].set_disponible(false);
+                    nb_palette_A_commande--;
+                    nb_palette_actuel_A--;
+                }
+                else if (nb_palette_B_commande > 0 && "B".equals(liste_palette[i].get_type_palette())) {
+                    liste_palette[i].set_disponible(false);
+                    nb_palette_B_commande--;
+                    nb_palette_actuel_B--;
+                }
+            }
+            i++;
+        }
+        maj_palettes();
+        if (nb_palette_A_commande > 0 || nb_palette_B_commande > 0) {
+            app.error("Commande palette", "Impossible de retirer le nombre de palettes demandées."
+                    + " Il reste "+nb_palette_A_commande+" palettes A et "+nb_palette_B_commande+" palettes B.");
+            throw new Error("Inconsistent data!");
+        }
     }
     
     /**
@@ -171,7 +293,6 @@ public class Suivi extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         B_commande = new javax.swing.JButton();
         B_reprise = new javax.swing.JButton();
@@ -182,15 +303,15 @@ public class Suivi extends javax.swing.JFrame {
         j_carton = new javax.swing.JList();
         jScrollPane3 = new javax.swing.JScrollPane();
         j_erreur = new javax.swing.JList();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Interface de suivi du lot");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
-
-        jLabel1.setText("Interface de suivi du lot");
 
         jLabel2.setText("Erreur detectées :");
 
@@ -217,8 +338,9 @@ public class Suivi extends javax.swing.JFrame {
         });
 
         j_palette.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        j_palette.setMaximumSize(new java.awt.Dimension(80, 100));
-        j_palette.setMinimumSize(new java.awt.Dimension(60, 100));
+        j_palette.setMaximumSize(null);
+        j_palette.setMinimumSize(null);
+        j_palette.setName(""); // NOI18N
         j_palette.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 j_paletteValueChanged(evt);
@@ -231,6 +353,8 @@ public class Suivi extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        j_carton.setMaximumSize(null);
+        j_carton.setMinimumSize(null);
         jScrollPane2.setViewportView(j_carton);
 
         j_erreur.setMaximumSize(new java.awt.Dimension(80, 100));
@@ -238,61 +362,52 @@ public class Suivi extends javax.swing.JFrame {
         j_erreur.setVisibleRowCount(2);
         jScrollPane3.setViewportView(j_erreur);
 
+        jLabel3.setText("Palettes en stock :");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(jLabel1)
-                        .addGap(0, 248, Short.MAX_VALUE))
+                        .addComponent(B_reprise)
+                        .addGap(18, 18, 18)
+                        .addComponent(B_commande)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(B_arret))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(B_reprise)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(B_arret))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(B_commande))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(64, 64, 64)
-                        .addComponent(B_commande))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(B_reprise)
-                    .addComponent(B_arret))
-                .addGap(27, 27, 27))
+                    .addComponent(B_arret)
+                    .addComponent(B_commande))
+                .addContainerGap())
         );
 
         pack();
@@ -305,59 +420,57 @@ public class Suivi extends javax.swing.JFrame {
     private void B_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_commandeActionPerformed
         // Envoi d'une commande
         System.out.println("Commande");
-        int nb_palette_actuel_A = 0;
+        /*int nb_palette_actuel_A = 0;
         int nb_palette_actuel_B = 0;
-        for(int j = 1; j < nb_palette; j++){
-            if("A".equals(liste_palette[j].getType_palette()) && liste_palette[j].isDisponible())
+        for(int j = 1; j < nb_palettes; j++) {
+            if("A".equals(liste_palette[j].get_type_palette()) && liste_palette[j].is_disponible())
             {
                 nb_palette_actuel_A++;
             }
-            else if ("B".equals(liste_palette[j].getType_palette()) && liste_palette[j].isDisponible())
+            else if ("B".equals(liste_palette[j].get_type_palette()) && liste_palette[j].is_disponible())
             {
                 nb_palette_actuel_B++;
             }           
-        }
+        }*/
         Commande fc = new Commande(app, this, nb_palette_actuel_A, nb_palette_actuel_B);
         fc.setVisible(true);
-        fc.addWindowListener(new WindowAdapter() {
+        /*fc.addWindowListener(new WindowAdapter() {
  
             @Override
             public void windowClosed(WindowEvent e)
             {
                 int j = 1;
-                if(nb_palette_A_commande > 0)
-                {
-                    while("A".equals(liste_palette[j].getType_palette()) && !liste_palette[j].isDisponible())
+                if(nb_palette_A_commande > 0) {
+                    while("A".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
                     {
                         j++;
                     }
                     for(;nb_palette_A_commande > 0;j++)
                     {
                         nb_palette_A_commande--;
-                        liste_palette[j].setDisponible(false);
-                        liste_def_palette[j]= "Palette envoyé";                        
+                        liste_palette[j].set_disponible(false);
+                        //liste_def_palette[j]= "Palette envoyé";                        
                     }
                 }
-                while("A".equals(liste_palette[j].getType_palette()))
-                {
+                while("A".equals(liste_palette[j].get_type_palette())) {
                     j++;
                 }
-                if(nb_palette_B_commande > 0)
-                {
-                    while("B".equals(liste_palette[j].getType_palette()) && !liste_palette[j].isDisponible())
+                if(nb_palette_B_commande > 0) {
+                    while("B".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
                     {
                         j++;
                     }
                     for(;nb_palette_B_commande > 0;j++)
                     {
                         nb_palette_B_commande--;
-                        liste_palette[j].setDisponible(false);
-                        liste_def_palette[j]= "Palette envoyé";                        
+                        liste_palette[j].set_disponible(false);
+                        //liste_def_palette[j]= "Palette envoyé";                        
                     }
                 }
-                j_palette.setListData(liste_def_palette);
+                //j_palette.setListData(liste_def_palette);
+                maj_palettes();
             }
-        });
+        });*/
     }//GEN-LAST:event_B_commandeActionPerformed
 
     /*
@@ -369,27 +482,21 @@ public class Suivi extends javax.swing.JFrame {
         int erreur = j_erreur.getSelectedIndex();
         try {
             app.network.send_message("2 " + erreur);
-            liste_erreur[erreur] = "";
-            j_erreur.setListData(liste_erreur);
-            boolean vide = true;
-            for (int j = 0; j < 7; j++)
-            {
-                if ("".equals(liste_erreur[j]))
-                {
-                    vide = true;
-                }
-                else
-                {
-                    vide = false;
-                }
-            }
-            if (vide == true){
-                B_reprise.setEnabled(false);
-            }  
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
         }
+        liste_erreur[erreur] = "";
+        j_erreur.setListData(liste_erreur);
+        boolean vide = true;
+        for (int j = 0; j < NB_ERREURS; j++) {
+            if (!"".equals(liste_erreur[j])) {
+                vide = false;
+            }
+        }
+        if (vide){
+            B_reprise.setEnabled(false);
+        }  
     }//GEN-LAST:event_B_repriseActionPerformed
     
     /*
@@ -403,36 +510,64 @@ public class Suivi extends javax.swing.JFrame {
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
-        }        
+        }
+        quit();
     }//GEN-LAST:event_B_arretActionPerformed
+    
+    void maj_carton() {
+        if (selected_palette_index >= 0) {
+            Palette p = liste_palette[selected_palette_index];
+            List<Carton> liste_carton = p.getListeCarton();
+            String[] liste_def_carton = new String[liste_carton.size()];
+            for(int j = 0; j < liste_carton.size(); j++)
+            {
+                Carton carton = (Carton)liste_carton.get(j);
+                liste_def_carton[j] = carton.ToString();
+            }
+            j_carton.setListData(liste_def_carton);
+        }
+    }
+    
     /*
      * Selection d'une palette dans la liste
      * 
      */
     private void j_paletteValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_j_paletteValueChanged
         
-        int index_palette = j_palette.getSelectedIndex();
+        /*int index_palette = j_palette.getSelectedIndex();
         if (index_palette == -1)
         {
             //cas ou rien n'est sélectionné pour cause de mise à jour de la liste
         }
         else
         {
-            
-            liste_carton = liste_palette[index_palette].getListeCarton();
-            for(int j = 0; j < liste_carton.size(); j++)
-            {
-                Carton carton = (Carton)liste_carton.get(j);
-                liste_def_carton[j]=carton.ToString();
+            Palette p = liste_palette[index_palette];
+            if (p != null) {
+                //liste_carton = p.getListeCarton();
+                List<Carton> liste_carton = p.getListeCarton();
+                String[] liste_def_carton = new String[liste_carton.size()];
+                for(int j = 0; j < liste_carton.size(); j++)
+                {
+                    Carton carton = (Carton)liste_carton.get(j);
+                    liste_def_carton[j] = carton.ToString();
+                }
+                j_carton.setListData(liste_def_carton);
+                maj_carton(p);
             }
-            j_carton.setListData(liste_def_carton);
-        }
-        
+        }*/
+        selected_palette_index = j_palette.getSelectedIndex();
+        maj_carton();
     }//GEN-LAST:event_j_paletteValueChanged
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        dispose();
+    
+    void quit() {
         app.quit();
+        if(message_receiver.isAlive())
+            message_receiver.stop();
+        dispose();
+    }
+    
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        quit();
     }//GEN-LAST:event_formWindowClosing
 
     /*
@@ -449,8 +584,8 @@ public class Suivi extends javax.swing.JFrame {
     private javax.swing.JButton B_arret;
     private javax.swing.JButton B_commande;
     private javax.swing.JButton B_reprise;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

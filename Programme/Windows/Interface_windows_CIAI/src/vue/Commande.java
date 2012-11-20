@@ -46,7 +46,8 @@ public class Commande extends javax.swing.JFrame {
         B_annuler_commande = new javax.swing.JButton();
         B_envoyer_commande = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Commande");
 
         jLabel1.setText("Quantité actuelle de palettes A");
 
@@ -58,9 +59,9 @@ public class Commande extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Nombre de palettes A");
+        jLabel3.setText("Nombre de palettes A commandées");
 
-        jLabel4.setText("Nombre de palettes B");
+        jLabel4.setText("Nombre de palettes B commandées");
 
         j_nb_palette_actuel_A.setEditable(false);
 
@@ -92,36 +93,34 @@ public class Commande extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(103, 103, 103)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(58, 58, 58)
-                        .addComponent(B_annuler_commande)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(B_envoyer_commande)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(j_nb_palette_commande_B, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                        .addComponent(j_nb_palette_commande_A, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(j_nb_palette_actuel_B, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(j_nb_palette_actuel_A, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(102, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(j_nb_palette_commande_B, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                            .addComponent(j_nb_palette_commande_A, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(j_nb_palette_actuel_B, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(j_nb_palette_actuel_A, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(0, 59, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(B_annuler_commande)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(B_envoyer_commande)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(72, 72, 72)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(j_nb_palette_actuel_A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(j_nb_palette_actuel_A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(j_nb_palette_actuel_B, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -129,15 +128,15 @@ public class Commande extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(j_nb_palette_commande_A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(j_nb_palette_commande_B, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                    .addComponent(j_nb_palette_commande_B, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(B_annuler_commande)
                     .addComponent(B_envoyer_commande))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -172,8 +171,8 @@ public class Commande extends javax.swing.JFrame {
         
         int nb_palette_commande_A = 0;
         int nb_palette_commande_B = 0;
-        int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
-        int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());        
+        /*int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
+        int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());*/ 
         
         try {
             nb_palette_commande_A = Integer.parseInt(j_nb_palette_commande_A.getText());
@@ -188,11 +187,11 @@ public class Commande extends javax.swing.JFrame {
             app.error("Format numérique", "Veuillez entrer des nombres positifs.");
         }
             
-        else if(nb_palette_commande_A > nb_palette_actuel_A)
+        else if(nb_palette_commande_A > suivi.nb_palette_actuel_A)
         {
             app.error("Stock", "Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production.");
         }
-        else if(nb_palette_commande_B > nb_palette_actuel_B)
+        else if(nb_palette_commande_B > suivi.nb_palette_actuel_B)
         {
             app.error("Stock", "Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production.");
         }
@@ -201,14 +200,14 @@ public class Commande extends javax.swing.JFrame {
             try {
                 String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
                 app.network.send_message(commande);
-                suivi.setNb_palette_A_commande(nb_palette_commande_A);
-                suivi.setNb_palette_B_commande(nb_palette_commande_B);                
+                /*suivi.set_nb_palettes_A_commande(nb_palette_commande_A);
+                suivi.set_nb_palette_B_commande(nb_palette_commande_B);*/
+                suivi.commande(nb_palette_commande_A, nb_palette_commande_B);
+                app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
                 this.dispose();
-
             } catch (IOException ex) {
                 app.error("IO Exception", "Could not send the command to the host!");
             }
-            app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
         }
         
     }//GEN-LAST:event_B_envoyer_commandeActionPerformed

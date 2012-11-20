@@ -25,8 +25,8 @@ public class Carton {
      * 
      */    
     public String ToString(){
-        String definition = "Carton "+ this.id_carton + " de type " + this.type_piece+ 
-                " finie à " + this.horaire + " avec taux de pièces defectueuses " + this.pourcentage;
+        String definition = "Carton "+ this.id_carton + ", type " + this.type_piece+ 
+                " fini à " + this.horaire + ", pièces defectueuses: " + this.pourcentage+"%";
         return definition;
     }
 
