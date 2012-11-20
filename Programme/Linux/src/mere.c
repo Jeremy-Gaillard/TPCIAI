@@ -56,7 +56,6 @@ void arret_urgence_prod(int signum) {
 	{
 		pthread_mutex_unlock(&mutex_compte);
 	}
-	pthread_mutex_unlock(&mutex_erreur);
 	sem_wait(&sem_AU);
 }
 
