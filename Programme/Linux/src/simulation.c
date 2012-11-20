@@ -51,15 +51,7 @@ void simulation(arg_simulation_t* ipc)
 	for( ; ; )
 	{
 		scanf("%s", commande);
-		if( !strcmp(commande, "logd") )
-		{
-			mq_send(bal_log_disque, "L C 10 666666", sizeof(log_t), BAL_PRIO_ELSE);
-		}
-		if( !strcmp(commande, "logdf") )
-		{
-			mq_send(bal_log_disque, TRAME_FIN, sizeof(log_t), BAL_PRIO_FIN);
-		}
-		else if( !strcmp(commande, "presence_carton") )
+		if( !strcmp(commande, "presence_carton") )
 		{
 			(*shm_statut)[ ST_PRESENCE_CARTON ] = 1;
 		}
@@ -122,18 +114,9 @@ void simulation(arg_simulation_t* ipc)
 			pthread_kill( t_carton, SIGUSR1 );
 			pthread_kill( t_palette, SIGUSR1 );
 		}
-		else if( !strcmp(commande, "rep") )
-		{
-			sem_post(sem_AU);
-			sem_post(sem_AU);
-		}
 		else if( !strcmp(commande, "go") )
 		{
 			commander_lot(4, 4, 200);
-		}
-		else if( !strcmp(commande, "reprise_rebus") )
-		{
-			reprise(ERR_TROP_DE_REBUS);
 		}
 	}
 	pthread_exit(0);
