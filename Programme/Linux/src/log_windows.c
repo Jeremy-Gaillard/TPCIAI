@@ -50,6 +50,7 @@ void init_log_windows(int asocket)
 
 void log_windows()
 {
+	/*Recuperation de la boite aux lettres*/
 	int bal_log_windows = mq_open( BALWIN, O_RDONLY );
 	log_t message;	
 	

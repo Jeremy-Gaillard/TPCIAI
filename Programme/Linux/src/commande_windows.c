@@ -23,11 +23,13 @@ static sem_t* sem_clapet;
 
 static int my_socket;
 
+/*Initialise la communication réseau*/
 void init_commande_windows(int asocket)
 {
 	my_socket = asocket;
 }
 
+/*Fonction assurant la reprise du fonctionnement normal apres une erreur ou un arret d'urgence*/
 void reprise(int erreur_id)
 {
 	int i;
@@ -56,7 +58,7 @@ void reprise(int erreur_id)
 		if((*statut)[i] == 0 && i != ST_CLAPET_OUVERT && i != ST_PIECE)
 			break;
 	}
-	if(i == STATUT_SIZE)
+	if(i == STATUT_SIZE)/*Si tout le materiel est OK, on rouvre le clapet*/
 	{
 		(*statut)[ST_CLAPET_OUVERT] = 1;
 		sem_post(sem_clapet);
@@ -64,11 +66,13 @@ void reprise(int erreur_id)
 	
 }
 
+/*Fin du thread*/
 void terminaison()
 {
 	pthread_exit(0);
 }
 
+/*Debut de production, on initialise la memoire partagee avec le nombre de lot a produire*/
 void commander_lot(int nb_A, int nb_B, int prc_max_rebus)
 {
 	(*lot)[0] = nb_A;
@@ -78,6 +82,7 @@ void commander_lot(int nb_A, int nb_B, int prc_max_rebus)
 	sem_post(sem_clapet);
 }
 
+/*Realisation d'une commande client, on enleve de l'entrepot le bon nombre de palette*/
 void expedier_lot(int nb_A, int nb_B)
 {
 	int i;
@@ -115,7 +120,6 @@ void commande_windows(arg_commande_windows_t* ipc)
 	sem_erreur_carton = ipc->carton;
 	sem_AU = ipc->AU;
 	sem_clapet = ipc->clapet;
-	//sleep(10);
 	wait_order(my_socket);
 }
 

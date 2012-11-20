@@ -29,6 +29,7 @@ static sem_t sem_AU;
 static pthread_mutex_t mutex_erreur;
 static mqd_t bal_erreur;
 
+/*Handler de fin de thread*/
 void fin_thread(int signum)
 {
 	printf("Signal %d reçu\n", signum);
@@ -36,12 +37,16 @@ void fin_thread(int signum)
 		pthread_exit( 0 );
 }
 
+/*Handler d'arrêt d'urgence*/
 void arret_urgence_prod(int signum) {
 	static int compte = 0;
 	static pthread_mutex_t mutex_compte;
 	printf("PRODUCTION: ARRÊT D'URGENCE !\n");
 	pthread_mutex_lock(&mutex_compte);
 	compte ++;
+	/*Comme plusieurs threads passent ici et qu'on ne veut prévenir qu'une fois
+	qu'il y a eu un AU, on compte le nombre de passage dans la fonction et on
+	signale l'erreur qu'une seule fois*/
 	if( compte == NB_THREAD_AU )
 	{
 		compte = 0;
@@ -72,7 +77,8 @@ int main(int argc, char** argv)
 	
 	/*----------------------------------------------------Initialisation--------------------------------------------------*/
 
-	server(32768);
+	/*Initialisation du server*/
+	server(NUM_PORT);
 	
 	/*priorite de la mere*/
 	struct sched_param mere_param;
@@ -147,7 +153,6 @@ int main(int argc, char** argv)
 	sigaction ( SIGUSR2, &handler_USR2, NULL );
 		
 	/*Threads*/
-	
 	arg_carton_t carton_arg;
 	carton_arg.shm_statut = shm_statut;
 	carton_arg.shm_lot = shm_lot;
@@ -241,13 +246,14 @@ int main(int argc, char** argv)
 	pthread_join( t_commande_windows, NULL );
 	/*--------------------------------------------------------Destruction-------------------------------------------------------------*/
 	
+	/*Destruction des threads*/
 	pthread_kill( t_simulation, SIGUSR2 );
 	pthread_join(t_simulation, NULL);
 	
 	pthread_kill(t_envoi_piece, SIGUSR2);
 	pthread_join(t_envoi_piece, NULL);
-
 	
+	/*On leur envoie la fin de l'application à l'aide de leur boite aux lettres en envoyant une trame de fin*/
 	pthread_mutex_lock(&mutex_erreur);
 	mq_send(bal_erreur, TRAME_FIN, sizeof(erreur_t), BAL_PRIO_FIN);
 	pthread_mutex_unlock(&mutex_erreur);
