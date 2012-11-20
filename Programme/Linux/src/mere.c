@@ -170,7 +170,6 @@ int main(int argc, char** argv)
 	
 	arg_palette_t palette_arg;
 	palette_arg.shm_statut = shm_statut;
-	palette_arg.shm_lot = shm_lot;
 	palette_arg.sem_carton = &sem_carton;
 	palette_arg.sem_palette = &sem_palette;
   	palette_arg.sem_erreur_palette = &sem_erreur_palette;
