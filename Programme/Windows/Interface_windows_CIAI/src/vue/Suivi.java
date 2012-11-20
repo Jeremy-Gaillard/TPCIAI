@@ -7,11 +7,11 @@ package vue;
 import interface_windows_ciai.Carton;
 import interface_windows_ciai.Interface_windows_CIAI;
 import interface_windows_ciai.Palette;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -22,6 +22,8 @@ public class Suivi extends javax.swing.JFrame {
         //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
     int MAXPAL = 100;
     int nb_palette = 1;
+    int nb_palette_A_commande = 0;
+    int nb_palette_B_commande = 0;
     Interface_windows_CIAI app;
     MessageReceiver message_receiver = new MessageReceiver(this);
     String[] liste_erreur = new String[7];
@@ -32,6 +34,14 @@ public class Suivi extends javax.swing.JFrame {
     Palette liste_palette[] = new Palette[MAXPAL];
     Palette palette_initiale = new Palette(0, "A", 0);
     List<Carton> liste_carton = new LinkedList<Carton>();
+
+    public void setNb_palette_A_commande(int nb_palette_A_commande) {
+        this.nb_palette_A_commande = nb_palette_A_commande;
+    }
+
+    public void setNb_palette_B_commande(int nb_palette_B_commande) {
+        this.nb_palette_B_commande = nb_palette_B_commande;
+    }
     
     class MessageReceiver extends Thread {
             Suivi suivi;
@@ -78,7 +88,7 @@ public class Suivi extends javax.swing.JFrame {
                                         case 1: liste_erreur[id_erreur] = id_erreur + " : trop de pièces defectueuses"; break;
                                         case 2: liste_erreur[id_erreur] = id_erreur + " : plus de carton"; break;
                                         case 3: liste_erreur[id_erreur] = id_erreur + " : imprimante HS"; break;
-                                        case 4: liste_erreur[id_erreur] = id_erreur + " : trop d ecartons dans la file d'attente"; break;
+                                        case 4: liste_erreur[id_erreur] = id_erreur + " : trop de cartons dans la file d'attente"; break;
                                         case 5: liste_erreur[id_erreur] = id_erreur + " : plus de palette"; break;
                                         case 6: liste_erreur[id_erreur] = id_erreur + " : problème de conditionnement de palette"; break;    
                                     }                                    
@@ -173,7 +183,12 @@ public class Suivi extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         j_erreur = new javax.swing.JList();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setText("Interface de suivi du lot");
 
@@ -212,17 +227,12 @@ public class Suivi extends javax.swing.JFrame {
         jScrollPane1.setViewportView(j_palette);
 
         j_carton.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Pas de carton selectionné" };
+            String[] strings = { "Pas de palette selectionnée" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
         jScrollPane2.setViewportView(j_carton);
 
-        j_erreur.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         j_erreur.setMaximumSize(new java.awt.Dimension(80, 100));
         j_erreur.setMinimumSize(new java.awt.Dimension(60, 100));
         j_erreur.setVisibleRowCount(2);
@@ -255,7 +265,7 @@ public class Suivi extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -264,10 +274,10 @@ public class Suivi extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(64, 64, 64)
@@ -298,17 +308,52 @@ public class Suivi extends javax.swing.JFrame {
         int nb_palette_actuel_A = 0;
         int nb_palette_actuel_B = 0;
         for(int j = 0; j < nb_palette; j++){  
-            if("A".equals(liste_palette[j].getType_palette()))
+            if("A".equals(liste_palette[j].getType_palette()) && liste_palette[j].isDisponible())
             {
                 nb_palette_actuel_A++;
             }
-            else
+            else if ("B".equals(liste_palette[j].getType_palette()) && liste_palette[j].isDisponible())
             {
                 nb_palette_actuel_B++;
             }           
         }
-        Commande fc = new Commande(app, nb_palette_actuel_A, nb_palette_actuel_B);
+        Commande fc = new Commande(app, this, nb_palette_actuel_A, nb_palette_actuel_B);
         fc.setVisible(true);
+        fc.addWindowListener(new WindowAdapter() {
+ 
+            @Override
+            public void windowClosing(WindowEvent e) 
+            {
+                int j = 0;
+                if(nb_palette_A_commande > 0)
+                {
+                    while("A".equals(liste_palette[j].getType_palette()) && !liste_palette[j].isDisponible())
+                    {
+                        j++;
+                    }
+                    for(;nb_palette_A_commande > 0;j++)
+                    {
+                        nb_palette_A_commande--;
+                        liste_palette[j].setDisponible(false);
+                        liste_def_palette[j]= "Palette envoyé";                        
+                    }
+                }
+                if(nb_palette_B_commande > 0)
+                {
+                    while("B".equals(liste_palette[j].getType_palette()) && !liste_palette[j].isDisponible())
+                    {
+                        j++;
+                    }
+                    for(;nb_palette_B_commande > 0;j++)
+                    {
+                        nb_palette_B_commande--;
+                        liste_palette[j].setDisponible(false);
+                        liste_def_palette[j]= "Palette envoyé";                        
+                    }
+                }
+                j_palette.setListData(liste_def_palette);
+            }
+        });
     }//GEN-LAST:event_B_commandeActionPerformed
 
     /*
@@ -351,7 +396,6 @@ public class Suivi extends javax.swing.JFrame {
         System.out.println("Message d'arrêt");
         try {
             app.network.send_message("3");
-            //this.dispose(); // attendre message de retour pour quitter !
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
@@ -381,6 +425,11 @@ public class Suivi extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_j_paletteValueChanged
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        dispose();
+        app.quit();
+    }//GEN-LAST:event_formWindowClosing
 
     /*
     public static void main(String args[]) {

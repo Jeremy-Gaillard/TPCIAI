@@ -15,11 +15,13 @@ import java.io.IOException;
 public class Commande extends javax.swing.JFrame {
 
     Interface_windows_CIAI app;
+    vue.Suivi suivi;
     /**
      * Creates new form Commande
      */
-    public Commande(Interface_windows_CIAI inter, int nb_palette_A, int nb_palette_B) {
+    public Commande(Interface_windows_CIAI inter, vue.Suivi fenetre_suivi, int nb_palette_A, int nb_palette_B) {
         app = inter;
+        suivi = fenetre_suivi;
         setLocationByPlatform(true);
         initComponents();
         initData(nb_palette_A, nb_palette_B);
@@ -179,36 +181,32 @@ public class Commande extends javax.swing.JFrame {
             nb_palette_commande_B = Integer.parseInt(j_nb_palette_commande_B.getText());           
         }
         catch (NumberFormatException ex){
-            //System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
             app.error("Format numérique", "Entrez des valeurs valides pour les différentes paramètres.", ex);
         }
 
         if (nb_palette_commande_A < 0 && nb_palette_commande_B < 0)
         {
-            //System.out.println("Veuillez mettre des nombres positifs");
             app.error("Format numérique", "Veuillez entrer des nombres positifs.");
         }
             
         else if(nb_palette_commande_A > nb_palette_actuel_A)
         {
-            //System.out.println("Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production");
             app.error("Stock", "Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production.");
         }
         else if(nb_palette_commande_B > nb_palette_actuel_B)
         {
-            //System.out.println("Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production");
             app.error("Stock", "Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production.");
         }
         else
         {
-            //System.out.println("Commande OK");
             try {
                 String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
                 app.network.send_message(commande);
+                suivi.setNb_palette_A_commande(nb_palette_commande_A);
+                suivi.setNb_palette_B_commande(nb_palette_commande_B);                
                 this.dispose();
             } catch (IOException ex) {
                 app.error("IO Exception", "Could not send the command to the host!");
-                //ex.printStackTrace(System.err);
             }
             app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
         }

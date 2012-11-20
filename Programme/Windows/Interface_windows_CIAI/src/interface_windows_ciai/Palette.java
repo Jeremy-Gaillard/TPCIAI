@@ -16,11 +16,21 @@ public class Palette {
     List<Carton> listeCarton = new LinkedList<Carton>();
     int horaire;
     String type_palette;
+    boolean disponible; //Pour les livraisons
 
     public Palette(int id_palette, String type_palette, int horaire) {
         this.id_palette = id_palette;
         this.type_palette = type_palette;
         this.horaire = horaire;
+        this.disponible = true;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
+
+    public boolean isDisponible() {
+        return disponible;
     }
 
     public List<Carton> getListeCarton() {
