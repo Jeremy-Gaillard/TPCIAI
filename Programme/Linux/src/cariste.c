@@ -13,17 +13,21 @@
 void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
                   int palette_id, char type_piece, pthread_mutex_t* mutex_windows,
                   pthread_mutex_t* mutex_disque) {
-
+	/*Recuperation de l'heure au format HHMMSS*/
 	char heure[7];
 	time_t rawtime;
 	struct tm * timeinfo;
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	strftime ( heure, 7, "%H%M%S", timeinfo );
-
-	log_t message;/*nb palette(int=15) + heure (=6) +reste message (7) = 28*/
-
+	
+	/*creation de message :" L P palette_id type_piece hhmmss"*/
+	log_t message;
 	sprintf(message, "L P %d %c %s", palette_id, type_piece, heure);
+
+
+	/*envoi du message a la bal disque et windows
+	celles ci sont protegees par des mutex */
 	pthread_mutex_lock( mutex_disque );
 	mq_send( bal_log_disque, message, sizeof( log_t ), BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_disque );
@@ -35,9 +39,11 @@ void log_cariste( mqd_t bal_log_disque, mqd_t bal_log_windows,
 
 void ranger_palette( int place, int nb_palette, char type_piece,
                      entrepot_t* shm_entrepot ) {
-
+	/*MAJ de entrepot*/
 	shm_entrepot->palettes[place].id = nb_palette;
 	shm_entrepot->palettes[place].type = type_piece;
+	
+	/*recuperation heure: HHMMSS et mise en memoire dans entrepot*/
 	time_t rawtime;
 	struct tm * timeinfo;	
 	time ( &rawtime );
