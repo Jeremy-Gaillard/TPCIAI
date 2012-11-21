@@ -22,17 +22,12 @@ void error(const char* msg)
 	exit(0);
 }
 
-	//void envoyer(log_t message);
 
 int server(int portno)
 {
-	/*pthread_t t_server;
-	pthread_create( &t_server, NULL, (void*) host_server, (void*) portno );
-	pthread_join(t_server, NULL);*/
 	int sockfd, newsockfd;
 	socklen_t clilen;
 	struct sockaddr_in serv_addr, cli_addr;
-	//int n;
 	
 	printf("Launching server...\n"); 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,10 +58,7 @@ int server(int portno)
 	
 	if (newsockfd < 0)
 		error("ERROR on accept 1");
-	/*
-	pthread_t t_receive;
-	pthread_create( &t_receive, NULL, (void*) wait_order, (void*) newsockfd );
-	*/
+
 	init_log_windows(newsockfd);
 	init_commande_windows(newsockfd);
 	
@@ -121,10 +113,8 @@ void wait_order(int newsockfd)
 			error("Connection interrupted.");
 		if (n == 0)
 			error("Connection closed");
-		//printf("%d\n", n);
 		printf("Received new message: %s\n", msg_buffer);
 		process_message(msg_buffer);
-		//envoyer("TEST!!!");
 	}
 
 }
