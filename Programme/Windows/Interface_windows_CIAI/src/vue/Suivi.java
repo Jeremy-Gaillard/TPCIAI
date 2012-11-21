@@ -161,7 +161,7 @@ public class Suivi extends javax.swing.JFrame {
                         int id_palette = Integer.parseInt(decoupe[3]);
                         String type_piece = decoupe[4];
                         int pourcentage = Integer.parseInt(decoupe[5]);
-                        int horaire = Integer.parseInt(decoupe[6]);
+                        String horaire = decoupe[6];
                         
                         /*
                         if (en_remplissage == null) {

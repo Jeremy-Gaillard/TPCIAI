@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/*
+ * Classe de gestion de l'interface réseau : envoi/réception de messages.
+ */
 public class NetworkInterface {
     
     Socket client;
