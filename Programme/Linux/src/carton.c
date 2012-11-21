@@ -11,7 +11,7 @@
 
 
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
-                 int carton_id, char type_piece, int nb_rebus ,
+                 int carton_id, int palette_id, char type_piece, int nb_rebus,
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque ) {
 
 	char heure[7];
@@ -24,8 +24,8 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 	int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
 	log_t message;
 
-	sprintf(message, "L C %d %c %d %s",
-	        carton_id, type_piece, pourcent_rebus, heure);
+	sprintf(message, "L C %d %d %c %d %s",
+	        carton_id, palette_id, type_piece, pourcent_rebus, heure);
 
 	while ( pthread_mutex_lock( mutex_disque ) );
 	mq_send( bal_log_disque, message, sizeof( log_t ),
@@ -124,7 +124,7 @@ int carton( arg_carton_t* args ){
 				nb_carton++;
 				
 				log_carton(bal_log_disque, bal_log_windows,
-				           nb_carton, type_piece, nb_rebus,
+				           nb_carton, nb_palette + 1, type_piece, nb_rebus,
 				           mutex_windows, mutex_disque);
 
 				nb_piece = 0;
