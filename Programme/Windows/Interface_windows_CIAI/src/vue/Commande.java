@@ -203,8 +203,8 @@ public class Commande extends javax.swing.JFrame {
                 /*suivi.set_nb_palettes_A_commande(nb_palette_commande_A);
                 suivi.set_nb_palette_B_commande(nb_palette_commande_B);*/
                 suivi.commande(nb_palette_commande_A, nb_palette_commande_B);
-                app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
                 this.dispose();
+                app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
             } catch (IOException ex) {
                 app.error("IO Exception", "Could not send the command to the host!");
             }

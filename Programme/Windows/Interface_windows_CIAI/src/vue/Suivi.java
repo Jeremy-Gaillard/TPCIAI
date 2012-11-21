@@ -10,8 +10,20 @@ import interface_windows_ciai.Palette;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+class Erreur {
+    public String msg, horaire; public int id;
+    public Erreur(String msg, String horaire, int id) {
+        this.msg = msg;
+        this.horaire = horaire;
+        this.id = id;
+    }
+}
 
 /**
  *
@@ -19,24 +31,34 @@ import java.util.List;
  */
 public class Suivi extends javax.swing.JFrame {
     
+    public static String horaire_format(String horaire) {
+        return horaire.substring(0,2)
+       + ":" + horaire.substring(2,4)
+       + ":" + horaire.substring(4,6);
+    }
+    
     static final int NB_ERREURS = 7;
-    static final int MAXPAL = 1024; // TODO: test si valeur trop grande dans Paramétrage et dans code moteur
+    //static final int MAXPAL = 1024; // TODO: test si valeur trop grande dans Paramétrage et dans code moteur
     
         //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
     //int nb_palettes = 1;
-    int nb_palettes = 0;
+    //int nb_palettes = 0;
     int nb_palette_A_commande = 0;
     int nb_palette_B_commande = 0;
     Interface_windows_CIAI app;
     MessageReceiver message_receiver = new MessageReceiver(this);
-    String[] liste_erreur = new String[NB_ERREURS];
+    //String[] liste_erreur = new String[NB_ERREURS];
+    List<Erreur> liste_erreur = new ArrayList<>();
+    //Map<Integer,String> erreurs = new HashMap<>();
+    
     
     /*Variable utilisée pour avoir un bon format dans les listes*/
     //String[] liste_def_palette = new String[MAXPAL];
     //String[] liste_def_carton = new String[MAXPAL];
-    Palette liste_palette[] = new Palette[MAXPAL];
+    //Palette liste_palette[] = new Palette[MAXPAL];
     //Palette palette_initiale = new Palette(0, "A", 0);
     //List<Carton> liste_carton = new LinkedList<>();
+    List<Palette> liste_palette = new ArrayList<>();
     int nb_palette_actuel_A = 0;
     int nb_palette_actuel_B = 0;
     int selected_palette_index;
@@ -55,16 +77,17 @@ public class Suivi extends javax.swing.JFrame {
             String msg = "";
             //liste_palette[0] = palette_initiale;
             //int indice_palettes_ajout_carton = 0;
-            Palette en_remplissage = null;
+            //Palette en_remplissage = null;
+            Map<String,Palette> en_remplissage = new HashMap<>();
             while (true) {
                 try {
                     //ecoute d'un message du serveur
                     msg = suivi.app.network.listen_message();
+                    System.out.println("Received message: '"+msg+"'");
                 } catch (IOException ex) {
                     //System.err.println("Could not establish server socket!");
                     app.error("Socket", "Could not establish client socket!", ex);
                 }
-                System.out.println("Received message: '"+msg+"'");
 
                 if (msg.length() == 0)
                 {
@@ -85,8 +108,8 @@ public class Suivi extends javax.swing.JFrame {
                             return;
                         } else {
                             int id_erreur = Integer.parseInt(decoupe[1]);
-                            int horaire = Integer.parseInt(decoupe[2]);
-
+                            String horaire = decoupe[2];
+                            /*
                             switch(id_erreur){
                                 case 0: liste_erreur[id_erreur] = id_erreur + " : AU"; break;
                                 case 1: liste_erreur[id_erreur] = id_erreur + " : trop de pièces defectueuses"; break;
@@ -96,9 +119,37 @@ public class Suivi extends javax.swing.JFrame {
                                 case 5: liste_erreur[id_erreur] = id_erreur + " : plus de palette"; break;
                                 case 6: liste_erreur[id_erreur] = id_erreur + " : problème de conditionnement de palette"; break;    
                             }                                    
-
-                            j_erreur.setListData(liste_erreur);
-                            B_reprise.setEnabled(true);
+                            */
+                            /*
+                            switch(id_erreur){
+                                case 0: erreurs.put(id_erreur, id_erreur + " : AU"); break;
+                                case 1: erreurs.put(id_erreur, id_erreur + " : trop de pièces defectueuses"); break;
+                                case 2: erreurs.put(id_erreur, id_erreur + " : plus de carton"); break;
+                                case 3: erreurs.put(id_erreur, id_erreur + " : imprimante HS"); break;
+                                case 4: erreurs.put(id_erreur, id_erreur + " : trop de cartons dans la file d'attente"); break;
+                                case 5: erreurs.put(id_erreur, id_erreur + " : plus de palette"); break;
+                                case 6: erreurs.put(id_erreur, id_erreur + " : problème de conditionnement de palette"); break;    
+                            }  
+                            */
+                            String msg_erreur = id_erreur + ": ";
+                            switch(id_erreur){
+                                case 0: msg_erreur += "AU"; break;
+                                case 1: msg_erreur += "Trop de pièces defectueuses"; break;
+                                case 2: msg_erreur += "Plus de carton"; break;
+                                case 3: msg_erreur += "Imprimante HS"; break;
+                                case 4: msg_erreur += "Trop de cartons dans la file d'attente"; break;
+                                case 5: msg_erreur += "Plus de palette"; break;
+                                case 6: msg_erreur += "Problème de conditionnement de palette"; break;     
+                            }
+                            //System.out.println(msg_erreur);
+                            msg_erreur += " (" + horaire_format(horaire) + ")";
+                            System.out.println(msg_erreur);
+                            liste_erreur.add(new Erreur(msg_erreur, horaire, id_erreur));
+                            
+                            //j_erreur.setListData(liste_erreur);
+                            //B_reprise.setEnabled(true);
+                            
+                            maj_erreurs();
                         }
                     }
                     else if ("L C".equals(msg.substring(0, 3)))
@@ -107,21 +158,34 @@ public class Suivi extends javax.swing.JFrame {
                         //Reception d'un carton
                         //String decoupe[] = msg.split(" ");
                         int id_carton = Integer.parseInt(decoupe[2]);
-                        String type_piece = decoupe[3];
-                        int pourcentage = Integer.parseInt(decoupe[4]);
-                        int horaire = Integer.parseInt(decoupe[5]);
+                        int id_palette = Integer.parseInt(decoupe[3]);
+                        String type_piece = decoupe[4];
+                        int pourcentage = Integer.parseInt(decoupe[5]);
+                        int horaire = Integer.parseInt(decoupe[6]);
                         
+                        /*
                         if (en_remplissage == null) {
                             en_remplissage = new Palette(type_piece);
-                            liste_palette[nb_palettes] = en_remplissage;
-                            nb_palettes++;
+                            //liste_palette[nb_palettes] = en_remplissage;
+                            //nb_palettes++;
+                            liste_palette.add(en_remplissage);
+                        }
+                        */
+                        //Palette p = en_remplissage.get(id_palette);
+                        Palette p = en_remplissage.get(Palette.get_unique_id_for(id_palette, type_piece));
+                        if (p == null) {
+                            //en_remplissage = new Palette(type_piece);
+                            p = new Palette(id_palette, type_piece);
+                            en_remplissage.put(p.get_unique_id(), p);
+                            liste_palette.add(p);
                         }
                         
                         //ajout dans sa palette
                         Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
                         //liste_palette[indice_palettes_ajout_carton].ajouter_carton(carton);
                         //liste_palette[nb_palettes-1].ajouter_carton(carton);
-                        en_remplissage.ajouter_carton(carton);
+                        //en_remplissage.ajouter_carton(carton);
+                        p.ajouter_carton(carton);
                         maj_carton();
                         maj_palettes();
                     }
@@ -158,7 +222,7 @@ public class Suivi extends javax.swing.JFrame {
                         
                         int id_palette = Integer.parseInt(decoupe[2]);
                         String type_palette = decoupe[3];
-                        int horaire = Integer.parseInt(decoupe[4]); 
+                        String horaire = decoupe[4]; 
                         
                         switch (type_palette) {
                             case "A":
@@ -170,8 +234,11 @@ public class Suivi extends javax.swing.JFrame {
                             default:
                                 throw new Error("Unsupported type of Palette: "+type_palette);
                         }
+                        /*
                         en_remplissage.finaliser(id_palette, horaire);
                         en_remplissage = null;
+                        * */
+                        en_remplissage.get(Palette.get_unique_id_for(id_palette, type_palette)).finaliser(horaire);
                         maj_palettes();
                     }
                 } catch (NumberFormatException ex) {
@@ -190,17 +257,38 @@ public class Suivi extends javax.swing.JFrame {
     }
     
     void maj_palettes() {
-        String[] liste_def_palette = new String[nb_palettes];
+        String[] liste_def_palette = new String[liste_palette.size()];
         //liste_def_palette[i] = palette.toString();
-        for (int i = 0; i < nb_palettes; i++) {
-            /*Palette p = liste_palette[i];
-            liste_def_palette[i] = (p.is_disponible() ? "" : "[Envoyée] ") + p.toString();
-            if (p.is_disponible()) 
-                 liste_def_palette[i] = p.toString();
-            else liste_def_palette[i] = "Palette envoyé";*/
+        /*for (int i = 0; i < nb_palettes; i++) {
             liste_def_palette[i] = liste_palette[i].toString();
-        }
+        }*/
+        int i = 0;
+        for (Palette p : liste_palette)
+            liste_def_palette[i++] = p.toString();
         j_palette.setListData(liste_def_palette);
+    }
+    
+    void maj_carton() {
+        if (selected_palette_index >= 0) {
+            Palette p = liste_palette.get(selected_palette_index);
+            List<Carton> liste_carton = p.getListeCarton();
+            String[] liste_def_carton = new String[liste_carton.size()];
+            for(int j = 0; j < liste_carton.size(); j++)
+            {
+                Carton carton = (Carton)liste_carton.get(j);
+                liste_def_carton[j] = carton.ToString();
+            }
+            j_carton.setListData(liste_def_carton);
+        }
+    }
+    
+    void maj_erreurs() {
+        String[] erreurs = new String[liste_erreur.size()];
+        int i = 0;
+        for (Erreur e : liste_erreur)
+            erreurs[i++] = e.msg;
+        j_erreur.setListData(erreurs);
+        B_reprise.setEnabled(liste_erreur.size() != 0);
     }
     
     /**
@@ -210,10 +298,10 @@ public class Suivi extends javax.swing.JFrame {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        for (int j = 0; j<NB_ERREURS; j++)
+        /*for (int j = 0; j<NB_ERREURS; j++)
         {
             liste_erreur[j] = "";
-        }
+        }*/
         message_receiver.start();
     }
     /*
@@ -259,17 +347,18 @@ public class Suivi extends javax.swing.JFrame {
         }
         //j_palette.setListData(liste_def_palette);*/
         int i = 0;
-        while (i < nb_palettes && (nb_palette_A_commande > 0 || nb_palette_B_commande > 0)) {
+        while (i < liste_palette.size() && (nb_palette_A_commande > 0 || nb_palette_B_commande > 0)) {
             //app.info("", liste_palette[i].toString());
-            if (liste_palette[i].is_disponible()) {
-                System.out.println(liste_palette[i]);
-                if (nb_palette_A_commande > 0 && "A".equals(liste_palette[i].get_type_palette())) {
-                    liste_palette[i].set_disponible(false);
+            Palette p = liste_palette.get(i);
+            if (p.is_disponible()) {
+                //System.out.println(p);
+                if (nb_palette_A_commande > 0 && "A".equals(p.get_type_palette())) {
+                    p.set_disponible(false);
                     nb_palette_A_commande--;
                     nb_palette_actuel_A--;
                 }
-                else if (nb_palette_B_commande > 0 && "B".equals(liste_palette[i].get_type_palette())) {
-                    liste_palette[i].set_disponible(false);
+                else if (nb_palette_B_commande > 0 && "B".equals(p.get_type_palette())) {
+                    p.set_disponible(false);
                     nb_palette_B_commande--;
                     nb_palette_actuel_B--;
                 }
@@ -479,14 +568,14 @@ public class Suivi extends javax.swing.JFrame {
      */
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
         System.out.println("Message de reprise");
-        int erreur = j_erreur.getSelectedIndex();
+        int erreur_index = j_erreur.getSelectedIndex();
         try {
-            app.network.send_message("2 " + erreur);
+            app.network.send_message("2 " + liste_erreur.get(erreur_index).id);
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
         }
-        liste_erreur[erreur] = "";
+        /*liste_erreur[erreur] = "";
         j_erreur.setListData(liste_erreur);
         boolean vide = true;
         for (int j = 0; j < NB_ERREURS; j++) {
@@ -496,7 +585,9 @@ public class Suivi extends javax.swing.JFrame {
         }
         if (vide){
             B_reprise.setEnabled(false);
-        }  
+        }*/
+        liste_erreur.remove(erreur_index);
+        maj_erreurs();
     }//GEN-LAST:event_B_repriseActionPerformed
     
     /*
@@ -507,26 +598,12 @@ public class Suivi extends javax.swing.JFrame {
         System.out.println("Message d'arrêt");
         try {
             app.network.send_message("3");
+           quit();
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
             ex.printStackTrace(System.err);
         }
-        quit();
     }//GEN-LAST:event_B_arretActionPerformed
-    
-    void maj_carton() {
-        if (selected_palette_index >= 0) {
-            Palette p = liste_palette[selected_palette_index];
-            List<Carton> liste_carton = p.getListeCarton();
-            String[] liste_def_carton = new String[liste_carton.size()];
-            for(int j = 0; j < liste_carton.size(); j++)
-            {
-                Carton carton = (Carton)liste_carton.get(j);
-                liste_def_carton[j] = carton.ToString();
-            }
-            j_carton.setListData(liste_def_carton);
-        }
-    }
     
     /*
      * Selection d'une palette dans la liste

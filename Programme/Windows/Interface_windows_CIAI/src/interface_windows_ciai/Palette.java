@@ -6,23 +6,29 @@ package interface_windows_ciai;
 
 import java.util.LinkedList;
 import java.util.List;
+import vue.Suivi;
 
 /**
  *
  * @author michael
  */
 public class Palette {
+    
+    public static String get_unique_id_for(int id_palette, String type_palette) {
+        return id_palette+type_palette;
+    }
+    
     //int id_palette;
     Integer id_palette = null;
-    Integer horaire = null;
+    String horaire = null;
     List<Carton> listeCarton = new LinkedList<>();
     String type_palette;
     boolean disponible; //Pour les livraisons
     boolean remplie;
     
     //public Palette(int id_palette, String type_palette, int horaire) {
-    public Palette(String type_palette) {
-        //this.id_palette = id_palette;
+    public Palette(int id_palette, String type_palette) {
+        this.id_palette = id_palette;
         this.type_palette = type_palette;
         //this.horaire = horaire;
         this.disponible = true;
@@ -33,8 +39,8 @@ public class Palette {
         this.remplie = remplie;
     }
     */
-    public void finaliser(int id, int horaire) {
-        id_palette = id;
+    public void finaliser(String horaire) {
+        //id_palette = id;
         remplie = true;
         this.horaire = horaire;
     }
@@ -59,6 +65,10 @@ public class Palette {
         return type_palette;
     }
     
+    public String get_unique_id() {
+        //return id_palette+type_palette;
+        return get_unique_id_for(id_palette, type_palette);
+    }
     
     
     public void ajouter_carton(Carton carton){
@@ -71,9 +81,10 @@ public class Palette {
     @Override
     public String toString() {
         String flag = "";
-        if (id_palette == null) flag = "[Remplissage] ";
+        if (horaire == null) flag = "[En remplissage] ";
         else if(!is_disponible()) flag = "[Envoyée] ";
-        String definition = flag + "Palette " + id_palette + ", type " + type_palette + ", finie à " + horaire;
-        return definition;
+        return flag
+                + "Palette " + id_palette + " de type " + type_palette
+                + (horaire == null?"":", finie à " + Suivi.horaire_format(horaire));
     }
 }
