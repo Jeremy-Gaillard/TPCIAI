@@ -27,12 +27,12 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 	sprintf(message, "L C %d %c %d %s",
 	        carton_id, type_piece, pourcent_rebus, heure);
 
-	pthread_mutex_lock( mutex_disque );
+	while ( pthread_mutex_lock( mutex_disque ) );
 	mq_send( bal_log_disque, message, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_disque );
 
-	pthread_mutex_lock( mutex_windows );
+	while ( pthread_mutex_lock( mutex_windows ) );
 	mq_send( bal_log_windows, message, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_windows );
@@ -79,7 +79,7 @@ int carton( arg_carton_t* args ){
 	for( ; ; ){
 		/* attente piece */
 
-		sem_wait( sem_piece ); 
+		while ( sem_wait ( sem_piece ) ); 
 
 		if (debut_prod) {
 			init_carton(&cmd_A, &cmd_B, &type_piece, &max_rebus, shm_lot);
@@ -92,7 +92,7 @@ int carton( arg_carton_t* args ){
 			   puis attente sur sémaphore de reprise d'erreur */
 		 		
 			gerer_erreur(ERR_PAS_DE_CARTON, mutex_erreur );
-			sem_wait( sem_erreur_carton );
+			while ( sem_wait ( sem_erreur_carton ) );
 		}
 		/*end of absence carton*/
 		
@@ -105,7 +105,7 @@ int carton( arg_carton_t* args ){
 					   puis attente sur sémaphore de reprise d'erreur */
 
 					gerer_erreur(ERR_IMPRIMANTE_KO, mutex_erreur);
-					sem_wait( sem_erreur_carton );
+					while ( sem_wait( sem_erreur_carton ) );
 				}
 				/*end of if imprimante HS*/
 				
@@ -116,7 +116,7 @@ int carton( arg_carton_t* args ){
 					   puis attente sur sémaphore de reprise d'erreur */
 				 
 					gerer_erreur(ERR_FILE_D_ATTENTE, mutex_erreur);
-					sem_wait( sem_erreur_carton );
+					while ( sem_wait( sem_erreur_carton ) );
 				}
 				/*end of if file attente pleine*/
 				
@@ -165,7 +165,7 @@ int carton( arg_carton_t* args ){
 				   puis on jette le carton en cours */
 			 	
 				gerer_erreur(ERR_TROP_DE_REBUS, mutex_erreur);
-				sem_wait( sem_erreur_carton );
+				while ( sem_wait( sem_erreur_carton ) );
 				/* printf("Fin erreur rebus\n"); */
 
 				nb_piece = 0;

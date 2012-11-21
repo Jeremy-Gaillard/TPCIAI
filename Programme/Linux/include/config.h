@@ -34,14 +34,16 @@
 #define NO_PALETTE -1
 
 /*Priorite des threads*/
-#define PRIO_MERE 1
-#define PRIO_ERREUR 2
-#define PRIO_CARTON 3
-#define PRIO_LOG_WINDOWS 4
+#define PRIO_MERE 10
+#define PRIO_ERREUR 9
+#define PRIO_ENVOI_PIECE 8
+#define PRIO_CARTON 7
+#define PRIO_LOG_WINDOWS 6
 #define PRIO_PALETTE 5
-#define PRIO_CARISTE 6
-#define PRIO_COMMANDE_WINDOWS 7
-#define PRIO_LOG_DISQUE 8
+#define PRIO_CARISTE 4
+#define PRIO_COMMANDE_WINDOWS 3
+#define PRIO_LOG_DISQUE 2
+#define PRIO_SIMULATION 1
 		
 /*Types généraux au programme*/
 typedef char log_t[128];

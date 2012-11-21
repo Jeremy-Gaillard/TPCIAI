@@ -27,7 +27,7 @@ void gerer_erreur( int erreur_id, pthread_mutex_t* mutex_erreur )
 	/* Envoi du message a la bal d'erreur
 	   Celle-ci est protégée par un mutex : mutex_erreur */
 	mqd_t bal_erreur = mq_open(BALERR, O_WRONLY);
-	pthread_mutex_lock( mutex_erreur );
+	while ( pthread_mutex_lock( mutex_erreur ) );
 	mq_send( bal_erreur, message_erreur, sizeof( erreur_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_erreur );
