@@ -222,6 +222,8 @@ int main(int argc, char** argv)
 	struct sched_param cariste_param;
 	struct sched_param commande_windows_param;
 	struct sched_param log_disque_param;
+	struct sched_param envoi_piece_param;
+	struct sched_param simulation_param;
 	erreur_param.sched_priority = PRIO_ERREUR;
 	carton_param.sched_priority = PRIO_CARTON;
 	log_windows_param.sched_priority = PRIO_LOG_WINDOWS;
@@ -229,6 +231,8 @@ int main(int argc, char** argv)
 	cariste_param.sched_priority = PRIO_CARISTE;
 	commande_windows_param.sched_priority = PRIO_COMMANDE_WINDOWS;
 	log_disque_param.sched_priority = PRIO_LOG_DISQUE;
+	envoi_piece_param.sched_priority = PRIO_ENVOI_PIECE;
+	simulation_param.sched_priority = PRIO_SIMULATION;
 	
 	pthread_setschedparam(t_erreur, SCHED_FIFO, &erreur_param);
 	pthread_setschedparam(t_carton, SCHED_FIFO, &carton_param);
@@ -237,6 +241,8 @@ int main(int argc, char** argv)
 	pthread_setschedparam(t_cariste, SCHED_FIFO, &cariste_param);
 	pthread_setschedparam(t_commande_windows, SCHED_FIFO, &commande_windows_param);
 	pthread_setschedparam(t_log_disque, SCHED_FIFO, &log_disque_param);
+	pthread_setschedparam(t_envoi_piece, SCHED_FIFO, &envoi_piece_param);
+	pthread_setschedparam(t_simulation, SCHED_FIFO, &simulation_param);
 	
 	/*---------------------------------------------------------Moteur-----------------------------------------------------------------*/
 	pthread_join( t_commande_windows, NULL );
