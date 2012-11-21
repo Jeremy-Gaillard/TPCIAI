@@ -21,7 +21,7 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 	timeinfo = localtime ( &rawtime );
 	strftime ( heure, 7, "%H%M%S", timeinfo );
 
-	int pourcent_rebus = (100*nb_rebus)/MAX_REBUS;
+	int pourcent_rebus = (100*nb_rebus)/(CARTON_PLEIN + nb_rebus);
 	log_t message;
 
 	sprintf(message, "L C %d %d %c %d %s",
@@ -77,15 +77,7 @@ int carton( arg_carton_t* args ){
 	int place_file_attente;
 
 	for( ; ; ){
-		/* attente piece */
-
-		while ( sem_wait ( sem_piece ) ); 
-
-		if (debut_prod) {
-			init_carton(&cmd_A, &cmd_B, &type_piece, &max_rebus, shm_lot);
-			debut_prod = 0;
-		}
-
+	
 		while ( nb_piece == 0 && (*shm_statut)[ST_PRESENCE_CARTON] != 1 ){
 			/* Si première piece et absence carton
 			   envoi d'un message d'erreur avec hhmmss et type erreur
@@ -95,6 +87,14 @@ int carton( arg_carton_t* args ){
 			while ( sem_wait ( sem_erreur_carton ) );
 		}
 		/*end of absence carton*/
+		
+		/* attente piece */
+		while ( sem_wait ( sem_piece ) ); 
+
+		if (debut_prod) {
+			init_carton(&cmd_A, &cmd_B, &type_piece, &max_rebus, shm_lot);
+			debut_prod = 0;
+		}
 		
 		if ( (*shm_statut)[ ST_PIECE ] == 1 ){
 			nb_piece += 1;
@@ -110,13 +110,14 @@ int carton( arg_carton_t* args ){
 				/*end of if imprimante HS*/
 				
 				sem_getvalue( sem_carton, &place_file_attente );
-				while ( place_file_attente == 10 ){
+				while ( place_file_attente == MAX_CARTON_FILE ){
 					/* Si trop de cartons dans la file d'attente
 					   envoi d'un message d'erreur avec hhmmss et type erreur
 					   puis attente sur sémaphore de reprise d'erreur */
 				 
 					gerer_erreur(ERR_FILE_D_ATTENTE, mutex_erreur);
 					while ( sem_wait( sem_erreur_carton ) );
+					sem_getvalue( sem_carton, &place_file_attente );
 				}
 				/*end of if file attente pleine*/
 				

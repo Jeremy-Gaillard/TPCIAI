@@ -7,9 +7,9 @@
 #define NUM_PORT 32768
 
 /*Constante générales au programme*/
+#define MAX_CARTON_FILE 10
 #define CARTON_PLEIN 1
 #define PALETTE_PLEINE 2
-#define MAX_REBUS 10
 #define TAILLE_ENTREPOT 20
 #define NB_THREAD_AU 2
 #define MODERW 0666

@@ -54,12 +54,7 @@ void reprise(int erreur_id)
 			break;
 	}
 	
-	for ( i = 0; i < STATUT_SIZE; i++) /*on verifie que tout le matériel est OK*/
-	{
-		if((*statut)[i] == 0 && i != ST_CLAPET_OUVERT && i != ST_PIECE)
-			break;
-	}
-	if((*statut)[ST_PRESENCE_CARTON] && ( (*lot)[LOT_A] != 0 || (*lot)[LOT_B] != 0) )
+	if( (*statut)[ST_PRESENCE_CARTON] && ( (*lot)[LOT_A] != 0 || (*lot)[LOT_B] != 0) )
 	/*S'il y a un carton et qu'il y a un lot en cours de production, on rouvre le clapet*/
 	{
 		(*statut)[ST_CLAPET_OUVERT] = 1;
