@@ -284,7 +284,7 @@ public class Suivi extends javax.swing.JFrame {
     }
     
     synchronized void maj_erreurs() {
-        System.out.println(">> maj err "+(liste_erreur.size() != 0));
+        //System.out.println(">> maj err "+(liste_erreur.size() != 0));
         String[] erreurs = new String[liste_erreur.size()];
         int i = 0;
         for (Erreur e : liste_erreur)
