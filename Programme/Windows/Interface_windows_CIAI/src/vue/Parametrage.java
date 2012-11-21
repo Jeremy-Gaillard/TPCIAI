@@ -4,7 +4,7 @@
  */
 package vue;
 
-import interface_windows_ciai.Interface_windows_CIAI;
+import interface_windows.InterfaceWindows;
 import java.io.IOException;
 
 /**
@@ -13,12 +13,12 @@ import java.io.IOException;
  */
 public class Parametrage extends javax.swing.JFrame {
 
-    Interface_windows_CIAI app;
+    InterfaceWindows app;
     
     /**
      * Creates new form Parametrage
      */
-    public Parametrage(Interface_windows_CIAI inter) {
+    public Parametrage(InterfaceWindows inter) {
         app = inter;
         setLocationByPlatform(true);
         initComponents();

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package interface_windows_ciai;
+package interface_windows;
 
 import java.util.LinkedList;
 import java.util.List;

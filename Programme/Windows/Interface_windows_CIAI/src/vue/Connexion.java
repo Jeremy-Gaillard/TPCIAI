@@ -4,7 +4,7 @@
  */
 package vue;
 
-import interface_windows_ciai.Interface_windows_CIAI;
+import interface_windows.InterfaceWindows;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -21,12 +21,12 @@ import network.NetworkInterface;
  */
 public class Connexion extends javax.swing.JFrame {
 
-    Interface_windows_CIAI app;
+    InterfaceWindows app;
     
     /**
      * Creates new form Identification
      */
-    public Connexion(Interface_windows_CIAI inter) throws UnknownHostException, IOException {
+    public Connexion(InterfaceWindows inter) throws UnknownHostException, IOException {
         //inter.network = new NetworkInterface();
         app = inter;
         setLocationByPlatform(true);

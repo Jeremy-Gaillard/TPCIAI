@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package interface_windows_ciai;
+package interface_windows;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,11 +18,11 @@ import vue.Connexion;
  *
  * @author michael
  */
-public class Interface_windows_CIAI {
+public class InterfaceWindows {
 
     public NetworkInterface network;
     
-    public Interface_windows_CIAI() throws UnknownHostException, IOException{
+    public InterfaceWindows() throws UnknownHostException, IOException{
         Connexion fi = new Connexion(this);
         fi.setVisible(true);        
     }
@@ -32,7 +32,7 @@ public class Interface_windows_CIAI {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(String[] args) throws UnknownHostException, IOException {
         // TODO code application logic here
-        new Interface_windows_CIAI();
+        new InterfaceWindows();
     }
     
     public void error(String title, String msg, Exception ex) {

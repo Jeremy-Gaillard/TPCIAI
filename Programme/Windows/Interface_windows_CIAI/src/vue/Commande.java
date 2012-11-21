@@ -4,7 +4,7 @@
  */
 package vue;
 
-import interface_windows_ciai.Interface_windows_CIAI;
+import interface_windows.InterfaceWindows;
 import java.io.IOException;
 
 /**
@@ -13,12 +13,12 @@ import java.io.IOException;
  */
 public class Commande extends javax.swing.JFrame {
 
-    Interface_windows_CIAI app;
+    InterfaceWindows app;
     vue.Suivi suivi;
     /**
      * Creates new form Commande
      */
-    public Commande(Interface_windows_CIAI inter, vue.Suivi fenetre_suivi, int nb_palette_A, int nb_palette_B) {
+    public Commande(InterfaceWindows inter, vue.Suivi fenetre_suivi, int nb_palette_A, int nb_palette_B) {
         app = inter;
         suivi = fenetre_suivi;
         setLocationByPlatform(true);
@@ -46,7 +46,7 @@ public class Commande extends javax.swing.JFrame {
         B_annuler_commande = new javax.swing.JButton();
         B_envoyer_commande = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Commande");
 
         jLabel1.setText("Quantité actuelle de palettes A");

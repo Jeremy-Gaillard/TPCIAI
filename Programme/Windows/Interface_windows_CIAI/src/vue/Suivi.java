@@ -4,9 +4,9 @@
  */
 package vue;
 
-import interface_windows_ciai.Carton;
-import interface_windows_ciai.Interface_windows_CIAI;
-import interface_windows_ciai.Palette;
+import interface_windows.Carton;
+import interface_windows.InterfaceWindows;
+import interface_windows.Palette;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class Suivi extends javax.swing.JFrame {
     //int nb_palettes = 0;
     int nb_palette_A_commande = 0;
     int nb_palette_B_commande = 0;
-    Interface_windows_CIAI app;
+    InterfaceWindows app;
     MessageReceiver message_receiver = new MessageReceiver(this);
     //String[] liste_erreur = new String[NB_ERREURS];
     List<Erreur> liste_erreur = new ArrayList<>();
@@ -246,6 +246,7 @@ public class Suivi extends javax.swing.JFrame {
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     app.error("Invalid message received", "Error while parsing message: "+msg, ex);
                 }
+                //maj_erreurs();
             }
         }
         
@@ -296,7 +297,7 @@ public class Suivi extends javax.swing.JFrame {
     /**
      * Creation d'une nouvelle forme Suivi
      */
-    public Suivi(Interface_windows_CIAI inter) {
+    public Suivi(InterfaceWindows inter) {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
@@ -451,6 +452,11 @@ public class Suivi extends javax.swing.JFrame {
         j_erreur.setMaximumSize(new java.awt.Dimension(80, 100));
         j_erreur.setMinimumSize(new java.awt.Dimension(60, 100));
         j_erreur.setVisibleRowCount(2);
+        j_erreur.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                j_erreursValueChanged(evt);
+            }
+        });
         jScrollPane3.setViewportView(j_erreur);
 
         jLabel3.setText("Palettes en stock :");
@@ -658,6 +664,11 @@ public class Suivi extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         quit();
     }//GEN-LAST:event_formWindowClosing
+
+    private void j_erreursValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_j_erreursValueChanged
+        System.out.println("OK!!!!!!!! "+liste_erreur.size());
+        maj_carton();
+    }//GEN-LAST:event_j_erreursValueChanged
 
     /*
     public static void main(String args[]) {
