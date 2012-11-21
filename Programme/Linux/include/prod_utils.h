@@ -60,7 +60,7 @@ typedef struct arg_cariste
    Celles-ci sont protégées par des mutex nommés identiquement
    Message de type "L C id_carton type_pièce %_pièces_défectueuses HHMMSS" */
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
-                 int carton_id, char type_piece, int nb_rebus, 
+                 int carton_id, int palette_id, char type_piece, int nb_rebus, 
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque);
 
 /* Initialise les informations sur les commandes a réaliser
