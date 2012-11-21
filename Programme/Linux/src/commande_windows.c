@@ -37,6 +37,7 @@ void reprise(int erreur_id)
 	switch(erreur_id) 
 	{
 		case ERR_AU :
+			(*statut)[ST_NB_ERREUR] --;
 			for( i = 0 ; i < NB_THREAD_AU; i++ )
 				sem_post(sem_AU);
 			break;
@@ -44,17 +45,19 @@ void reprise(int erreur_id)
 		case ERR_PAS_DE_CARTON :
 		case ERR_IMPRIMANTE_KO :
 		case ERR_FILE_D_ATTENTE :
+			(*statut)[ST_NB_ERREUR] --;
 			sem_post(sem_erreur_carton);
 			break;
 		case ERR_PAS_DE_PALETTE :
 		case ERR_FILM_KO :
+			(*statut)[ST_NB_ERREUR] --;
 			sem_post(sem_erreur_palette);
 			break;
 		default :
 			break;
 	}
 	
-	if( (*statut)[ST_PRESENCE_CARTON] && ( (*lot)[LOT_A] != 0 || (*lot)[LOT_B] != 0) )
+	if( (*statut)[ST_NB_ERREUR] == 0 && ( (*lot)[LOT_A] != 0 || (*lot)[LOT_B] != 0) )
 	/*S'il y a un carton et qu'il y a un lot en cours de production, on rouvre le clapet*/
 	{
 		(*statut)[ST_CLAPET_OUVERT] = 1;

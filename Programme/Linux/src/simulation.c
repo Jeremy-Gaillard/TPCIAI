@@ -73,14 +73,6 @@ void simulation(arg_simulation_t* ipc)
 		{
 			(*shm_statut)[ ST_IMPRIMANTE ] = 0;
 		}
-		else if( !strcmp(commande, "presence_carton") )
-		{
-			(*shm_statut)[ ST_PRESENCE_CARTON ] = 1;
-		}
-		else if( !strcmp(commande, "absence_carton") )
-		{
-			(*shm_statut)[ ST_PRESENCE_CARTON ] = 0;
-		}
 		else if( !strcmp(commande, "piece_OK") )
 		{
 			(*shm_statut)[ ST_PIECE ] = 1;
@@ -97,24 +89,10 @@ void simulation(arg_simulation_t* ipc)
 		{
 			(*shm_statut)[ ST_FILM ] = 0;
 		}
-		else if( !strcmp(commande, "clapet_ouvert") )
-		{
-			(*shm_statut)[ ST_CLAPET_OUVERT ] = 1;
-			sem_post( sem_clapet );
-			pthread_join( t_envoi_piece, NULL );
-		}
-		else if( !strcmp(commande, "clapet_ferme") )
-		{
-			(*shm_statut)[ ST_CLAPET_OUVERT ] = 0;
-		}
 		else if( !strcmp(commande, "AU") )
 		{
 			pthread_kill( t_carton, SIGUSR1 );
 			pthread_kill( t_palette, SIGUSR1 );
-		}
-		else if( !strcmp(commande, "go") )
-		{
-			commander_lot(4, 4, 200);
 		}
 	}
 	pthread_exit(0);

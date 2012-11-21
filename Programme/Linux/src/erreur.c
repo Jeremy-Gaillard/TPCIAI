@@ -37,6 +37,7 @@ void erreur(struct arg_erreur *ipc)
 		/*Envoie du message dans les boites aux lettres, fermeture du clapet*/
 			(*shm_statut)[ST_CLAPET_OUVERT] = 0;
 			log_t log;
+			(*shm_statut)[ST_NB_ERREUR] ++;
 			sprintf( log, "E %s", message );
 			pthread_mutex_lock ( mutex_windows );
 			mq_send(bal_log_windows, log, sizeof(log_t), BAL_PRIO_ELSE);

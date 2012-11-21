@@ -22,13 +22,14 @@
 #define BAL_PRIO_ELSE 1
 
 /*Constantes relatives à la memoire partagee statut*/
-#define STATUT_SIZE 6
+#define STATUT_SIZE 7
 #define ST_PRESENCE_CARTON 0
 #define ST_PRESENCE_PALETTE 1
 #define ST_IMPRIMANTE 2
 #define ST_PIECE 3
 #define ST_FILM 4
 #define ST_CLAPET_OUVERT 5
+#define ST_NB_ERREUR 6
 
 /*Constante definissant l'absence de palette*/
 #define NO_PALETTE -1

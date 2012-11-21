@@ -132,6 +132,7 @@ int main(int argc, char** argv)
 		(*shm_statut)[i] = 1;
 	/*Le clapet est fermé au lancement du programme*/
 	(*shm_statut)[ST_CLAPET_OUVERT] = 0;
+	(*shm_statut)[ST_NB_ERREUR] = 0;
 	
 	for ( i = 0; i < 20; i++)
 		shm_entrepot->palettes[i].id = NO_PALETTE;
