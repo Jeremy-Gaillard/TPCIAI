@@ -287,8 +287,10 @@ public class Suivi extends javax.swing.JFrame {
         int i = 0;
         for (Erreur e : liste_erreur)
             erreurs[i++] = e.msg;
+        //System.out.println(j_erreur.getSelectedIndex());
+        //B_reprise.setEnabled(j_erreur.getSelectedIndex() >= 0 && liste_erreur.size() != 0);
         j_erreur.setListData(erreurs);
-        B_reprise.setEnabled(liste_erreur.size() != 0);
+        B_reprise.setEnabled(!liste_erreur.isEmpty());
     }
     
     /**
@@ -567,9 +569,15 @@ public class Suivi extends javax.swing.JFrame {
      * 
      */
     private void B_repriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_repriseActionPerformed
-        System.out.println("Message de reprise");
         int erreur_index = j_erreur.getSelectedIndex();
+        
+        if (erreur_index < 0) {
+            app.error("Reprise", "Sélectionnez une erreur à reprendre.");
+            return;
+        }
+        
         try {
+            System.out.println("Message de reprise");
             app.network.send_message("2 " + liste_erreur.get(erreur_index).id);
         } catch (IOException ex) {
             app.error("IO Exception", "Could not send the command to the host!");
