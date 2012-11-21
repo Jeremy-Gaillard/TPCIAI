@@ -283,7 +283,8 @@ public class Suivi extends javax.swing.JFrame {
         }
     }
     
-    void maj_erreurs() {
+    synchronized void maj_erreurs() {
+        System.out.println(">> maj err "+(liste_erreur.size() != 0));
         String[] erreurs = new String[liste_erreur.size()];
         int i = 0;
         for (Erreur e : liste_erreur)
@@ -291,7 +292,13 @@ public class Suivi extends javax.swing.JFrame {
         //System.out.println(j_erreur.getSelectedIndex());
         //B_reprise.setEnabled(j_erreur.getSelectedIndex() >= 0 && liste_erreur.size() != 0);
         j_erreur.setListData(erreurs);
-        B_reprise.setEnabled(!liste_erreur.isEmpty());
+        //B_reprise.setEnabled(!liste_erreur.isEmpty());
+        maj_reprise_btn();
+    }
+    
+    void maj_reprise_btn() {
+        //B_reprise.setEnabled(!liste_erreur.isEmpty());
+        B_reprise.setEnabled(liste_erreur.size() != 0);
     }
     
     /**
@@ -589,9 +596,10 @@ public class Suivi extends javax.swing.JFrame {
         try {
             System.out.println("Message de reprise");
             app.network.send_message("2 " + liste_erreur.get(erreur_index).id);
+            liste_erreur.remove(erreur_index);
         } catch (IOException ex) {
-            app.error("IO Exception", "Could not send the command to the host!");
-            ex.printStackTrace(System.err);
+            app.error("IO Exception", "Could not send the command to the host!", ex);
+            //ex.printStackTrace(System.err);
         }
         /*liste_erreur[erreur] = "";
         j_erreur.setListData(liste_erreur);
@@ -604,7 +612,6 @@ public class Suivi extends javax.swing.JFrame {
         if (vide){
             B_reprise.setEnabled(false);
         }*/
-        liste_erreur.remove(erreur_index);
         maj_erreurs();
     }//GEN-LAST:event_B_repriseActionPerformed
     
@@ -618,8 +625,8 @@ public class Suivi extends javax.swing.JFrame {
             app.network.send_message("3");
            quit();
         } catch (IOException ex) {
-            app.error("IO Exception", "Could not send the command to the host!");
-            ex.printStackTrace(System.err);
+            app.error("IO Exception", "Could not send the command to the host!", ex);
+            //ex.printStackTrace(System.err);
         }
     }//GEN-LAST:event_B_arretActionPerformed
     
@@ -666,8 +673,8 @@ public class Suivi extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void j_erreursValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_j_erreursValueChanged
-        System.out.println("OK!!!!!!!! "+liste_erreur.size());
-        maj_carton();
+        //System.out.println(">>>> "+);
+        maj_reprise_btn();
     }//GEN-LAST:event_j_erreursValueChanged
 
     /*
