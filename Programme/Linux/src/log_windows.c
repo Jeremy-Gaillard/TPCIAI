@@ -31,11 +31,12 @@ void envoyer(log_t message)
 	printf("%s\n",message);*/
 	printf("Sending message: %s\n",message);
 	int len = strlen(message);
-	char buffer[len+1]; // alloca POWA
+	char buffer[len+2]; // alloca POWA
 	strcpy(buffer,message);
-	buffer[len-1] = '\n';
+	buffer[len] = '\n';
+	buffer[len+1] = '\0';
 	//printf("%s\n",buffer);
-	int n = write( my_socket, buffer, len );
+	int n = write( my_socket, buffer, len+1 );
 	if (n<0)
 		error("ERROR writing to socket");
 }
