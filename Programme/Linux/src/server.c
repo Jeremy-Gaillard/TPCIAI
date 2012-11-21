@@ -22,7 +22,7 @@ void error(const char* msg)
 	exit(0);
 }
 
-
+// Initialise la connexion (bloque jusqu'à demande du client)
 int server(int portno)
 {
 	int sockfd, newsockfd;
@@ -102,6 +102,7 @@ void process_message(char * message)
 	
 }
 
+// Attend de recevoir des requetes du client
 void wait_order(int newsockfd)
 {
 	char msg_buffer[MSG_MAX_SIZE];

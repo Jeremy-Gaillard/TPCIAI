@@ -21,6 +21,7 @@
 
 static int my_socket;
 
+// Envoie un message au client
 void envoyer(log_t message)
 {
 	int len = strlen(message);
