@@ -1,158 +1,64 @@
 package network;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.ServerSocket;
 import java.net.UnknownHostException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
+/*
+ * Classe de gestion de l'interface réseau : envoi/réception de messages.
+ */
 public class NetworkInterface {
-/*
-        public class ServerInitThread extends Thread {
-            
-            NetworkInterface network;
-            public ServerInitThread(NetworkInterface network) {
-                this.network = network;
+    
+    Socket client;
+    BufferedReader client_reader;
+    boolean open;
+    
+    public NetworkInterface(String ip, int port) throws UnknownHostException, IOException {
+        System.out.println("Starting client socket...");
+        client = new Socket(ip, port);
+        client_reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        open = true;
+    }
+    
+    public void send_message(String msg) throws IOException {
+            System.out.println("Sending message: '"+msg+"'");
+            OutputStream oStream = client.getOutputStream();
+            BufferedOutputStream bOStream = new BufferedOutputStream(oStream);
+            for (byte c : msg.getBytes()) {
+                    bOStream.write(c);
             }
-            public void run() {
-            System.out.println("Starting server socket...");
-                try {
-                    //System.out.println("Hello from a thread!");
-                    //network.listen_messages();
-network.server = new ServerSocket(32767);
-            Socket clientSocket = null;
-            //try {
-                    clientSocket = server.accept();
-            //BufferedReader in = 
-network.client_reader = 
-                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            System.out.println("Server socket established.");
+            bOStream.flush();
+    }
 
-                } catch (IOException ex) {
-                    Logger.getLogger(NetworkInterface.class.getName()).log(Level.SEVERE, null, ex);
-                    
-                    
-                    System.err.println("Could not establish server socket!");
-                    
-                }
-            }
-
-        }
-    */
-	Socket client;
-	//ServerSocket server;
-	BufferedReader client_reader;
-        boolean open;
+    public String listen_message() throws IOException {
         
-	public NetworkInterface() throws UnknownHostException, IOException {
-            //this("134.214.105.197");
-            this("if219-06.insa-lyon.fr");
-        }
-	public NetworkInterface(String ip) throws UnknownHostException, IOException {
-            //(new ServerInitThread(this)).start();
-            System.out.println("Starting client socket...");
-            client = new Socket(ip, 32768);
-            //client_reader = new Socket(ip, 32768).get;
-            //client_reader = new BufferedReader(new InputStreamReader(new Socket(ip, 32768).getInputStream()));
-            //Socket clientSocket = client.accept();
-            client_reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            //client_reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            //listen_messages();
-            
-//client = new Socket("localhost", 32768);
-            open = true;
-	}
-	/*
-	public void recovery_order() {
-	
-	}
-	
-	public void restart_order() {
-	
-	}
-
-	public void command() {
-	
-	}
-	*/
-	public void send_message(String msg) throws IOException {
-                System.out.println("Sending message: '"+msg+"'");
-		OutputStream oStream = client.getOutputStream();
-		BufferedOutputStream bOStream = new BufferedOutputStream(oStream);
-		for (byte c : msg.getBytes()) {
-			bOStream.write(c);
-		}
-		bOStream.flush();
-	}
-
-	public String listen_message() throws IOException {
-            //client_reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            
-/*
-            System.out.println("Starting server socket...");
-            server = new ServerSocket(32767);
-            Socket clientSocket = null;
-                    clientSocket = server.accept();
-            BufferedReader in = 
-                    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-*/
-            /*
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            String inputLine, outputLine;
-
-            // initiate conversation with client
-            KnockKnockProtocol kkp = new KnockKnockProtocol();
-            outputLine = kkp.processInput(null);
-            out.println(outputLine);
-            while ((inputLine = in.readLine()) != null) {   
-            outputLine = kkp.processInput(inputLine);
-            out.println(outputLine);
-            if (outputLine.equals("Bye."))
-            break;
-            }*/
-            System.out.println("Listening...");
-
-            StringBuilder sb = new StringBuilder();
-            
-            char r;
-while ((r = (char) client_reader.read()) != '\n') {
-//System.out.println(r);
-                    sb.append(r);
-            }
-/*
-int r;
-while ((r = in.read()) != -1) {
-System.out.println(r);
-System.out.println((char)r);
-                    sb.append((char)r);
-            }
-*/
-
-
-
-            //System.out.println(sb.toString());
-            String msg = sb.toString();
-            //System.out.println("Received message: '"+msg+"'");
-            return msg;
-	}
+        System.out.println("Listening...");
         
-        public void close() throws IOException {
-            if (open) {
-                client.close();
-                //server.close();
-                open = false;
-            }
+        StringBuilder sb = new StringBuilder();
+        char r;
+        while ((r = (char) client_reader.read()) != '\n') {
+                sb.append(r);
         }
+        String msg = sb.toString();
         
-        @Override
-        protected void finalize() throws Throwable {
-            close();
-            super.finalize();
+        return msg;
+    }
+
+    public void close() throws IOException {
+        if (open) {
+            client.close();
+            open = false;
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+        super.finalize();
+    }
 
 }

@@ -4,6 +4,8 @@
  */
 package interface_windows_ciai;
 
+import vue.Suivi;
+
 /**
  *
  * @author michael
@@ -11,10 +13,10 @@ package interface_windows_ciai;
 public class Carton {
     int id_carton;
     String type_piece;
-    int horaire;
+    String horaire;
     int pourcentage; //de pièces défectueuses durant la réalisation du carton
 
-    public Carton(int id_carton, String type_piece, int horaire, int pourcentage) {
+    public Carton(int id_carton, String type_piece, String horaire, int pourcentage) {
         this.id_carton = id_carton;
         this.type_piece = type_piece;
         this.horaire = horaire;
@@ -26,7 +28,7 @@ public class Carton {
      */    
     public String ToString(){
         String definition = "Carton "+ this.id_carton + ", type " + this.type_piece+ 
-                " fini à " + this.horaire + ", pièces defectueuses: " + this.pourcentage+"%";
+                " fini à " + Suivi.horaire_format(horaire) + ", pièces defectueuses: " + this.pourcentage+"%";
         return definition;
     }
 

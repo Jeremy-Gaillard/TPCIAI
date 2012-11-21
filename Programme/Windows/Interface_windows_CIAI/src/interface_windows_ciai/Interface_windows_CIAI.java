@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import network.NetworkInterface;
-import vue.Identification;
+import vue.Connexion;
 
 /**
  *
@@ -23,7 +23,7 @@ public class Interface_windows_CIAI {
     public NetworkInterface network;
     
     public Interface_windows_CIAI() throws UnknownHostException, IOException{
-        Identification fi = new Identification(this);
+        Connexion fi = new Connexion(this);
         fi.setVisible(true);        
     }
     /**
