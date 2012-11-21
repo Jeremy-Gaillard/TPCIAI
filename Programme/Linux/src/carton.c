@@ -27,12 +27,12 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 	sprintf(message, "L C %d %c %d %s",
 	        carton_id, type_piece, pourcent_rebus, heure);
 
-	pthread_mutex_lock( mutex_disque );
+	while ( pthread_mutex_lock( mutex_disque ) );
 	mq_send( bal_log_disque, message, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_disque );
 
-	pthread_mutex_lock( mutex_windows );
+	while ( pthread_mutex_lock( mutex_windows ) );
 	mq_send( bal_log_windows, message, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_windows );
