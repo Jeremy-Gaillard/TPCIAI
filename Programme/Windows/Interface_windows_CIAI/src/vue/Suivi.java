@@ -572,8 +572,12 @@ public class Suivi extends javax.swing.JFrame {
         int erreur_index = j_erreur.getSelectedIndex();
         
         if (erreur_index < 0) {
-            app.error("Reprise", "Sélectionnez une erreur à reprendre.");
-            return;
+            if (liste_erreur.size() == 1) {
+                erreur_index = 0;
+            } else {
+                app.error("Reprise", "Sélectionnez une erreur à reprendre.");
+                return;
+            }
         }
         
         try {

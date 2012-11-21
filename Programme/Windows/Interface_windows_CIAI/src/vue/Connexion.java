@@ -19,14 +19,14 @@ import network.NetworkInterface;
  *
  * @author michael
  */
-public class Identification extends javax.swing.JFrame {
+public class Connexion extends javax.swing.JFrame {
 
     Interface_windows_CIAI app;
     
     /**
      * Creates new form Identification
      */
-    public Identification(Interface_windows_CIAI inter) throws UnknownHostException, IOException {
+    public Connexion(Interface_windows_CIAI inter) throws UnknownHostException, IOException {
         //inter.network = new NetworkInterface();
         app = inter;
         setLocationByPlatform(true);
@@ -42,22 +42,18 @@ public class Identification extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        j_identification = new javax.swing.JTextField();
+        j_port = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         B_connect = new javax.swing.JButton();
-        j_mot_de_passe = new javax.swing.JPasswordField();
         jLabel3 = new javax.swing.JLabel();
         j_IP_linux = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Identification");
+        setTitle("Connexion serveur");
 
-        j_identification.setText("JB");
+        j_port.setText("32768");
 
-        jLabel1.setText("Identification");
-
-        jLabel2.setText("Mot de passe");
+        jLabel1.setText("Port");
 
         B_connect.setText("Connection");
         B_connect.addActionListener(new java.awt.event.ActionListener() {
@@ -65,8 +61,6 @@ public class Identification extends javax.swing.JFrame {
                 B_connectActionPerformed(evt);
             }
         });
-
-        j_mot_de_passe.setText("C");
 
         jLabel3.setText("IP de la machine Linux");
 
@@ -77,43 +71,33 @@ public class Identification extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(B_connect))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(36, 36, 36)
-                                .addComponent(j_IP_linux, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addGap(32, 32, 32)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(j_identification)
-                                    .addComponent(j_mot_de_passe)))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(B_connect)))
+                            .addComponent(j_IP_linux, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                            .addComponent(j_port))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(j_IP_linux, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(j_identification, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(j_IP_linux, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(j_mot_de_passe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(j_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(B_connect)
                 .addContainerGap())
         );
@@ -124,24 +108,18 @@ public class Identification extends javax.swing.JFrame {
     private void B_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_connectActionPerformed
         //Connection d'un utilisateur
         
-        if ("".equals(j_identification.getText()))
-        {
-            System.out.println("insert your login");
-        }
-        else if ("".equals(j_mot_de_passe.getText()))
-        {
-            System.out.println("insert your password");
-        }
-        else if ("".equals(j_IP_linux.getText()))
-        {
-            System.out.println("insert your IP");
-        }
-        else
-        {
+        if ("".equals(j_port.getText())) {
+            //System.out.println("insert your login");
+            app.error(null, "Please enter the server port to use (default is 32768).");
+        } else if ("".equals(j_IP_linux.getText())) {
+            //System.out.println("insert your IP");
+            app.error(null, "Please enter the server address.");
+        } else {
             //System.out.println("Ok");
             String host = j_IP_linux.getText();
+            int port = Integer.parseInt(j_port.getText());
             try {
-                app.network = new NetworkInterface(host);
+                app.network = new NetworkInterface(host, port);
             } catch (UnknownHostException ex) {
                 //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
                 /*String stack = new String();
@@ -149,11 +127,14 @@ public class Identification extends javax.swing.JFrame {
                 ex.printStackTrace(pw);
                 ex.g*/
                 app.error("Unknown Host", "The host '"+host+"' is unknown!");
-                ex.printStackTrace(System.err);
+                //ex.printStackTrace(System.err);
             } catch (IOException ex) {
                 //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
-                app.error("IO Exception", "Could not send a request to '"+host+"'!");
-                ex.printStackTrace(System.err);
+                app.error("IO Exception", "Could not send a request to '"+host+":"+port+"'!");
+                //ex.printStackTrace(System.err);
+            } catch (IllegalArgumentException ex) {
+                app.error("Argument exception", "Please enter a valid host and port.");
+                //ex.printStackTrace(System.err);
             } finally {
                 //if (app.network == null) System.exit(-1);
             }
@@ -186,13 +167,13 @@ public class Identification extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Identification.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Identification.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Identification.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Identification.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -209,10 +190,8 @@ public class Identification extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_connect;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField j_IP_linux;
-    private javax.swing.JTextField j_identification;
-    private javax.swing.JPasswordField j_mot_de_passe;
+    private javax.swing.JTextField j_port;
     // End of variables declaration//GEN-END:variables
 }
