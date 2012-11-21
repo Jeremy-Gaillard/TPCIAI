@@ -125,8 +125,7 @@ public class Parametrage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void B_envoi_parametrageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_envoi_parametrageActionPerformed
-        // TODO add your handling code here:
-        /*A modifier*/
+
         int nb_palette_commande_A = -1;
         int nb_palette_commande_B = -1;
         int pourcentage = -1;
@@ -139,14 +138,14 @@ public class Parametrage extends javax.swing.JFrame {
                 app.error("Données invalides", "Entrez des valeurs positives pour les différentes paramètres.");
             }
             else
-            { /* censé veréifier si la commande est possible ici ? C'est passé ou ?*/
+            {
                 try {
+                    //Envoie le message d'une commande au serveur Linux
                     String parametrage_lot = "0 " + nb_palette_commande_A + " " + nb_palette_commande_B + " " +  pourcentage;
                     app.network.send_message(parametrage_lot);
                     this.dispose();
                 } catch (IOException ex) {
                     app.error("IO Exception", "Could not send the command to the host!");
-                    //ex.printStackTrace(System.err);
                 }    
                 //ouverture de la fenêtre de suivi
                 Suivi fv = new Suivi(app);
@@ -154,7 +153,6 @@ public class Parametrage extends javax.swing.JFrame {
                 this.dispose();
             }
         } catch (java.lang.NumberFormatException ex){
-            //System.out.println("Rentrez les bonnes valeurs pour les différentes paramètres.");
             app.error("Format numérique", "Entrez des valeurs valides pour les différentes paramètres.", ex);
         }
         

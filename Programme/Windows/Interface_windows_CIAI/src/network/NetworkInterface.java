@@ -23,7 +23,10 @@ public class NetworkInterface {
         client_reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
         open = true;
     }
-    
+
+    /*
+    * Fonction envoyant des messages par socket au serveur Linux
+    */
     public void send_message(String msg) throws IOException {
             System.out.println("Sending message: '"+msg+"'");
             OutputStream oStream = client.getOutputStream();
@@ -34,6 +37,9 @@ public class NetworkInterface {
             bOStream.flush();
     }
 
+    /*
+    * Fonction écoutant les messages par socket du serveur Linux
+    */
     public String listen_message() throws IOException {
         
         System.out.println("Listening...");
@@ -47,7 +53,9 @@ public class NetworkInterface {
         
         return msg;
     }
-
+    /*
+    * Fonction fermant proprement la connection avec le serveur
+    */
     public void close() throws IOException {
         if (open) {
             client.close();

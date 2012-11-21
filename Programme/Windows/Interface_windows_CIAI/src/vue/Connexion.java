@@ -13,7 +13,6 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.NetworkInterface;
-//import java.net.NetworkInterface;
 
 /**
  *
@@ -106,37 +105,31 @@ public class Connexion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void B_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_connectActionPerformed
-        //Connection d'un utilisateur
+        //Connection au serveur linux
         
-        if ("".equals(j_port.getText())) {
-            //System.out.println("insert your login");
+        if ("".equals(j_port.getText())) 
+        {
             app.error(null, "Please enter the server port to use (default is 32768).");
-        } else if ("".equals(j_IP_linux.getText())) {
-            //System.out.println("insert your IP");
+        } 
+        
+        else if ("".equals(j_IP_linux.getText())) 
+        {
             app.error(null, "Please enter the server address.");
-        } else {
-            //System.out.println("Ok");
+        } 
+        else 
+        {
             String host = j_IP_linux.getText();
             int port = Integer.parseInt(j_port.getText());
             try {
                 app.network = new NetworkInterface(host, port);
             } catch (UnknownHostException ex) {
-                //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
-                /*String stack = new String();
-                PrintWriter pw = new PrintStream();
-                ex.printStackTrace(pw);
-                ex.g*/
                 app.error("Unknown Host", "The host '"+host+"' is unknown!");
-                //ex.printStackTrace(System.err);
             } catch (IOException ex) {
-                //Logger.getLogger(Identification.class.getName()).log(Level.SEVERE, null, ex);
                 app.error("IO Exception", "Could not send a request to '"+host+":"+port+"'!");
-                //ex.printStackTrace(System.err);
             } catch (IllegalArgumentException ex) {
                 app.error("Argument exception", "Please enter a valid host and port.");
-                //ex.printStackTrace(System.err);
             } finally {
-                //if (app.network == null) System.exit(-1);
+                
             }
             if (app.network != null) {
                 Parametrage fp = new Parametrage(app);
@@ -150,42 +143,7 @@ public class Connexion extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Connexion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /*
-         * Create and display the form
-         */
-       /* java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new Identification().setVisible(true);
-            }
-        });*/
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_connect;

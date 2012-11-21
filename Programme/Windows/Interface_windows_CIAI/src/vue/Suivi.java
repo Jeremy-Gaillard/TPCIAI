@@ -7,12 +7,9 @@ package vue;
 import interface_windows.Carton;
 import interface_windows.InterfaceWindows;
 import interface_windows.Palette;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,26 +35,17 @@ public class Suivi extends javax.swing.JFrame {
     }
     
     static final int NB_ERREURS = 7;
-    //static final int MAXPAL = 1024; // TODO: test si valeur trop grande dans Paramétrage et dans code moteur
     
         //Variable ici car l'entrepôt est toujours consideré comme vide au début de l'application
-    //int nb_palettes = 1;
-    //int nb_palettes = 0;
     int nb_palette_A_commande = 0;
     int nb_palette_B_commande = 0;
     InterfaceWindows app;
     MessageReceiver message_receiver = new MessageReceiver(this);
-    //String[] liste_erreur = new String[NB_ERREURS];
     List<Erreur> liste_erreur = new ArrayList<>();
-    //Map<Integer,String> erreurs = new HashMap<>();
     
     
     /*Variable utilisée pour avoir un bon format dans les listes*/
-    //String[] liste_def_palette = new String[MAXPAL];
-    //String[] liste_def_carton = new String[MAXPAL];
-    //Palette liste_palette[] = new Palette[MAXPAL];
-    //Palette palette_initiale = new Palette(0, "A", 0);
-    //List<Carton> liste_carton = new LinkedList<>();
+
     List<Palette> liste_palette = new ArrayList<>();
     int nb_palette_actuel_A = 0;
     int nb_palette_actuel_B = 0;
@@ -73,11 +61,9 @@ public class Suivi extends javax.swing.JFrame {
 
         @Override
         public void run() {
+            
             System.out.println("Starting message receiver...");
             String msg = "";
-            //liste_palette[0] = palette_initiale;
-            //int indice_palettes_ajout_carton = 0;
-            //Palette en_remplissage = null;
             Map<String,Palette> en_remplissage = new HashMap<>();
             while (true) {
                 try {
@@ -85,7 +71,6 @@ public class Suivi extends javax.swing.JFrame {
                     msg = suivi.app.network.listen_message();
                     System.out.println("Received message: '"+msg+"'");
                 } catch (IOException ex) {
-                    //System.err.println("Could not establish server socket!");
                     app.error("Socket", "Could not establish client socket!", ex);
                 }
 
@@ -99,9 +84,8 @@ public class Suivi extends javax.swing.JFrame {
                     
                     if ("E".equals(msg.substring(0, 1)))
                     {
-
                         //Reception et traitement d'une erreur
-                        //String decoupe[] = msg.split(" ");
+                        
                         if (decoupe[1].equals("Fi")) {
                             app.info("Quitting", "Received a stop message, quitting...");
                             quit_app();
@@ -109,28 +93,7 @@ public class Suivi extends javax.swing.JFrame {
                         } else {
                             int id_erreur = Integer.parseInt(decoupe[1]);
                             String horaire = decoupe[2];
-                            /*
-                            switch(id_erreur){
-                                case 0: liste_erreur[id_erreur] = id_erreur + " : AU"; break;
-                                case 1: liste_erreur[id_erreur] = id_erreur + " : trop de pièces defectueuses"; break;
-                                case 2: liste_erreur[id_erreur] = id_erreur + " : plus de carton"; break;
-                                case 3: liste_erreur[id_erreur] = id_erreur + " : imprimante HS"; break;
-                                case 4: liste_erreur[id_erreur] = id_erreur + " : trop de cartons dans la file d'attente"; break;
-                                case 5: liste_erreur[id_erreur] = id_erreur + " : plus de palette"; break;
-                                case 6: liste_erreur[id_erreur] = id_erreur + " : problème de conditionnement de palette"; break;    
-                            }                                    
-                            */
-                            /*
-                            switch(id_erreur){
-                                case 0: erreurs.put(id_erreur, id_erreur + " : AU"); break;
-                                case 1: erreurs.put(id_erreur, id_erreur + " : trop de pièces defectueuses"); break;
-                                case 2: erreurs.put(id_erreur, id_erreur + " : plus de carton"); break;
-                                case 3: erreurs.put(id_erreur, id_erreur + " : imprimante HS"); break;
-                                case 4: erreurs.put(id_erreur, id_erreur + " : trop de cartons dans la file d'attente"); break;
-                                case 5: erreurs.put(id_erreur, id_erreur + " : plus de palette"); break;
-                                case 6: erreurs.put(id_erreur, id_erreur + " : problème de conditionnement de palette"); break;    
-                            }  
-                            */
+
                             String msg_erreur = id_erreur + ": ";
                             switch(id_erreur){
                                 case 0: msg_erreur += "AU"; break;
@@ -141,40 +104,25 @@ public class Suivi extends javax.swing.JFrame {
                                 case 5: msg_erreur += "Plus de palette"; break;
                                 case 6: msg_erreur += "Problème de conditionnement de palette"; break;     
                             }
-                            //System.out.println(msg_erreur);
                             msg_erreur += " (" + horaire_format(horaire) + ")";
                             System.out.println(msg_erreur);
                             liste_erreur.add(new Erreur(msg_erreur, horaire, id_erreur));
-                            
-                            //j_erreur.setListData(liste_erreur);
-                            //B_reprise.setEnabled(true);
                             
                             maj_erreurs();
                         }
                     }
                     else if ("L C".equals(msg.substring(0, 3)))
                     {
-                        
                         //Reception d'un carton
-                        //String decoupe[] = msg.split(" ");
+                        
                         int id_carton = Integer.parseInt(decoupe[2]);
                         int id_palette = Integer.parseInt(decoupe[3]);
                         String type_piece = decoupe[4];
                         int pourcentage = Integer.parseInt(decoupe[5]);
                         String horaire = decoupe[6];
                         
-                        /*
-                        if (en_remplissage == null) {
-                            en_remplissage = new Palette(type_piece);
-                            //liste_palette[nb_palettes] = en_remplissage;
-                            //nb_palettes++;
-                            liste_palette.add(en_remplissage);
-                        }
-                        */
-                        //Palette p = en_remplissage.get(id_palette);
                         Palette p = en_remplissage.get(Palette.get_unique_id_for(id_palette, type_piece));
                         if (p == null) {
-                            //en_remplissage = new Palette(type_piece);
                             p = new Palette(id_palette, type_piece);
                             en_remplissage.put(p.get_unique_id(), p);
                             liste_palette.add(p);
@@ -182,43 +130,13 @@ public class Suivi extends javax.swing.JFrame {
                         
                         //ajout dans sa palette
                         Carton carton = new Carton(id_carton, type_piece, horaire, pourcentage);
-                        //liste_palette[indice_palettes_ajout_carton].ajouter_carton(carton);
-                        //liste_palette[nb_palettes-1].ajouter_carton(carton);
-                        //en_remplissage.ajouter_carton(carton);
                         p.ajouter_carton(carton);
                         maj_carton();
                         maj_palettes();
                     }
                     else if ("L P".equals(msg.substring(0, 3)))
                     {
-                        /*
                         //Reception d'une palette
-                        
-                        //String decoupe[] = msg.split(" ");
-                        int id_palette = Integer.parseInt(decoupe[2]);
-                        String type_palette = decoupe[3];
-                        int horaire = Integer.parseInt(decoupe[4]); 
-                        
-                        switch (type_palette) {
-                            case "A":
-                                nb_palette_actuel_A++;
-                                break;
-                            case "B":
-                                nb_palette_actuel_B++;
-                                break;
-                            default:
-                                throw new Error("Unsupported type of Palette: "+type_palette);
-                        }
-                        
-                        //indice_palettes_ajout_carton++; //mise à jour de l'indice de la liste de palette
-                        nb_palettes++; //mise à jour du nombre de palette
-                        
-                        Palette palette = new Palette(id_palette, type_palette, horaire);
-                        //liste_palette[indice_palettes_ajout_carton] = palette;
-                        liste_palette[nb_palettes-1] = palette;
-                        
-                        //MAJ de la liste de palettes
-                        maj_palettes();*/
                         
                         int id_palette = Integer.parseInt(decoupe[2]);
                         String type_palette = decoupe[3];
@@ -234,10 +152,7 @@ public class Suivi extends javax.swing.JFrame {
                             default:
                                 throw new Error("Unsupported type of Palette: "+type_palette);
                         }
-                        /*
-                        en_remplissage.finaliser(id_palette, horaire);
-                        en_remplissage = null;
-                        * */
+
                         en_remplissage.get(Palette.get_unique_id_for(id_palette, type_palette)).finaliser(horaire);
                         maj_palettes();
                     }
@@ -246,7 +161,6 @@ public class Suivi extends javax.swing.JFrame {
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     app.error("Invalid message received", "Error while parsing message: "+msg, ex);
                 }
-                //maj_erreurs();
             }
         }
         
@@ -257,18 +171,23 @@ public class Suivi extends javax.swing.JFrame {
         
     }
     
+    /*
+     * 
+     * Met à jour la liste des palettes de l'interface graphique.
+     */
+    
     void maj_palettes() {
         String[] liste_def_palette = new String[liste_palette.size()];
-        //liste_def_palette[i] = palette.toString();
-        /*for (int i = 0; i < nb_palettes; i++) {
-            liste_def_palette[i] = liste_palette[i].toString();
-        }*/
         int i = 0;
         for (Palette p : liste_palette)
             liste_def_palette[i++] = p.toString();
         j_palette.setListData(liste_def_palette);
     }
     
+    /*
+     * 
+     * Met à jour la liste des cartons de l'interface graphique.
+     */    
     void maj_carton() {
         if (selected_palette_index >= 0) {
             Palette p = liste_palette.get(selected_palette_index);
@@ -283,21 +202,21 @@ public class Suivi extends javax.swing.JFrame {
         }
     }
     
+    /*
+     * 
+     * Met à jour la liste des erreurs de l'interface graphique.
+     */    
     synchronized void maj_erreurs() {
-        //System.out.println(">> maj err "+(liste_erreur.size() != 0));
+
         String[] erreurs = new String[liste_erreur.size()];
         int i = 0;
         for (Erreur e : liste_erreur)
             erreurs[i++] = e.msg;
-        //System.out.println(j_erreur.getSelectedIndex());
-        //B_reprise.setEnabled(j_erreur.getSelectedIndex() >= 0 && liste_erreur.size() != 0);
         j_erreur.setListData(erreurs);
-        //B_reprise.setEnabled(!liste_erreur.isEmpty());
         maj_reprise_btn();
     }
     
     void maj_reprise_btn() {
-        //B_reprise.setEnabled(!liste_erreur.isEmpty());
         B_reprise.setEnabled(liste_erreur.size() != 0);
     }
     
@@ -308,60 +227,22 @@ public class Suivi extends javax.swing.JFrame {
         app = inter;
         setLocationByPlatform(true);
         initComponents();
-        /*for (int j = 0; j<NB_ERREURS; j++)
-        {
-            liste_erreur[j] = "";
-        }*/
+        
+        //thread servant à l'écoute de message venant du sreveur Linux
         message_receiver.start();
     }
-    /*
-    public void set_nb_palettes_A_commande(int nb_palette_A_commande) {
-        this.nb_palette_A_commande = nb_palette_A_commande;
-    }
 
-    public void set_nb_palette_B_commande(int nb_palette_B_commande) {
-        this.nb_palette_B_commande = nb_palette_B_commande;
-    }
-    */
-    
+     /*
+     * 
+     * Suite à une commande réussie, met à jour la liste des palettes 
+     * de l'interface graphique et décremente le nombre de palettes totals dans le système.
+     */   
     public void commande(int nb_palette_A_commande, int nb_palette_B_commande) {
-        //this.nb_palette_B_commande = nb_palette_B_commande;
-        /*
-        int j = 1;
-        if (nb_palette_A_commande > 0) {
-            while("A".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
-            {
-                j++;
-            }
-            for(;nb_palette_A_commande > 0;j++)
-            {
-                nb_palette_A_commande--;
-                liste_palette[j].set_disponible(false);
-                //liste_def_palette[j]= "Palette envoyé";                        
-            }
-        }
-        while ("A".equals(liste_palette[j].get_type_palette())) {
-            j++;
-        }
-        if (nb_palette_B_commande > 0) {
-            while("B".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
-            {
-                j++;
-            }
-            for(;nb_palette_B_commande > 0;j++)
-            {
-                nb_palette_B_commande--;
-                liste_palette[j].set_disponible(false);
-                //liste_def_palette[j]= "Palette envoyé";                        
-            }
-        }
-        //j_palette.setListData(liste_def_palette);*/
+
         int i = 0;
         while (i < liste_palette.size() && (nb_palette_A_commande > 0 || nb_palette_B_commande > 0)) {
-            //app.info("", liste_palette[i].toString());
             Palette p = liste_palette.get(i);
             if (p.is_disponible()) {
-                //System.out.println(p);
                 if (nb_palette_A_commande > 0 && "A".equals(p.get_type_palette())) {
                     p.set_disponible(false);
                     nb_palette_A_commande--;
@@ -518,63 +399,15 @@ public class Suivi extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     /*
-     * ouverure de la fenêtre commande
      * 
+     * Ouvre la fenêtre de commande avec le nombre de palettes actuellement en stock
      */
     private void B_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_commandeActionPerformed
         // Envoi d'une commande
+        
         System.out.println("Commande");
-        /*int nb_palette_actuel_A = 0;
-        int nb_palette_actuel_B = 0;
-        for(int j = 1; j < nb_palettes; j++) {
-            if("A".equals(liste_palette[j].get_type_palette()) && liste_palette[j].is_disponible())
-            {
-                nb_palette_actuel_A++;
-            }
-            else if ("B".equals(liste_palette[j].get_type_palette()) && liste_palette[j].is_disponible())
-            {
-                nb_palette_actuel_B++;
-            }           
-        }*/
         Commande fc = new Commande(app, this, nb_palette_actuel_A, nb_palette_actuel_B);
         fc.setVisible(true);
-        /*fc.addWindowListener(new WindowAdapter() {
- 
-            @Override
-            public void windowClosed(WindowEvent e)
-            {
-                int j = 1;
-                if(nb_palette_A_commande > 0) {
-                    while("A".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
-                    {
-                        j++;
-                    }
-                    for(;nb_palette_A_commande > 0;j++)
-                    {
-                        nb_palette_A_commande--;
-                        liste_palette[j].set_disponible(false);
-                        //liste_def_palette[j]= "Palette envoyé";                        
-                    }
-                }
-                while("A".equals(liste_palette[j].get_type_palette())) {
-                    j++;
-                }
-                if(nb_palette_B_commande > 0) {
-                    while("B".equals(liste_palette[j].get_type_palette()) && !liste_palette[j].is_disponible())
-                    {
-                        j++;
-                    }
-                    for(;nb_palette_B_commande > 0;j++)
-                    {
-                        nb_palette_B_commande--;
-                        liste_palette[j].set_disponible(false);
-                        //liste_def_palette[j]= "Palette envoyé";                        
-                    }
-                }
-                //j_palette.setListData(liste_def_palette);
-                maj_palettes();
-            }
-        });*/
     }//GEN-LAST:event_B_commandeActionPerformed
 
     /*

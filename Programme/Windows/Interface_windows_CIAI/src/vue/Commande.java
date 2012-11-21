@@ -150,7 +150,7 @@ public class Commande extends javax.swing.JFrame {
         int nb_palette_actuel_A = nb_palette_A;
         int nb_palette_actuel_B = nb_palette_B;
 
-        String palette_actuel_A = String.valueOf(nb_palette_actuel_A); //A modifier pour avoir la bonne valeur
+        String palette_actuel_A = String.valueOf(nb_palette_actuel_A);
         String palette_actuel_B = String.valueOf(nb_palette_actuel_B);
         j_nb_palette_actuel_A.setText(palette_actuel_A);
         j_nb_palette_actuel_B.setText(palette_actuel_B);
@@ -160,7 +160,7 @@ public class Commande extends javax.swing.JFrame {
     }
     
     private void j_nb_palette_actuel_BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j_nb_palette_actuel_BActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_j_nb_palette_actuel_BActionPerformed
 
     /**
@@ -171,8 +171,7 @@ public class Commande extends javax.swing.JFrame {
         
         int nb_palette_commande_A = 0;
         int nb_palette_commande_B = 0;
-        /*int nb_palette_actuel_A = Integer.parseInt(j_nb_palette_actuel_A.getText());
-        int nb_palette_actuel_B = Integer.parseInt(j_nb_palette_actuel_B.getText());*/ 
+
         
         try {
             nb_palette_commande_A = Integer.parseInt(j_nb_palette_commande_A.getText());
@@ -191,17 +190,19 @@ public class Commande extends javax.swing.JFrame {
         {
             app.error("Stock", "Pas assez de palettes A en stock, veuillez modifier votre commande ou attendre leur production.");
         }
+        
         else if(nb_palette_commande_B > suivi.nb_palette_actuel_B)
         {
             app.error("Stock", "Pas assez de palettes B en stock, veuillez modifier votre commande ou attendre leur production.");
         }
+        
         else
         {
             try {
                 String commande = "1 " + nb_palette_commande_A + " " + nb_palette_commande_B;
                 app.network.send_message(commande);
-                /*suivi.set_nb_palettes_A_commande(nb_palette_commande_A);
-                suivi.set_nb_palette_B_commande(nb_palette_commande_B);*/
+                
+                //Envoie l'information pour mettre à jour le suivi de l'entrepôt
                 suivi.commande(nb_palette_commande_A, nb_palette_commande_B);
                 this.dispose();
                 app.info("Commande réussie", "La commande a bien été envoyée au serveur.");
@@ -213,7 +214,7 @@ public class Commande extends javax.swing.JFrame {
     }//GEN-LAST:event_B_envoyer_commandeActionPerformed
 
     private void j_nb_palette_commande_BActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j_nb_palette_commande_BActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_j_nb_palette_commande_BActionPerformed
 
     private void B_annuler_commandeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_annuler_commandeActionPerformed
@@ -221,18 +222,6 @@ public class Commande extends javax.swing.JFrame {
 
     }//GEN-LAST:event_B_annuler_commandeActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    /*public static void main(String args[]) {
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new Commande().setVisible(true);
-            }
-        });
-    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_annuler_commande;
     private javax.swing.JButton B_envoyer_commande;

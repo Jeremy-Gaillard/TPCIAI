@@ -5,11 +5,7 @@
 package interface_windows;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import network.NetworkInterface;
 import vue.Connexion;
@@ -22,6 +18,10 @@ public class InterfaceWindows {
 
     public NetworkInterface network;
     
+    /*
+     * 
+     * Classe principale lançant l'application.
+     */
     public InterfaceWindows() throws UnknownHostException, IOException{
         Connexion fi = new Connexion(this);
         fi.setVisible(true);        
@@ -31,16 +31,10 @@ public class InterfaceWindows {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(String[] args) throws UnknownHostException, IOException {
-        // TODO code application logic here
         new InterfaceWindows();
     }
     
     public void error(String title, String msg, Exception ex) {
-        //throw new UnsupportedOperationException("Not yet implemented");
-        /*
-        StringWriter sw = new StringWriter();
-        ex.printStackTrace(new PrintWriter(sw));
-        JOptionPane.showMessageDialog(null, msg+"\n\n"+sw.toString(), title, 0);*/
         JOptionPane.showMessageDialog(null, msg+"\n\n"+ex.toString(), title, 0);
     }
     
