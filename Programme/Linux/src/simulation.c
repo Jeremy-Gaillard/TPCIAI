@@ -19,6 +19,7 @@
 
 static pthread_t t_envoi_piece;
 
+/*Procédure chargée d'envoyer les pièces sur la chaine de production*/
 void envoi_piece(arg_envoi_piece_t* ipc)
 {
 	statut_t* shm_statut = ipc->statut;
@@ -26,6 +27,7 @@ void envoi_piece(arg_envoi_piece_t* ipc)
 	sem_t* sem_clapet = ipc->clapet;
 	for( ; ; )
 	{
+                /*Si le clapet est ouvert, on envoi les pieces, sinon, on attend son ouverture*/
 		if( (*shm_statut)[ST_CLAPET_OUVERT] == 1 )
 		{
 			sem_post( sem_piece );
@@ -37,6 +39,7 @@ void envoi_piece(arg_envoi_piece_t* ipc)
 	pthread_exit( 0 );
 }
 
+/*Procédure chargée d'interpréter les commandes utilisateurs et de les traduire pour le système*/
 void simulation(arg_simulation_t* ipc)
 {
 	statut_t* shm_statut = ipc->statut;
@@ -48,7 +51,9 @@ void simulation(arg_simulation_t* ipc)
 	
 	for( ; ; )
 	{
+                /*Récupération de la commande entrée par l'utilisateur*/
 		scanf("%s", commande);
+                /*Cette partie est chargée de modifier le bon segment de mémoire dans shm_status en fonction de la commande utilisateur*/
 		if( !strcmp(commande, "presence_carton") )
 		{
 			(*shm_statut)[ ST_PRESENCE_CARTON ] = 1;
@@ -89,6 +94,7 @@ void simulation(arg_simulation_t* ipc)
 		{
 			(*shm_statut)[ ST_FILM ] = 0;
 		}
+                /*En cas d'arret d'urgence, on envoie SIGUSR1 aux threads carton et palette*/
 		else if( !strcmp(commande, "AU") )
 		{
 			pthread_kill( t_carton, SIGUSR1 );
