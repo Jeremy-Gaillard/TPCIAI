@@ -9,7 +9,7 @@
 #include "config.h"
 #include "prod_utils.h"
 
-
+/*Fonction qui envoi les logs prvenant de carton aux threads de log_windows et de log_disque*/
 void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
                  int carton_id, int palette_id, char type_piece, int nb_rebus,
                  pthread_mutex_t* mutex_windows, pthread_mutex_t* mutex_disque ) {
@@ -27,17 +27,20 @@ void log_carton( mqd_t bal_log_disque, mqd_t bal_log_windows,
 	sprintf(message, "L C %d %d %c %d %s",
 	        carton_id, palette_id, type_piece, pourcent_rebus, heure);
 
+        /*Envoi des log à bal_log_disque*/
 	while ( pthread_mutex_lock( mutex_disque ) );
 	mq_send( bal_log_disque, message, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_disque );
 
+        /*Envoi des log à bal_log_windows*/
 	while ( pthread_mutex_lock( mutex_windows ) );
 	mq_send( bal_log_windows, message, sizeof( log_t ),
 	         BAL_PRIO_ELSE );
 	pthread_mutex_unlock( mutex_windows );
 }
 
+/*Procédure chargée d'initialiser les IPC utiles à carton*/
 void init_carton( int* cmd_A, int* cmd_B, char* type_piece,
                   int* max_rebus, lot_t* shm_lot ) {
 
