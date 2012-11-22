@@ -47,8 +47,7 @@ int server(int portno)
 	int listen(int sockfd, int backlog);
 	The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow. If a connection request arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connection succeeds.
 	*/
-	listen(sockfd, 1); // 5?
-
+	listen(sockfd, 1); 
 	clilen = sizeof(cli_addr);
 	
 	printf("Waiting for connection...\n");
