@@ -20,7 +20,7 @@ public class Palette {
     
     Integer id_palette = null;
     String horaire = null;
-    List<Carton> listeCarton = new LinkedList<>();
+    List<Carton> listeCarton = new LinkedList<Carton>();
     String type_palette;
     boolean disponible; //Pour les livraisons
     boolean remplie;

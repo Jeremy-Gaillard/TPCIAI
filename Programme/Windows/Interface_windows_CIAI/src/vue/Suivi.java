@@ -41,12 +41,12 @@ public class Suivi extends javax.swing.JFrame {
     int nb_palette_B_commande = 0;
     InterfaceWindows app;
     MessageReceiver message_receiver = new MessageReceiver(this);
-    List<Erreur> liste_erreur = new ArrayList<>();
+    List<Erreur> liste_erreur = new ArrayList<Erreur>();
     
     
     /*Variable utilisée pour avoir un bon format dans les listes*/
 
-    List<Palette> liste_palette = new ArrayList<>();
+    List<Palette> liste_palette = new ArrayList<Palette>();
     int nb_palette_actuel_A = 0;
     int nb_palette_actuel_B = 0;
     int selected_palette_index;
@@ -64,7 +64,7 @@ public class Suivi extends javax.swing.JFrame {
             
             System.out.println("Starting message receiver...");
             String msg = "";
-            Map<String,Palette> en_remplissage = new HashMap<>();
+            Map<String,Palette> en_remplissage = new HashMap<String,Palette>();
             while (true) {
                 try {
                     //ecoute d'un message du serveur
@@ -141,16 +141,18 @@ public class Suivi extends javax.swing.JFrame {
                         int id_palette = Integer.parseInt(decoupe[2]);
                         String type_palette = decoupe[3];
                         String horaire = decoupe[4]; 
-                        
-                        switch (type_palette) {
-                            case "A":
-                                nb_palette_actuel_A++;
-                                break;
-                            case "B":
-                                nb_palette_actuel_B++;
-                                break;
-                            default:
-                                throw new Error("Unsupported type of Palette: "+type_palette);
+
+                        if ("A".equals(type_palette))
+                        {
+                            nb_palette_actuel_A++;
+                        }
+                        else if ("B".equals(type_palette))
+                        {
+                            nb_palette_actuel_B++;
+                        }
+                        else
+                        {
+                            throw new Error("Unsupported type of Palette: "+type_palette);
                         }
 
                         en_remplissage.get(Palette.get_unique_id_for(id_palette, type_palette)).finaliser(horaire);

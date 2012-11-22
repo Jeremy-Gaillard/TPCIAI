@@ -54,7 +54,7 @@ public class Connexion extends javax.swing.JFrame {
 
         jLabel1.setText("Port");
 
-        B_connect.setText("Connection");
+        B_connect.setText("Connexion");
         B_connect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 B_connectActionPerformed(evt);
@@ -63,7 +63,7 @@ public class Connexion extends javax.swing.JFrame {
 
         jLabel3.setText("IP de la machine Linux");
 
-        j_IP_linux.setText("134.214.161.7");
+        j_IP_linux.setText("127.0.0.1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
